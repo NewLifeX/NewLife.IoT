@@ -56,10 +56,15 @@ public interface IDriver
 
     /// <summary>性能追踪器</summary>
     ITracer Tracer { get; set; }
+    #endregion
+}
 
+/// <summary>扩展</summary>
+public static class DriverExtensions
+{
     /// <summary>写日志</summary>
+    /// <param name="driver"></param>
     /// <param name="format"></param>
     /// <param name="args"></param>
-    void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
-    #endregion
+    public static void WriteLog(this IDriver driver, String format, params Object[] args) => driver.Log?.Info(format, args);
 }

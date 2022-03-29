@@ -49,21 +49,6 @@ public interface IThing
     /// <param name="remark"></param>
     Boolean WriteEvent(String type, String name, String remark);
 
-    /// <summary>写信息事件</summary>
-    /// <param name="name"></param>
-    /// <param name="remark"></param>
-    void WriteInfoEvent(String name, String remark) => WriteEvent("info", name, remark);
-
-    /// <summary>写警告事件</summary>
-    /// <param name="name"></param>
-    /// <param name="remark"></param>
-    void WriteAlertEvent(String name, String remark) => WriteEvent("alert", name, remark);
-
-    /// <summary>写错误事件</summary>
-    /// <param name="name"></param>
-    /// <param name="remark"></param>
-    void WriteErrorEvent(String name, String remark) => WriteEvent("error", name, remark);
-
     /// <summary>
     /// 获取影子
     /// </summary>
@@ -101,10 +86,33 @@ public interface IThing
 
     /// <summary>日志</summary>
     ILog Log { get; set; }
+    #endregion
+}
+
+/// <summary>物模型扩展</summary>
+public static class ThingExtensions
+{
+    /// <summary>写信息事件</summary>
+    /// <param name="thing"></param>
+    /// <param name="name"></param>
+    /// <param name="remark"></param>
+    public static void WriteInfoEvent(IThing thing, String name, String remark) => thing.WriteEvent("info", name, remark);
+
+    /// <summary>写警告事件</summary>
+    /// <param name="thing"></param>
+    /// <param name="name"></param>
+    /// <param name="remark"></param>
+    public static void WriteAlertEvent(IThing thing, String name, String remark) => thing.WriteEvent("alert", name, remark);
+
+    /// <summary>写错误事件</summary>
+    /// <param name="thing"></param>
+    /// <param name="name"></param>
+    /// <param name="remark"></param>
+    public static void WriteErrorEvent(IThing thing, String name, String remark) => thing.WriteEvent("error", name, remark);
 
     /// <summary>写日志</summary>
+    /// <param name="thing"></param>
     /// <param name="format"></param>
     /// <param name="args"></param>
-    void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
-    #endregion
+    public static void WriteLog(this IThing thing, String format, params Object[] args) => thing.Log?.Info(format, args);
 }

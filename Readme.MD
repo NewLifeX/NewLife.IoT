@@ -1,19 +1,15 @@
 ﻿# NewLife.Modbus - ModbusTcp/ModbusRTU
 
-![GitHub top language](https://img.shields.io/github/languages/top/newlifex/newlife.modbus?logo=github)
-![GitHub License](https://img.shields.io/github/license/newlifex/newlife.modbus?logo=github)
-![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.modbus?logo=nuget)
-![Nuget](https://img.shields.io/nuget/v/newlife.modbus?logo=nuget)
-![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.modbus?label=dev%20nuget&logo=nuget)
+![GitHub top language](https://img.shields.io/github/languages/top/newlifex/newlife.iot?logo=github)
+![GitHub License](https://img.shields.io/github/license/newlifex/newlife.iot?logo=github)
+![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.iot?logo=nuget)
+![Nuget](https://img.shields.io/nuget/v/newlife.iot?logo=nuget)
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.iot?label=dev%20nuget&logo=nuget)
 
-![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.modbusRTU?logo=nuget)
-![Nuget](https://img.shields.io/nuget/v/newlife.modbusRTU?logo=nuget)
-![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.modbusRTU?label=dev%20nuget&logo=nuget)
+IoT标准库，定义物联网领域的各种通信协议标准规范，不含具体实现。主要用于IoT平台建设，以及统一各种硬件驱动协议。  
 
-Modbus协议实现，包括ModbusTcp/ModbusRTU。  
-
-源码： https://github.com/NewLifeX/NewLife.Modbus  
-Nuget：NewLife.Modbus / NewLife.ModbusRT  
+源码： https://github.com/NewLifeX/NewLife.IoT  
+Nuget：NewLife.IoT  
 
 
 ## 新生命项目矩阵
@@ -32,6 +28,7 @@ Nuget：NewLife.Modbus / NewLife.ModbusRT
 |    [NewLife.Redis](https://github.com/NewLifeX/NewLife.Redis)    | 2017  | 维护中 |    √    | Redis客户端，微秒级延迟，百万级吞吐，丰富的消息队列，百亿级数据量项目验证            |
 | [NewLife.RocketMQ](https://github.com/NewLifeX/NewLife.RocketMQ) | 2018  | 维护中 |    √    | 支持Apache RocketMQ和阿里云消息队列，十亿级项目验证                                  |
 |     [NewLife.MQTT](https://github.com/NewLifeX/NewLife.MQTT)     | 2019  | 维护中 |    √    | 物联网消息协议，客户端支持阿里云物联网                                               |
+|      [NewLife.IoT](https://github.com/NewLifeX/NewLife.IoT)      | 2022  | 维护中 |    √    | IoT标准库，定义物联网领域的各种通信协议标准规范                                               |
 |     [NewLife.LoRa](https://github.com/NewLifeX/NewLife.LoRa)     | 2016  | 维护中 |    √    | 超低功耗的物联网远程通信协议LoRaWAN                                                  |
 |                             产品平台                             |       |        |         | 产品平台级，编译部署即用，个性化自定义                                               |
 |           [AntJob](https://github.com/NewLifeX/AntJob)           | 2019  | 维护中 |    √    | 蚂蚁调度，分布式大数据计算平台（实时/离线），蚂蚁搬家分片思想，万亿级数据量项目验证  |
