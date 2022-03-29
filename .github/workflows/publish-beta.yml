@@ -3,6 +3,8 @@ name: publish-beta
 on:
   push:
     branches: [ master ]
+    paths:
+        - 'NewLife.IoT/**'
 
 jobs:
   build-publish:
