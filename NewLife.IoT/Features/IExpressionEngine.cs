@@ -37,7 +37,7 @@ public static class ExpressionEngineExtensions
     /// <param name="name">参数名称</param>
     /// <param name="type">参数类型</param>
     /// <returns></returns>
-    public static Object Parse(IExpressionEngine engine, String expression, String name, Type type) => engine.Parse(expression, new Dictionary<String, Type> { { name, type } });
+    public static Object Parse(this IExpressionEngine engine, String expression, String name, Type type) => engine.Parse(expression, new Dictionary<String, Type> { { name, type } });
 
     /// <summary>
     /// 执行表达式
@@ -46,5 +46,5 @@ public static class ExpressionEngineExtensions
     /// <param name="name">参数名称</param>
     /// <param name="value">参数数值</param>
     /// <returns></returns>
-    public static Object Invoke(IExpressionEngine engine, String name, Object value) => engine.Invoke(new Dictionary<String, Object> { { name, value } });
+    public static Object Invoke(this IExpressionEngine engine, String name, Object value) => engine.Invoke(new Dictionary<String, Object> { { name, value } });
 }
