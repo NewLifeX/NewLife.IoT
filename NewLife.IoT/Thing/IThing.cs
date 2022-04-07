@@ -96,19 +96,19 @@ public static class ThingExtensions
     /// <param name="thing"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteInfoEvent(IThing thing, String name, String remark) => thing.WriteEvent("info", name, remark);
+    public static void WriteInfoEvent(this IThing thing, String name, String remark) => thing.WriteEvent("info", name, remark);
 
     /// <summary>写警告事件</summary>
     /// <param name="thing"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteAlertEvent(IThing thing, String name, String remark) => thing.WriteEvent("alert", name, remark);
+    public static void WriteAlertEvent(this IThing thing, String name, String remark) => thing.WriteEvent("alert", name, remark);
 
     /// <summary>写错误事件</summary>
     /// <param name="thing"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteErrorEvent(IThing thing, String name, String remark) => thing.WriteEvent("error", name, remark);
+    public static void WriteErrorEvent(this IThing thing, String name, String remark) => thing.WriteEvent("error", name, remark);
 
     /// <summary>写日志</summary>
     /// <param name="thing"></param>
