@@ -54,7 +54,7 @@ namespace XUnitTest
         {
             {
                 var point = new PointModel { Type = "int", Length = 2 };
-                Assert.Equal(typeof(UInt16), point.GetNetType());
+                Assert.Equal(typeof(Int16), point.GetNetType());
             }
             {
                 var point = new PointModel { Type = "int", Length = 0 };
