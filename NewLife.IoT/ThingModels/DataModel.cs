@@ -6,9 +6,9 @@ public class DataModel
     /// <summary>时间。数据采集时间，UTC毫秒</summary>
     public Int64 Time { get; set; }
 
-    /// <summary>主题</summary>
-    public String Topic { get; set; }
+    /// <summary>名称</summary>
+    public String Name { get; set; }
 
     /// <summary>数据</summary>
-    public String Data { get; set; }
+    public String Value { get; set; }
 }

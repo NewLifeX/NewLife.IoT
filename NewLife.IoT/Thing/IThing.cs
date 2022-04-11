@@ -39,9 +39,9 @@ public interface IThing
     void SetProperty(String name, Object value);
 
     /// <summary>添加自定义数据，批量上传</summary>
-    /// <param name="topic"></param>
-    /// <param name="data"></param>
-    Boolean AddData(String topic, String data);
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    Boolean AddData(String name, String value);
 
     /// <summary>写事件</summary>
     /// <param name="type"></param>
@@ -49,25 +49,25 @@ public interface IThing
     /// <param name="remark"></param>
     Boolean WriteEvent(String type, String name, String remark);
 
-    /// <summary>
-    /// 获取影子
-    /// </summary>
-    /// <remarks>每次获取上一次值，并异步更新</remarks>
-    String GetShadow();
+    ///// <summary>
+    ///// 获取影子
+    ///// </summary>
+    ///// <remarks>每次获取上一次值，并异步更新</remarks>
+    //String GetShadow();
 
-    /// <summary>
-    /// 设置影子，马上上报
-    /// </summary>
-    /// <param name="shadow"></param>
-    void SetShadow(Object shadow);
+    ///// <summary>
+    ///// 设置影子，马上上报
+    ///// </summary>
+    ///// <param name="shadow"></param>
+    //void SetShadow(Object shadow);
 
-    /// <summary>
-    /// 获取配置
-    /// </summary>
-    /// <remarks>首次获取时启动定时器，确保后续读到新数据</remarks>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    Object GetConfig(String name);
+    ///// <summary>
+    ///// 获取配置
+    ///// </summary>
+    ///// <remarks>首次获取时启动定时器，确保后续读到新数据</remarks>
+    ///// <param name="name"></param>
+    ///// <returns></returns>
+    //Object GetConfig(String name);
     #endregion
 
     #region 服务控制
