@@ -35,7 +35,7 @@ namespace NewLife.IoT
         public static Int32 GetLength(this IPoint point) => point.Length > 0 ? point.Length : GetLength(point.Type);
 
         /// <summary>
-        /// 获取指定类型的本地类型。可用于格式化各种非标类型
+        /// 获取指定IoT类型的本地类型。可用于格式化各种非标类型
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -64,7 +64,7 @@ namespace NewLife.IoT
         }
 
         /// <summary>
-        /// 获取指定点位的本地类型，依赖于点位类型和长度。可用于格式化各种非标类型
+        /// 获取指定点位的本地类型，依赖于点位IoT类型和长度。可用于格式化各种非标类型
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
@@ -73,53 +73,151 @@ namespace NewLife.IoT
             if ((point?.Type).IsNullOrEmpty()) return null;
 
             var type = GetNetType(point.Type);
-
-            // 数字类型，最终类型取决于长度
-            if (type.IsInt() && point.Length > 0)
+            if (point.Length > 0)
             {
-                return point.Length switch
+                // 数字类型，最终类型取决于长度
+                if (type.IsInt())
                 {
-                    1 => typeof(Byte),
-                    2 => typeof(UInt16),
-                    3 or 4 => typeof(UInt32),
-                    _ => type,
-                };
-            }
-            // 小数类型，最终类型取决于长度
-            else if (type == typeof(Single) || type == typeof(Double) || type == typeof(Decimal))
-            {
-                return point.Length switch
+                    return point.Length switch
+                    {
+                        1 => typeof(Byte),
+                        2 => typeof(UInt16),
+                        3 or 4 => typeof(UInt32),
+                        _ => type,
+                    };
+                }
+                // 小数类型，最终类型取决于长度
+                else if (type == typeof(Single) || type == typeof(Double) || type == typeof(Decimal))
                 {
-                    1 or 2 => typeof(Single),
-                    3 or 4 => typeof(Double),
-                    _ => type,
-                };
+                    return point.Length <= 4 ? typeof(Single) : typeof(Double);
+                }
             }
 
             return type;
         }
 
         /// <summary>
+        /// 设置点位的IoT类型和长度
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="type"></param>
+        public static void SetNetType(this IPoint point, Type type)
+        {
+            point.Type = GetIoTType(type);
+            //point.Length = GetLength(point.Type);
+            point.Length = type.GetTypeCode() switch
+            {
+                TypeCode.Boolean => 1,
+                TypeCode.Char or TypeCode.Byte or TypeCode.SByte => 1,
+                TypeCode.Int16 or TypeCode.UInt16 => 2,
+                TypeCode.Int32 or TypeCode.UInt32 => 4,
+                TypeCode.Int64 or TypeCode.UInt64 => 8,
+                TypeCode.Single => 4,
+                TypeCode.Double or TypeCode.Decimal => 8,
+                TypeCode.String => 0,
+                TypeCode.DateTime => 4,
+                _ => 0,
+            };
+        }
+
+        /// <summary>
         /// 获取指定类型的IoT类型，简化可用类型。可用于格式化各种非标类型
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
         /// <returns></returns>
-        public static String GetIoTType(Type type)
+        public static String GetIoTType(Type type, Boolean full = false)
         {
             if (type == null) return null;
 
-            return type.GetTypeCode() switch
+            if (full)
             {
-                TypeCode.Boolean or TypeCode.Char or TypeCode.Byte or TypeCode.SByte => "bit",
-                TypeCode.Int16 or TypeCode.UInt16 => "short",
-                TypeCode.Int32 or TypeCode.UInt32 => "int",
-                TypeCode.Int64 or TypeCode.UInt64 => "long",
-                TypeCode.Single => "float",
-                TypeCode.Double or TypeCode.Decimal => "double",
-                TypeCode.String => "text",
-                TypeCode.DateTime => "time",
-                _ => null,
-            };
+                return type.GetTypeCode() switch
+                {
+                    TypeCode.Boolean => "bool",
+                    TypeCode.Char or TypeCode.Byte or TypeCode.SByte => "byte",
+                    TypeCode.Int16 or TypeCode.UInt16 => "short",
+                    TypeCode.Int32 or TypeCode.UInt32 => "int",
+                    TypeCode.Int64 or TypeCode.UInt64 => "long",
+                    TypeCode.Single => "float",
+                    TypeCode.Double or TypeCode.Decimal => "double",
+                    TypeCode.String => "text",
+                    TypeCode.DateTime => "time",
+                    _ => null,
+                };
+            }
+            else
+            {
+                return type.GetTypeCode() switch
+                {
+                    TypeCode.Boolean => "bool",
+                    TypeCode.Char or TypeCode.Byte or TypeCode.SByte => "int",
+                    TypeCode.Int16 or TypeCode.UInt16 => "int",
+                    TypeCode.Int32 or TypeCode.UInt32 => "int",
+                    TypeCode.Int64 or TypeCode.UInt64 => "int",
+                    TypeCode.Single => "float",
+                    TypeCode.Double or TypeCode.Decimal => "float",
+                    TypeCode.String => "text",
+                    //TypeCode.DateTime => "time",
+                    _ => null,
+                };
+            }
+        }
+
+        /// <summary>
+        /// 获取指定点位的标准IoT类型，依据原类型及长度
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
+        /// <returns></returns>
+        public static String GetIoTType(this IPoint point, Boolean full = false)
+        {
+            var type = point.GetNetType();
+            return GetIoTType(type, full);
+        }
+
+        static IDictionary<String, String> _fullTypes;
+        static IDictionary<String, String> _iotTypes;
+        /// <summary>
+        /// 获取所有可用IoT类型
+        /// </summary>
+        /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
+        /// <returns></returns>
+        public static IDictionary<String, String> GetIoTTypes(Boolean full = false)
+        {
+            if (full)
+            {
+                if (_fullTypes != null) return _fullTypes;
+
+                var dic = new Dictionary<String, String>
+                {
+                    ["short"] = "短整数",
+                    ["int"] = "整数",
+                    ["float"] = "小数",
+                    ["bool"] = "布尔型",
+                    ["byte"] = "字节",
+                    ["long"] = "长整数",
+                    ["double"] = "双精度",
+                    ["text"] = "文本",
+                    ["time"] = "时间",
+                };
+
+                return _fullTypes = dic;
+            }
+            else
+            {
+                if (_iotTypes != null) return _iotTypes;
+
+                var dic = new Dictionary<String, String>
+                {
+                    ["int"] = "整数",
+                    ["float"] = "小数",
+                    ["bool"] = "布尔型",
+                    ["text"] = "文本",
+                };
+
+                return _iotTypes = dic;
+            }
         }
     }
 }
