@@ -76,17 +76,16 @@ public interface IThing
     /// </summary>
     /// <param name="service"></param>
     /// <param name="method"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    void RegisterService(String service, Func<String, String> method);
+    void RegisterService(String service, Delegate method);
     #endregion
 
-    #region 日志
-    /// <summary>链路追踪</summary>
-    ITracer Tracer { get; set; }
+    //#region 日志
+    ///// <summary>链路追踪</summary>
+    //ITracer Tracer { get; set; }
 
-    /// <summary>日志</summary>
-    ILog Log { get; set; }
-    #endregion
+    ///// <summary>日志</summary>
+    //ILog Log { get; set; }
+    //#endregion
 }
 
 /// <summary>物模型扩展</summary>
@@ -110,9 +109,9 @@ public static class ThingExtensions
     /// <param name="remark"></param>
     public static void WriteErrorEvent(this IThing thing, String name, String remark) => thing.WriteEvent("error", name, remark);
 
-    /// <summary>写日志</summary>
-    /// <param name="thing"></param>
-    /// <param name="format"></param>
-    /// <param name="args"></param>
-    public static void WriteLog(this IThing thing, String format, params Object[] args) => thing.Log?.Info(format, args);
+    ///// <summary>写日志</summary>
+    ///// <param name="thing"></param>
+    ///// <param name="format"></param>
+    ///// <param name="args"></param>
+    //public static void WriteLog(this IThing thing, String format, params Object[] args) => thing.Log?.Info(format, args);
 }

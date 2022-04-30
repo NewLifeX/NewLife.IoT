@@ -29,7 +29,10 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        client.Services[service] = method;
+        if (client is IThing thing)
+            thing.RegisterService(service, method);
+        else
+            client.Services[service] = method;
     }
 
     /// <summary>
@@ -43,7 +46,10 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        client.Services[service] = method;
+        if (client is IThing thing)
+            thing.RegisterService(service, method);
+        else
+            client.Services[service] = method;
     }
 
     /// <summary>
@@ -57,7 +63,10 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        client.Services[service] = method;
+        if (client is IThing thing)
+            thing.RegisterService(service, method);
+        else
+            client.Services[service] = method;
     }
 
     /// <summary>
@@ -71,7 +80,10 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        client.Services[service] = method;
+        if (client is IThing thing)
+            thing.RegisterService(service, method);
+        else
+            client.Services[service] = method;
     }
 
     /// <summary>执行命令</summary>
