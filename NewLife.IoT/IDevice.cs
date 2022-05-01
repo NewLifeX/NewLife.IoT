@@ -1,13 +1,20 @@
-﻿using NewLife.IoT.ThingModels;
+﻿using NewLife.IoT.Models;
+using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 
-namespace NewLife.IoT.Thing;
+namespace NewLife.IoT;
 
-/// <summary>物模型客户端。主设备和每个子设备都有自己的物模型客户端实例</summary>
-public interface IThing
+/// <summary>逻辑设备接口。具备物模型全部能力，对接物理设备进行数据采集及远程控制</summary>
+/// <remarks>
+/// IDevice 接口乃是IoT客户端核心，它的不同程度实现，可以建立轻量级或重量级物联网平台。
+/// </remarks>
+public interface IDevice
 {
     #region 属性
+    /// <summary>设备编码。在平台中唯一标识设备</summary>
+    public String Code { get; set; }
+
     /// <summary>属性集合</summary>
     IDictionary<String, Object> Properties { get; }
 
@@ -29,7 +36,13 @@ public interface IThing
     void Stop();
     #endregion
 
-    #region 业务方法
+    #region 设备方法
+    /// <summary>添加子设备。有些设备驱动具备扫描发现子设备能力，通过该方法上报设备</summary>
+    /// <param name="devices"></param>
+    void AddDevice(IDeviceInfo[] devices);
+    #endregion
+
+    #region 物模型方法
     /// <summary>马上上报属性</summary>
     void PostProperty();
 
@@ -79,39 +92,39 @@ public interface IThing
     void RegisterService(String service, Delegate method);
     #endregion
 
-    //#region 日志
-    ///// <summary>链路追踪</summary>
-    //ITracer Tracer { get; set; }
+    #region 日志
+    /// <summary>链路追踪</summary>
+    ITracer Tracer { get; set; }
 
-    ///// <summary>日志</summary>
-    //ILog Log { get; set; }
-    //#endregion
+    /// <summary>日志</summary>
+    ILog Log { get; set; }
+    #endregion
 }
 
 /// <summary>物模型扩展</summary>
 public static class ThingExtensions
 {
     /// <summary>写信息事件</summary>
-    /// <param name="thing"></param>
+    /// <param name="device"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteInfoEvent(this IThing thing, String name, String remark) => thing.WriteEvent("info", name, remark);
+    public static void WriteInfoEvent(this IDevice device, String name, String remark) => device.WriteEvent("info", name, remark);
 
     /// <summary>写警告事件</summary>
-    /// <param name="thing"></param>
+    /// <param name="device"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteAlertEvent(this IThing thing, String name, String remark) => thing.WriteEvent("alert", name, remark);
+    public static void WriteAlertEvent(this IDevice device, String name, String remark) => device.WriteEvent("alert", name, remark);
 
     /// <summary>写错误事件</summary>
-    /// <param name="thing"></param>
+    /// <param name="device"></param>
     /// <param name="name"></param>
     /// <param name="remark"></param>
-    public static void WriteErrorEvent(this IThing thing, String name, String remark) => thing.WriteEvent("error", name, remark);
+    public static void WriteErrorEvent(this IDevice device, String name, String remark) => device.WriteEvent("error", name, remark);
 
     ///// <summary>写日志</summary>
-    ///// <param name="thing"></param>
+    ///// <param name="device"></param>
     ///// <param name="format"></param>
     ///// <param name="args"></param>
-    //public static void WriteLog(this IThing thing, String format, params Object[] args) => thing.Log?.Info(format, args);
+    //public static void WriteLog(this IThing device, String format, params Object[] args) => device.Log?.Info(format, args);
 }

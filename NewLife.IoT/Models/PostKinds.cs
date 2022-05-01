@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.Models;
 
 /// <summary>
 /// 数据上报类型

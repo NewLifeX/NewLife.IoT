@@ -3,7 +3,7 @@ using NewLife.Log;
 using NewLife.Remoting;
 using NewLife.Serialization;
 
-namespace NewLife.IoT.Thing;
+namespace NewLife.IoT.Clients;
 
 /// <summary>命令服务处理器接口</summary>
 public interface IServiceHandler
@@ -29,8 +29,8 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        if (client is IThing thing)
-            thing.RegisterService(service, method);
+        if (client is IDevice device)
+            device.RegisterService(service, method);
         else
             client.Services[service] = method;
     }
@@ -46,8 +46,8 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        if (client is IThing thing)
-            thing.RegisterService(service, method);
+        if (client is IDevice device)
+            device.RegisterService(service, method);
         else
             client.Services[service] = method;
     }
@@ -63,8 +63,8 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        if (client is IThing thing)
-            thing.RegisterService(service, method);
+        if (client is IDevice device)
+            device.RegisterService(service, method);
         else
             client.Services[service] = method;
     }
@@ -80,8 +80,8 @@ public static class ServiceHandlerHelper
     {
         if (service.IsNullOrEmpty()) service = method.Method.Name;
 
-        if (client is IThing thing)
-            thing.RegisterService(service, method);
+        if (client is IDevice device)
+            device.RegisterService(service, method);
         else
             client.Services[service] = method;
     }

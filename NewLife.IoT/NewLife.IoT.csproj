@@ -35,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Thing\EventPropertyMethod.cs" />
-    <Compile Remove="Thing\ServicePropertyMethod.cs" />
+    <Compile Remove="Clients\EventPropertyMethod.cs" />
+    <Compile Remove="Clients\ServicePropertyMethod.cs" />
   </ItemGroup>
 
   <ItemGroup>
