@@ -3,15 +3,18 @@ using NewLife.Log;
 
 namespace NewLife.IoT.Drivers;
 
-/// <summary>
-/// 节点接口
-/// </summary>
-public interface INode { }
-
 /// <summary>协议驱动接口</summary>
 public interface IDriver
 {
-    #region 方法
+    #region 参数
+    /// <summary>
+    /// 创建驱动参数对象，用于
+    /// </summary>
+    /// <returns></returns>
+    IDriverParameter CreateParameter();
+    #endregion
+
+    #region 核心方法
     /// <summary>
     /// 打开设备驱动，传入参数。一个设备可能有多个通道共用，需要以节点来区分
     /// </summary>
@@ -67,4 +70,23 @@ public static class DriverExtensions
     /// <param name="format"></param>
     /// <param name="args"></param>
     public static void WriteLog(this IDriver driver, String format, params Object[] args) => driver.Log?.Info(format, args);
+
+    /// <summary>
+    /// 打开设备驱动
+    /// </summary>
+    /// <param name="driver"></param>
+    /// <param name="channel"></param>
+    /// <param name="parameter"></param>
+    /// <returns></returns>
+    public static INode Open(this IDriver driver, IChannel channel, IDriverParameter parameter)
+    {
+        var ps = parameter?.Serialize();
+        var node = driver.Open(channel, ps);
+
+        if (node.Driver == null) node.Driver = driver;
+        if (node.Channel == null) node.Channel = channel;
+        if (node.Parameter == node) node.Parameter = parameter;
+
+        return node;
+    }
 }
