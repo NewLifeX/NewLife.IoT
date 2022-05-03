@@ -28,6 +28,11 @@ namespace Test
             DriverFactory.ScanAll();
 
             DriverFactory.ScanAll();
+
+            foreach (var item in DriverFactory.Drivers)
+            {
+                XTrace.WriteLine(item.DefaultParameter?.Trim());
+            }
         }
     }
 }
