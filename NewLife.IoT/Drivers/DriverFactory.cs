@@ -26,21 +26,19 @@ public class DriverFactory
     /// <summary>注册协议实现</summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="name"></param>
-    public static void Register<T>(String name = null) => Register(name, typeof(T));
+    public static void Register<T>(String name = null) where T : IDriver => Register(name, typeof(T));
 
-    private static readonly ConcurrentDictionary<String, Object> _cache = new();
+    private static readonly ConcurrentDictionary<String, IDriver> _cache = new();
     /// <summary>创建协议实例，根据地址确保唯一，多设备共用同一个串口</summary>
     /// <param name="name">名称</param>
     /// <param name="identifier">唯一标识</param>
     /// <returns></returns>
-    public static Object Create(String name, String identifier)
+    public static IDriver Create(String name, String identifier)
     {
         if (!_map.TryGetValue(name, out var type)) return null;
 
         var key = $"{name}-{identifier}";
-        var obj = _cache.GetOrAdd(key, k => type.CreateInstance());
-
-        return obj;
+        return _cache.GetOrAdd(key, k => type.CreateInstance() as IDriver);
     }
     #endregion
 

@@ -1,7 +1,6 @@
 ﻿using NewLife.IoT.Models;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
-using NewLife.Log;
 
 namespace NewLife.IoT;
 
@@ -29,17 +28,29 @@ public interface IDevice
     #endregion
 
     #region 方法
-    /// <summary>开始</summary>
+    /// <summary>开始工作</summary>
     Task Start();
 
-    /// <summary>停止</summary>
+    /// <summary>停止工作</summary>
     void Stop();
-    #endregion
 
-    #region 设备方法
-    /// <summary>添加子设备。有些设备驱动具备扫描发现子设备能力，通过该方法上报设备</summary>
-    /// <param name="devices"></param>
-    void AddDevice(IDeviceInfo[] devices);
+    /// <summary>设备上线。驱动打开后调用，子设备发现，或者上报主设备/子设备的默认参数模版</summary>
+    /// <remarks>
+    /// 有些设备驱动具备扫描发现子设备能力，通过该方法上报设备。
+    /// 主设备或子设备，也可通过该方法上报驱动的默认参数模版。
+    /// 根据需要，驱动内可能多次调用该方法。
+    /// </remarks>
+    /// <param name="devices">设备信息集合。可传递参数模版</param>
+    /// <returns>返回上报信息对应的反馈，如果新增子设备，则返回子设备信息</returns>
+    IDeviceInfo[] SetOnline(IDeviceInfo[] devices);
+
+    /// <summary>设备下线。驱动内子设备变化后调用</summary>
+    /// <remarks>
+    /// 根据需要，驱动内可能多次调用该方法。
+    /// </remarks>
+    /// <param name="devices">设备编码集合。用于子设备离线</param>
+    /// <returns>返回上报信息对应的反馈，如果新增子设备，则返回子设备信息</returns>
+    IDeviceInfo[] SetOffline(String[] devices);
     #endregion
 
     #region 物模型方法
@@ -91,14 +102,6 @@ public interface IDevice
     /// <param name="method"></param>
     void RegisterService(String service, Delegate method);
     #endregion
-
-    #region 日志
-    /// <summary>链路追踪</summary>
-    ITracer Tracer { get; set; }
-
-    /// <summary>日志</summary>
-    ILog Log { get; set; }
-    #endregion
 }
 
 /// <summary>物模型扩展</summary>
@@ -121,10 +124,4 @@ public static class ThingExtensions
     /// <param name="name"></param>
     /// <param name="remark"></param>
     public static void WriteErrorEvent(this IDevice device, String name, String remark) => device.WriteEvent("error", name, remark);
-
-    ///// <summary>写日志</summary>
-    ///// <param name="device"></param>
-    ///// <param name="format"></param>
-    ///// <param name="args"></param>
-    //public static void WriteLog(this IThing device, String format, params Object[] args) => device.Log?.Info(format, args);
 }

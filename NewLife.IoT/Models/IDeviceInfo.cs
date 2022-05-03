@@ -8,4 +8,7 @@ public interface IDeviceInfo
 
     /// <summary>名称</summary>
     String Name { get; set; }
+
+    /// <summary>产品编码</summary>
+    String ProductCode { get; set; }
 }
