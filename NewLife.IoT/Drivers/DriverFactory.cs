@@ -2,6 +2,7 @@
 using System.Reflection;
 using NewLife.Log;
 using NewLife.Reflection;
+using NewLife.Xml;
 
 namespace NewLife.IoT.Drivers;
 
@@ -12,6 +13,9 @@ public class DriverFactory
     private static readonly Dictionary<String, Type> _map = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>驱动表</summary>
     public static IDictionary<String, Type> Map => _map;
+
+    /// <summary>驱动集合</summary>
+    public static IList<DriverInfo> Drivers { get; private set; }
 
     /// <summary>注册协议实现</summary>
     /// <param name="name"></param>
@@ -50,7 +54,7 @@ public class DriverFactory
     {
         XTrace.WriteLine("================开始扫描驱动插件================");
 
-        //foreach (var item in typeof(IProtocol).GetAllSubclasses())
+        var list = new List<DriverInfo>();
         foreach (var item in FindAllPlugins(typeof(IDriver), true, true))
         {
             var att = item.GetCustomAttribute<DriverAttribute>();
@@ -59,7 +63,32 @@ public class DriverFactory
             XTrace.WriteLine("加载驱动 [{0}] {1}", name, item.FullName);
 
             Register(name, item);
+
+            var info = new DriverInfo
+            {
+                Name = name,
+                DisplayName = item.GetDisplayName(),
+                Type = item,
+                ClassName = item.FullName,
+                Version = item.Assembly.GetName().Version + "",
+                Description = item.GetDescription(),
+            };
+
+            try
+            {
+                var drv = item.CreateInstance() as IDriver;
+                var pm = drv?.CreateParameter();
+                if (pm != null)
+                {
+                    info.DefaultParameter = pm.ToXml(null, true);
+                }
+            }
+            catch { }
+
+            list.Add(info);
         }
+
+        Drivers = list;
 
         XTrace.WriteLine("================结束扫描驱动插件================");
     }
