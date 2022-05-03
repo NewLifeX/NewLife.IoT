@@ -27,7 +27,7 @@ public interface IDriver
     INode Open(IDevice device, IDictionary<String, Object> parameters);
 
     /// <summary>
-    /// 关闭设备驱动
+    /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
     /// </summary>
     /// <param name="node"></param>
     void Close(INode node);
