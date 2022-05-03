@@ -123,7 +123,7 @@ public class DriverFactory
                         if (file.StartsWithIgnoreCase(root)) file = file.Substring(root.Length).TrimStart("\\");
                         XTrace.WriteLine("AssemblyX.FindAllPlugins(\"{0}\") => {1}", baseType.FullName, file);
                     }
-                    var asm2 = Assembly.LoadFile(item.Asm.Location);
+                    var asm2 = Assembly.LoadFrom(item.Asm.Location);
                     ts = FindPlugins(baseType, asm2.GetTypes());
 
                     foreach (var elm in ts)

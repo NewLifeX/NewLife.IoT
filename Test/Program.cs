@@ -1,4 +1,5 @@
 ﻿using System;
+using NewLife.IoT.Drivers;
 using NewLife.Log;
 
 namespace Test
@@ -11,7 +12,7 @@ namespace Test
 
             try
             {
-                //Test1();
+                Test1();
             }
             catch (Exception ex)
             {
@@ -20,6 +21,13 @@ namespace Test
 
             Console.WriteLine("OK!");
             Console.ReadKey();
+        }
+
+        static void Test1()
+        {
+            DriverFactory.ScanAll();
+
+            DriverFactory.ScanAll();
         }
     }
 }
