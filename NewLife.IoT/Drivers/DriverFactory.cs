@@ -54,6 +54,9 @@ public class DriverFactory
     {
         XTrace.WriteLine("================开始扫描驱动插件================");
 
+        var iot = Assembly.GetExecutingAssembly();
+        var iotVersion = iot.GetName().Version + "";
+
         var list = new List<DriverInfo>();
         foreach (var item in FindAllPlugins(typeof(IDriver), true, true))
         {
@@ -71,6 +74,7 @@ public class DriverFactory
                 Type = item,
                 ClassName = item.FullName,
                 Version = item.Assembly.GetName().Version + "",
+                IoTVersion = iotVersion,
                 Description = item.GetDescription(),
             };
 

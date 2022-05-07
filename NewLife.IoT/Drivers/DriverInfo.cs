@@ -20,8 +20,11 @@ public class DriverInfo
     /// <summary>类型名</summary>
     public String ClassName { get; set; }
 
-    /// <summary>版本</summary>
+    /// <summary>驱动版本</summary>
     public String Version { get; set; }
+
+    /// <summary>该驱动所依赖的IoT版本</summary>
+    public String IoTVersion { get; set; }
 
     /// <summary>默认参数。可作为设备参数模版，Xml格式带注释</summary>
     public String DefaultParameter { get; set; }
