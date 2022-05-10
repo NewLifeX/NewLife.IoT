@@ -6,7 +6,7 @@ public interface IPoint
     /// <summary>名称</summary>
     String Name { get; set; }
 
-    /// <summary>地址。常规地址 0x06，大地址 40000，位域地址 0x46000:05，比特位置0~15</summary>
+    /// <summary>地址。表示点位的地址，具体含义由设备驱动决定。例如常规地址6，字母地址DI07，Modbus地址4x0015，位域地址D012.05，比特位置0~15</summary>
     String Address { get; set; }
 
     /// <summary>数据类型。来自物模型</summary>
