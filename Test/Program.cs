@@ -33,6 +33,10 @@ namespace Test
             {
                 XTrace.WriteLine(item.DefaultParameter?.Trim());
             }
+
+            var drv = DriverFactory.Drivers[0];
+            XTrace.WriteLine("{0}", drv.DefaultParameter[0]);
+            XTrace.WriteLine("{0}", (Int32)drv.DefaultParameter[0]);
         }
     }
 }

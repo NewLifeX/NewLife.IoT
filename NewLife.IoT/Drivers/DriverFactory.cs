@@ -84,7 +84,7 @@ public class DriverFactory
                 var pm = drv?.CreateParameter();
                 if (pm != null)
                 {
-                    info.DefaultParameter = pm.ToXml(null, true);
+                    info.DefaultParameter = pm.ToXml(null, true).Trim((Char)0xFEFF);
                 }
             }
             catch { }
