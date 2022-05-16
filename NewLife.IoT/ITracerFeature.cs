@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD
+﻿#if !NETSTANDARD2_1_OR_GREATER
 namespace NewLife.Log;
 
 /// <summary>日志功能接口</summary>

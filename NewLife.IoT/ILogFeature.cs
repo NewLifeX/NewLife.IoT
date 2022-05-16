@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD
+﻿#if !NETSTANDARD2_1_OR_GREATER
 using System;
 
 namespace NewLife.Log;
