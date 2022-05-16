@@ -47,7 +47,7 @@ public class DriverBase<TNode, TParameter> : DriverBase
 /// 在Modbus协议上，一个通信链路（串口/ModbusTcp地址）即是IDriver，可能有多个物理设备共用，各自表示为INode。
 /// 即是是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
 /// </remarks>
-public class DriverBase : IDriver, ILogFeature, ITracerFeature
+public class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFeature
 {
     #region 参数
     /// <summary>
