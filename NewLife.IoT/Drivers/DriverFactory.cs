@@ -58,7 +58,11 @@ public class DriverFactory
         var iotVersion = iot.GetName().Version + "";
 
         var list = new List<DriverInfo>();
+#if NETSTANDARD2_1_OR_GREATER
+        foreach (var item in AssemblyX.FindAllPlugins(typeof(IDriver), true, true))
+#else
         foreach (var item in FindAllPlugins(typeof(IDriver), true, true))
+#endif
         {
             var att = item.GetCustomAttribute<DriverAttribute>();
             var name = att?.Name ?? item.Name.TrimEnd("Procotol");
@@ -136,6 +140,10 @@ public class DriverFactory
         }
         if (isLoadAssembly)
         {
+            // 基类也改为只反射，否则判断某类是否集成指定基类时，一个反射一个正常加载无法通过
+            var baseType2 = Assembly.ReflectionOnlyLoadFrom(baseType.Assembly.Location).GetType(baseType.FullName);
+            if (baseType2 == null) yield break;
+
             foreach (var item in AssemblyX.ReflectionOnlyGetAssemblies())
             {
                 // 如果excludeGlobalTypes为true，则指检查来自非GAC引用的程序集
@@ -144,7 +152,7 @@ public class DriverFactory
                 // 不搜索系统程序集，不搜索未引用基类所在程序集的程序集，优化性能
                 if (item.IsSystemAssembly || !IsReferencedFrom(item.Asm, baseAssemblyName)) continue;
 
-                var ts = FindPlugins(baseType, item.Types);
+                var ts = FindPlugins(baseType2, item.Types);
                 if (ts.Any())
                 {
                     // 真实加载
