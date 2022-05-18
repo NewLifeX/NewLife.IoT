@@ -140,8 +140,15 @@ public class DriverFactory
         }
         if (isLoadAssembly)
         {
+            Assembly asm;
+            try
+            {
+                asm = Assembly.ReflectionOnlyLoadFrom(baseType.Assembly.Location);
+            }
+            catch { yield break; }
+
             // 基类也改为只反射，否则判断某类是否集成指定基类时，一个反射一个正常加载无法通过
-            var baseType2 = Assembly.ReflectionOnlyLoadFrom(baseType.Assembly.Location).GetType(baseType.FullName);
+            var baseType2 = asm.GetType(baseType.FullName);
             if (baseType2 == null) yield break;
 
             foreach (var item in AssemblyX.ReflectionOnlyGetAssemblies())
@@ -164,8 +171,12 @@ public class DriverFactory
                         if (file.StartsWithIgnoreCase(root)) file = file.Substring(root.Length).TrimStart("\\");
                         XTrace.WriteLine("AssemblyX.FindAllPlugins(\"{0}\") => {1}", baseType.FullName, file);
                     }
-                    var asm2 = Assembly.LoadFrom(item.Asm.Location);
-                    ts = FindPlugins(baseType, asm2.GetTypes());
+                    try
+                    {
+                        asm = Assembly.LoadFrom(item.Asm.Location);
+                    }
+                    catch { continue; }
+                    ts = FindPlugins(baseType, asm.GetTypes());
 
                     foreach (var elm in ts)
                     {
