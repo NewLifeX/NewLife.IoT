@@ -140,16 +140,18 @@ public class DriverFactory
         }
         if (isLoadAssembly)
         {
-            Assembly asm;
+            var baseType2 = baseType;
+#if NET40_OR_GREATER
             try
             {
-                asm = Assembly.ReflectionOnlyLoadFrom(baseType.Assembly.Location);
+                var asm = Assembly.ReflectionOnlyLoadFrom(baseType.Assembly.Location);
+
+                // 基类也改为只反射，否则判断某类是否集成指定基类时，一个反射一个正常加载无法通过
+                baseType2 = asm.GetType(baseType.FullName);
+                if (baseType2 == null) yield break;
             }
             catch { yield break; }
-
-            // 基类也改为只反射，否则判断某类是否集成指定基类时，一个反射一个正常加载无法通过
-            var baseType2 = asm.GetType(baseType.FullName);
-            if (baseType2 == null) yield break;
+#endif
 
             foreach (var item in AssemblyX.ReflectionOnlyGetAssemblies())
             {
@@ -173,10 +175,10 @@ public class DriverFactory
                     }
                     try
                     {
-                        asm = Assembly.LoadFrom(item.Asm.Location);
+                        var asm = Assembly.LoadFrom(item.Asm.Location);
+                        ts = FindPlugins(baseType, asm.GetTypes());
                     }
                     catch { continue; }
-                    ts = FindPlugins(baseType, asm.GetTypes());
 
                     foreach (var elm in ts)
                     {
