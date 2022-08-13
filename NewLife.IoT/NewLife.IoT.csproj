@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net4.0;net4.5</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net4.0;net4.5;net461</TargetFrameworks>
     <AssemblyTitle>IoT标准</AssemblyTitle>
     <Description>IoT标准库，定义物联网领域的各种通信协议标准规范，不含具体实现。主要用于IoT平台建设，以及统一各种硬件驱动协议</Description>
     <Company>新生命开发团队</Company>
@@ -15,6 +15,8 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,11 +42,11 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
-    <PackageReference Include="NewLife.Core" Version="9.2.2022.0601" />
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1' or '$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
+    <PackageReference Include="NewLife.Core" Version="10.0.2022.813-beta1403" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'!='netstandard2.1'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net4.0' or '$(TargetFramework)'=='net4.5'">
     <PackageReference Include="NewLife.Core" Version="8.11.2021.1225" />
   </ItemGroup>
 
