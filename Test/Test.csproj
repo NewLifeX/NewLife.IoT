@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NewLife.Fuji" Version="1.0.2022.517-beta1638" />
+    <PackageReference Include="NewLife.Melsec" Version="1.0.2022.906" />
+    <PackageReference Include="NewLife.NetPing" Version="1.0.2022.906" />
+    <PackageReference Include="NewLife.Omron" Version="1.0.2022.517-beta1622" />
+    <PackageReference Include="NewLife.OpcDa" Version="1.0.2022.816-beta1358" />
+    <PackageReference Include="NewLife.OpcUa" Version="1.0.2022.816-beta1358" />
+    <PackageReference Include="NewLife.Schneider" Version="1.0.2022.820-beta1204" />
+    <PackageReference Include="NewLife.Siemens" Version="1.0.2022.906" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NewLife.IoT\NewLife.IoT.csproj" />
   </ItemGroup>
 

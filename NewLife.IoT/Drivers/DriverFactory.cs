@@ -67,7 +67,7 @@ public class DriverFactory
             var att = item.GetCustomAttribute<DriverAttribute>();
             var name = att?.Name ?? item.Name.TrimEnd("Procotol");
 
-            XTrace.WriteLine("加载驱动 [{0}] {1}", name, item.FullName);
+            XTrace.WriteLine("加载驱动 [{0}] {1} {2}", name, item.FullName, item.GetDisplayName());
 
             Register(name, item);
 
