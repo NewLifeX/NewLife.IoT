@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
+using NewLife.IoT.ThingModels;
 using NewLife.Log;
 using NewLife.Reflection;
 using NewLife.Xml;
@@ -86,7 +87,18 @@ public class DriverFactory
                 {
                     // Xml序列化，去掉前面的BOM编码
                     info.DefaultParameter = pm.ToXml(null, true).Trim((Char)0xFEFF);
-                    info.DefaultPoints = drv?.GetDefaultPoints();
+
+                    var ps = drv?.GetDefaultPoints();
+                    if (ps != null)
+                    {
+                        info.DefaultPoints = ps.Select(e => e as PointModel ?? new PointModel
+                        {
+                            Name = e.Name,
+                            Address = e.Address,
+                            Type = e.Type,
+                            Length = e.Length,
+                        }).ToArray();
+                    }
                 }
             }
             catch { }

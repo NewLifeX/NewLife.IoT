@@ -34,6 +34,6 @@ public class DriverInfo
     public String DefaultParameter { get; set; }
 
     /// <summary>默认点位。某些设备驱动中指定了该类设备所拥有的点位信息</summary>
-    public IPoint[] DefaultPoints { get; set; }
+    public PointModel[] DefaultPoints { get; set; }
     #endregion
 }
