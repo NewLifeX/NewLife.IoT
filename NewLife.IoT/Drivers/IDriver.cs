@@ -5,16 +5,22 @@ namespace NewLife.IoT.Drivers;
 /// <summary>协议驱动接口。抽象各种硬件设备的数据采集及远程控制</summary>
 /// <remarks>
 /// 在Modbus协议上，一个通信链路（串口/ModbusTcp地址）即是IDriver，可能有多个物理设备共用，各自表示为INode。
-/// 即是是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
+/// 即使是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
 /// </remarks>
 public interface IDriver
 {
-    #region 参数
+    #region 元数据
     /// <summary>
-    /// 创建驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
+    /// 获取默认驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
     /// </summary>
     /// <returns></returns>
-    IDriverParameter CreateParameter();
+    IDriverParameter GetDefaultParameter();
+
+    /// <summary>
+    /// 获取点位集合。如果设备有着固定点位，则直接返回，否则返回空
+    /// </summary>
+    /// <returns></returns>
+    IPoint[] GetDefaultPoints();
     #endregion
 
     #region 核心方法
@@ -72,9 +78,9 @@ public static class DriverExtensions
         var ps = parameter?.Serialize();
         var node = driver.Open(device, ps);
 
-        if (node.Driver == null) node.Driver = driver;
-        if (node.Device == null) node.Device = device;
-        if (node.Parameter == node) node.Parameter = parameter;
+        node.Driver ??= driver;
+        node.Device ??= device;
+        node.Parameter ??= parameter;
 
         return node;
     }

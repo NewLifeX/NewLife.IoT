@@ -81,11 +81,12 @@ public class DriverFactory
             try
             {
                 var drv = item.CreateInstance() as IDriver;
-                var pm = drv?.CreateParameter();
+                var pm = drv?.GetDefaultParameter();
                 if (pm != null)
                 {
                     // Xml序列化，去掉前面的BOM编码
                     info.DefaultParameter = pm.ToXml(null, true).Trim((Char)0xFEFF);
+                    info.DefaultPoints = drv?.GetDefaultPoints();
                 }
             }
             catch { }

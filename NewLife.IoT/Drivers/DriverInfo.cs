@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using NewLife.IoT.ThingModels;
 
 namespace NewLife.IoT.Drivers;
 
@@ -26,10 +27,13 @@ public class DriverInfo
     /// <summary>该驱动所依赖的IoT版本</summary>
     public String IoTVersion { get; set; }
 
+    /// <summary>描述</summary>
+    public String Description { get; set; }
+
     /// <summary>默认参数。可作为设备参数模版，Xml格式带注释</summary>
     public String DefaultParameter { get; set; }
 
-    /// <summary>描述</summary>
-    public String Description { get; set; }
+    /// <summary>默认点位。某些设备驱动中指定了该类设备所拥有的点位信息</summary>
+    public IPoint[] DefaultPoints { get; set; }
     #endregion
 }

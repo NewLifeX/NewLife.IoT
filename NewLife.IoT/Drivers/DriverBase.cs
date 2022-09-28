@@ -11,12 +11,12 @@ public class DriverBase<TNode, TParameter> : DriverBase
     where TNode : INode, new()
     where TParameter : IDriverParameter, new()
 {
-    #region 参数
+    #region 元数据
     /// <summary>
-    /// 创建驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
+    /// 获取默认驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
     /// </summary>
     /// <returns></returns>
-    public override IDriverParameter CreateParameter() => new TParameter();
+    public override IDriverParameter GetDefaultParameter() => new TParameter();
     #endregion
 
     #region 核心方法
@@ -45,16 +45,22 @@ public class DriverBase<TNode, TParameter> : DriverBase
 /// <summary>协议驱动基类。抽象各种硬件设备的数据采集及远程控制</summary>
 /// <remarks>
 /// 在Modbus协议上，一个通信链路（串口/ModbusTcp地址）即是IDriver，可能有多个物理设备共用，各自表示为INode。
-/// 即是是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
+/// 即使是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
 /// </remarks>
 public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFeature
 {
-    #region 参数
+    #region 元数据
     /// <summary>
-    /// 创建驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
+    /// 获取默认驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
     /// </summary>
     /// <returns></returns>
-    public virtual IDriverParameter CreateParameter() => null;
+    public virtual IDriverParameter GetDefaultParameter() => null;
+
+    /// <summary>
+    /// 获取点位集合。如果设备有着固定点位，则直接返回，否则返回空
+    /// </summary>
+    /// <returns></returns>
+    public virtual IPoint[] GetDefaultPoints() => null;
     #endregion
 
     #region 核心方法
