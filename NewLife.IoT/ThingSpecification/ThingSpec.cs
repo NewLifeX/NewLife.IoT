@@ -58,7 +58,8 @@ public class ThingSpec
         var jw = new JsonWriter
         {
             Indented = true,
-            CamelCase = true
+            IndentedLength = 2,
+            CamelCase = true,
         };
         jw.Write(dic);
 

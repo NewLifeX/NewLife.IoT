@@ -1,4 +1,5 @@
 ﻿using NewLife.IoT.ThingModels;
+using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using NewLife.Serialization;
 
@@ -56,11 +57,9 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <returns></returns>
     public virtual IDriverParameter GetDefaultParameter() => null;
 
-    /// <summary>
-    /// 获取点位集合。如果设备有着固定点位，则直接返回，否则返回空
-    /// </summary>
+    /// <summary>获取产品物模型。如果设备有固定点位属性、服务和事件，则直接返回，否则返回空</summary>
     /// <returns></returns>
-    public virtual IPoint[] GetDefaultPoints() => null;
+    public virtual ThingSpec GetSpecification() => null;
     #endregion
 
     #region 核心方法

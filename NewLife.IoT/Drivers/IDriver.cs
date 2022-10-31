@@ -1,4 +1,5 @@
 ﻿using NewLife.IoT.ThingModels;
+using NewLife.IoT.ThingSpecification;
 
 namespace NewLife.IoT.Drivers;
 
@@ -16,11 +17,9 @@ public interface IDriver
     /// <returns></returns>
     IDriverParameter GetDefaultParameter();
 
-    /// <summary>
-    /// 获取点位集合。如果设备有着固定点位，则直接返回，否则返回空
-    /// </summary>
+    /// <summary>获取产品物模型。如果设备有固定点位属性、服务和事件，则直接返回，否则返回空</summary>
     /// <returns></returns>
-    IPoint[] GetDefaultPoints();
+    ThingSpec GetSpecification();
     #endregion
 
     #region 核心方法

@@ -21,4 +21,10 @@
     <ProjectReference Include="..\NewLife.IoT\NewLife.IoT.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TSL1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

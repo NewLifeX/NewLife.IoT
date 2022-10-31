@@ -1,0 +1,407 @@
+{
+  "schema": "http://iot.feifan.link/schema.json",
+  "profile": {
+    "version": "1.0",
+    "productKey": "EdgeGateway"
+  },
+  "properties": [
+    {
+      "identifier": "memory_usage",
+      "name": "内存使用率",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "float",
+        "specs": {
+          "min": 0,
+          "max": 100,
+          "unit": "%",
+          "unitName": "百分比",
+          "step": 0.1
+        }
+      }
+    },
+    {
+      "identifier": "gateway_version",
+      "name": "网关版本",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "text",
+        "specs": {
+          "length": 255
+        }
+      }
+    },
+    {
+      "identifier": "cpu_usage",
+      "name": "CPU使用率",
+      "required": true,
+      "accessMode": "rw",
+      "dataType": {
+        "type": "float",
+        "specs": {
+          "min": 0,
+          "max": 100,
+          "unit": "%",
+          "unitName": "百分比",
+          "step": 0.1
+        }
+      }
+    },
+    {
+      "identifier": "system_info",
+      "name": "系统信息",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "text",
+        "specs": {
+          "length": 255
+        }
+      }
+    },
+    {
+      "identifier": "memory_total",
+      "name": "内存总量",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "double",
+        "specs": {
+          "min": 0,
+          "max": "2147483647",
+          "unit": "B",
+          "unitName": "字节",
+          "step": 0.01
+        }
+      }
+    },
+    {
+      "identifier": "memory_free",
+      "name": "内存剩余量",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "double",
+        "specs": {
+          "min": 0,
+          "max": "2147483647",
+          "unit": "B",
+          "unitName": "字节",
+          "step": 0.01
+        }
+      }
+    },
+    {
+      "identifier": "cpu_core_number",
+      "name": "CPU内核数量",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "int",
+        "specs": {
+          "min": 1,
+          "max": 128,
+          "unitName": "无",
+          "step": 1
+        }
+      }
+    },
+    {
+      "identifier": "disk_usage",
+      "name": "磁盘使用率",
+      "required": true,
+      "accessMode": "rw",
+      "dataType": {
+        "type": "float",
+        "specs": {
+          "min": 0,
+          "max": 100,
+          "unit": "%",
+          "unitName": "百分比",
+          "step": 0.1
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "identifier": "post",
+      "name": "post",
+      "required": true,
+      "type": "info",
+      "desc": "属性上报",
+      "method": "thing.event.property.post",
+      "outputData": [
+        {
+          "identifier": "memory_usage",
+          "name": "内存使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        },
+        {
+          "identifier": "gateway_version",
+          "name": "网关版本",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "cpu_usage",
+          "name": "CPU使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        },
+        {
+          "identifier": "system_info",
+          "name": "系统信息",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "memory_total",
+          "name": "内存总量",
+          "dataType": {
+            "type": "double",
+            "specs": {
+              "min": 0,
+              "max": 2147483647,
+              "unit": "B",
+              "unitName": "字节",
+              "step": 0.01
+            }
+          }
+        },
+        {
+          "identifier": "memory_free",
+          "name": "内存剩余量",
+          "dataType": {
+            "type": "double",
+            "specs": {
+              "min": 0,
+              "max": 2147483647,
+              "unit": "B",
+              "unitName": "字节",
+              "step": 0.01
+            }
+          }
+        },
+        {
+          "identifier": "cpu_core_number",
+          "name": "CPU内核数量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": 1,
+              "max": 128,
+              "unitName": "无",
+              "step": 1
+            }
+          }
+        },
+        {
+          "identifier": "disk_usage",
+          "name": "磁盘使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "identifier": "set",
+      "name": "set",
+      "required": true,
+      "callType": "async",
+      "desc": "属性设置",
+      "method": "thing.service.property.set",
+      "inputData": [
+        {
+          "identifier": "cpu_usage",
+          "name": "CPU使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        },
+        {
+          "identifier": "disk_usage",
+          "name": "磁盘使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        }
+      ],
+      "outputData": []
+    },
+    {
+      "identifier": "get",
+      "name": "get",
+      "required": true,
+      "callType": "async",
+      "desc": "属性获取",
+      "method": "thing.service.property.get",
+      "inputData": [
+        "memory_usage",
+        "gateway_version",
+        "cpu_usage",
+        "system_info",
+        "memory_total",
+        "memory_free",
+        "cpu_core_number",
+        "disk_usage"
+      ],
+      "outputData": [
+        {
+          "identifier": "memory_usage",
+          "name": "内存使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        },
+        {
+          "identifier": "gateway_version",
+          "name": "网关版本",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "cpu_usage",
+          "name": "CPU使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        },
+        {
+          "identifier": "system_info",
+          "name": "系统信息",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "memory_total",
+          "name": "内存总量",
+          "dataType": {
+            "type": "double",
+            "specs": {
+              "min": 0,
+              "max": 2147483647,
+              "unit": "B",
+              "unitName": "字节",
+              "step": 0.01
+            }
+          }
+        },
+        {
+          "identifier": "memory_free",
+          "name": "内存剩余量",
+          "dataType": {
+            "type": "double",
+            "specs": {
+              "min": 0,
+              "max": 2147483647,
+              "unit": "B",
+              "unitName": "字节",
+              "step": 0.01
+            }
+          }
+        },
+        {
+          "identifier": "cpu_core_number",
+          "name": "CPU内核数量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": 1,
+              "max": 128,
+              "unitName": "无",
+              "step": 1
+            }
+          }
+        },
+        {
+          "identifier": "disk_usage",
+          "name": "磁盘使用率",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "unitName": "百分比",
+              "step": 0.1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

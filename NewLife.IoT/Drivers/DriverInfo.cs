@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using NewLife.IoT.ThingModels;
+using NewLife.IoT.ThingSpecification;
 
 namespace NewLife.IoT.Drivers;
 
@@ -33,7 +34,7 @@ public class DriverInfo
     /// <summary>默认参数。可作为设备参数模版，Xml格式带注释</summary>
     public String DefaultParameter { get; set; }
 
-    /// <summary>默认点位。某些设备驱动中指定了该类设备所拥有的点位信息</summary>
-    public PointModel[] DefaultPoints { get; set; }
+    /// <summary>产品物模型。如果设备有固定点位属性、服务和事件，则直接返回，否则返回空</summary>
+    public ThingSpec Specification { get; set; }
     #endregion
 }
