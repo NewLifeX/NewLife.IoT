@@ -24,6 +24,36 @@ public class PropertySpec : SpecBase, IDictionarySource
     public String Address { get; set; }
     #endregion
 
+    #region 创建
+    /// <summary>快速创建属性</summary>
+    /// <param name="id">标识</param>
+    /// <param name="name">名称</param>
+    /// <param name="type">类型</param>
+    /// <param name="length">长度</param>
+    /// <param name="address">点位地址</param>
+    /// <returns></returns>
+    public static PropertySpec Create(String id, String name, String type, Int32 length = 0, String address = null)
+    {
+        var ps = new PropertySpec
+        {
+            Id = id,
+            Name = name,
+            Address = address
+        };
+
+        if (type != null)
+        {
+            ps.DataType = new TypeSpec { Type = type };
+
+            if (length > 0)
+                ps.DataType.Specs = new DataSpecs { Length = length };
+        }
+
+        return ps;
+    }
+    #endregion
+
+    #region 方法
     /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
     /// <returns></returns>
     public IDictionary<String, Object> ToDictionary()
@@ -54,4 +84,5 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// </summary>
     /// <returns></returns>
     public override String ToString() => $"{Id} {Name} {DataType}";
+    #endregion
 }

@@ -23,11 +23,15 @@ public class TypeSpec : IDictionarySource
     {
         var ds = Specs?.GetDictionary(Type);
 
-        return new Dictionary<String, Object>
+        var dic = new Dictionary<String, Object>
         {
-            { nameof(Type), Type },
-            { nameof(Specs), ds }
+            { nameof(Type), Type }
         };
+
+        if (ds != null)
+            dic.Add(nameof(Specs), ds);
+
+        return dic;
     }
 
     /// <summary>

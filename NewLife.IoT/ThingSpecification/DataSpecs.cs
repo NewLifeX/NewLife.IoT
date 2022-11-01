@@ -56,7 +56,10 @@ public class DataSpecs
             case TypeCode.Single:
             case TypeCode.Double:
             case TypeCode.Decimal:
-                ds[nameof(Min)] = Min;
+                if (Length > 0)
+                    ds[nameof(Length)] = Length;
+                if (Min != 0 || Max != 0)
+                    ds[nameof(Min)] = Min;
                 if (Max != 0)
                     ds[nameof(Max)] = Max;
                 if (!Unit.IsNullOrEmpty())
