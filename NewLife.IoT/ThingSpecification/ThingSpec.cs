@@ -24,14 +24,14 @@ public class ThingSpec
     public PropertySpec[] Properties { get; set; }
 
     /// <summary>
-    /// 服务
-    /// </summary>
-    public ServiceSpec[] Services { get; set; }
-
-    /// <summary>
     /// 事件
     /// </summary>
     public EventSpec[] Events { get; set; }
+
+    /// <summary>
+    /// 服务
+    /// </summary>
+    public ServiceSpec[] Services { get; set; }
     #endregion
 
     #region 方法

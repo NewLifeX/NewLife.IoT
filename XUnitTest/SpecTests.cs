@@ -55,7 +55,7 @@ namespace XUnitTest
             Assert.Equal("async", si.Type);
             Assert.Equal("thing.service.property.set", si.Method);
             Assert.Equal(2, si.InputData.Length);
-            Assert.Equal(0, si.OutputData.Length);
+            Assert.Empty(si.OutputData);
 
             si = sis[1];
             Assert.Equal("get", si.Id);
@@ -118,7 +118,7 @@ namespace XUnitTest
             Assert.Equal("async", si.Type);
             Assert.Equal("thing.service.property.set", si.Method);
             Assert.Equal(2, si.InputData.Length);
-            Assert.Equal(0, si.OutputData.Length);
+            Assert.Empty(si.OutputData);
 
             si = sis[1];
             Assert.Equal("get", si.Id);

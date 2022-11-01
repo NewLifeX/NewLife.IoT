@@ -1,8 +1,11 @@
-﻿namespace NewLife.IoT.ThingSpecification;
+﻿using NewLife.Reflection;
+
+namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>数据规范</summary>
 public class DataSpecs
 {
+    #region 属性
     /// <summary>最小值</summary>
     public Double Min { get; set; }
 
@@ -23,4 +26,54 @@ public class DataSpecs
 
     /// <summary>布尔类型值</summary>
     public Boolean BValue { get; set; }
+    #endregion
+
+    #region 方法
+    /// <summary>根据指定数据类型获取成员字典，不同类型所需要的字段不一样</summary>
+    /// <param name="type">数据类型</param>
+    /// <returns></returns>
+    public IDictionary<String, Object> GetDictionary(String type)
+    {
+        var ds = new Dictionary<String, Object>();
+
+        var t = TypeHelper.GetNetType(type);
+        if (t == null) return this.ToDictionary();
+
+        switch (t.GetTypeCode())
+        {
+            case TypeCode.Boolean:
+                ds[nameof(BValue)] = BValue;
+                break;
+            case TypeCode.Byte:
+            case TypeCode.SByte:
+            case TypeCode.Char:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.UInt16:
+            case TypeCode.UInt32:
+            case TypeCode.UInt64:
+            case TypeCode.Single:
+            case TypeCode.Double:
+            case TypeCode.Decimal:
+                ds[nameof(Min)] = Min;
+                if (Max != 0)
+                    ds[nameof(Max)] = Max;
+                if (!Unit.IsNullOrEmpty())
+                    ds[nameof(Unit)] = Unit;
+                if (!UnitName.IsNullOrEmpty())
+                    ds[nameof(UnitName)] = UnitName;
+                if (Step != 0)
+                    ds[nameof(Step)] = Step;
+                break;
+            case TypeCode.String:
+                ds[nameof(Length)] = Length;
+                break;
+            default:
+                return this.ToDictionary();
+        }
+
+        return ds;
+    }
+    #endregion
 }

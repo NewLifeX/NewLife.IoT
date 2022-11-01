@@ -1,9 +1,11 @@
-﻿namespace NewLife.IoT.ThingSpecification;
+﻿using NewLife.Collections;
+
+namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>
 /// 类型规范
 /// </summary>
-public class TypeSpec
+public class TypeSpec : IDictionarySource
 {
     /// <summary>
     /// 类型。float/text
@@ -14,6 +16,19 @@ public class TypeSpec
     /// 数据规范
     /// </summary>
     public DataSpecs Specs { get; set; }
+
+    /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
+    /// <returns></returns>
+    public IDictionary<String, Object> ToDictionary()
+    {
+        var ds = Specs?.GetDictionary(Type);
+
+        return new Dictionary<String, Object>
+        {
+            { nameof(Type), Type },
+            { nameof(Specs), ds }
+        };
+    }
 
     /// <summary>
     /// 已重载。友好显示
