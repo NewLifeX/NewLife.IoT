@@ -3,6 +3,9 @@
 namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>物模型规范</summary>
+/// <remarks>
+/// 物联网平台通过定义一种物的描述语言来描述物模型模块和功能，称为TSL（Thing Specification Language）
+/// </remarks>
 public class ThingSpec
 {
     #region 属性

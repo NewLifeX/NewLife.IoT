@@ -2,9 +2,12 @@
 
 namespace NewLife.IoT.ThingSpecification;
 
-/// <summary>
-/// 属性规范
-/// </summary>
+/// <summary>属性规范</summary>
+/// <remarks>
+/// 用于描述设备运行时具体信息和状态。
+/// 例如，环境监测设备所读取的当前环境温度、智能灯开关状态、电风扇风力等级等。
+/// 属性可分为读写和只读两种类型。读写类型支持读取和设置属性值，只读类型仅支持读取属性值。
+/// </remarks>
 public class PropertySpec : SpecBase, IDictionarySource
 {
     #region 属性

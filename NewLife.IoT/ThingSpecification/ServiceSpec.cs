@@ -2,9 +2,12 @@
 
 namespace NewLife.IoT.ThingSpecification;
 
-/// <summary>
-/// 服务规范
-/// </summary>
+/// <summary>服务规范</summary>
+/// <remarks>
+/// 指设备可供外部调用的指令或方法。服务调用中可设置输入和输出参数。输入参数是服务执行时的参数，输出参数是服务执行后的结果。
+/// 相比于属性，服务可通过一条指令实现更复杂的业务逻辑，例如执行某项特定的任务。
+/// 服务分为异步和同步两种调用方式。
+/// </remarks>
 public class ServiceSpec : SpecBase
 {
     #region 属性

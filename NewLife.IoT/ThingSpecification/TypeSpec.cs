@@ -8,7 +8,7 @@ namespace NewLife.IoT.ThingSpecification;
 public class TypeSpec : IDictionarySource
 {
     /// <summary>
-    /// 类型。float/text
+    /// 类型。int/float/text
     /// </summary>
     public String Type { get; set; }
 

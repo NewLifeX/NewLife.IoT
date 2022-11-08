@@ -4,6 +4,9 @@ using NewLife.Collections;
 namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>属性扩展</summary>
+/// <remarks>
+/// 大部分字段仅适用于数字型属性，用于数据解析
+/// </remarks>
 public class PropertyExtend : IDictionarySource
 {
     #region 属性
