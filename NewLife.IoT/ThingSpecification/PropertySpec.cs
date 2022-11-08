@@ -18,10 +18,10 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// </summary>
     public TypeSpec DataType { get; set; }
 
-    /// <summary>
-    /// 采集点位置信息
-    /// </summary>
-    public String Address { get; set; }
+    ///// <summary>
+    ///// 采集点位置信息
+    ///// </summary>
+    //public String Address { get; set; }
     #endregion
 
     #region 创建
@@ -30,15 +30,13 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// <param name="name">名称</param>
     /// <param name="type">类型</param>
     /// <param name="length">长度</param>
-    /// <param name="address">点位地址</param>
     /// <returns></returns>
-    public static PropertySpec Create(String id, String name, String type, Int32 length = 0, String address = null)
+    public static PropertySpec Create(String id, String name, String type, Int32 length = 0)
     {
         var ps = new PropertySpec
         {
             Id = id,
             Name = name,
-            Address = address
         };
 
         if (type != null)
@@ -73,8 +71,8 @@ public class PropertySpec : SpecBase, IDictionarySource
         if (dt != null)
             dic.Add(nameof(DataType), dt);
 
-        if (!Address.IsNullOrEmpty())
-            dic.Add(nameof(Address), Address);
+        //if (!Address.IsNullOrEmpty())
+        //    dic.Add(nameof(Address), Address);
 
         return dic;
     }

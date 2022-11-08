@@ -1,7 +1,7 @@
 {
   "schema": "http://iot.feifan.link/schema.json",
   "profile": {
-    "version": "1.0",
+    "version": "1.6",
     "productKey": "EdgeGateway"
   },
   "properties": [
@@ -287,16 +287,7 @@
       "callType": "async",
       "desc": "属性获取",
       "method": "thing.service.property.get",
-      "inputData": [
-        "memory_usage",
-        "gateway_version",
-        "cpu_usage",
-        "system_info",
-        "memory_total",
-        "memory_free",
-        "cpu_core_number",
-        "disk_usage"
-      ],
+      "inputData": [],
       "outputData": [
         {
           "identifier": "memory_usage",
@@ -402,6 +393,16 @@
           }
         }
       ]
+    }
+  ],
+  "extendedProperties": [
+    {
+      "identifier": "memory_usage",
+      "address": "4x100"
+    },
+    {
+      "identifier": "cpu_usage",
+      "address": "4x101"
     }
   ]
 }

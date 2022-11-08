@@ -1,0 +1,65 @@
+﻿using System.Runtime.Serialization;
+using NewLife.Collections;
+
+namespace NewLife.IoT.ThingSpecification;
+
+/// <summary>属性扩展</summary>
+public class PropertyExtend : IDictionarySource
+{
+    #region 属性
+    /// <summary>唯一标识</summary>
+    [DataMember(Name = "identifier")]
+    public String Id { get; set; }
+
+    /// <summary>采集点位置信息。常规地址6，Modbus地址 4x0023，位域地址D12.05，虚拟点位地址#</summary>
+    public String Address { get; set; }
+
+    /// <summary>交换16。字节交换，12转21，默认false大端</summary>
+    public Boolean Swap16 { get; set; }
+
+    /// <summary>交换32。字节交换，1234转3412，默认false大端</summary>
+    public Boolean Swap32 { get; set; }
+
+    /// <summary>缩放因子。不能是0，默认1，n*scaling+constant</summary>
+    public Single Scaling { get; set; }
+
+    /// <summary>常量因子。默认0，n*scaling+constant</summary>
+    public Single Constant { get; set; }
+
+    /// <summary>读取规则。数据解析规则，表达式或脚本</summary>
+    public String ReadRule { get; set; }
+
+    /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
+    public String WriteRule { get; set; }
+    #endregion
+
+    #region 方法
+    /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
+    /// <returns></returns>
+    public IDictionary<String, Object> ToDictionary()
+    {
+        var dic = CollectionHelper.ToDictionary(this);
+
+        //return dic.Where(e => e.Value != null).ToDictionary(e => e.Key, e => e.Value);
+
+        var rs = new Dictionary<String, Object>();
+        foreach (var item in dic)
+        {
+            if (item.Value != null &&
+                (item.Value is not Single f || f != 0) &&
+                (item.Value is not Boolean b || b != false))
+            {
+                rs.Add(item.Key, item.Value);
+            }
+        }
+
+        return rs;
+    }
+
+    /// <summary>
+    /// 已重载。友好显示
+    /// </summary>
+    /// <returns></returns>
+    public override String ToString() => $"{Id} {Address}";
+    #endregion
+}

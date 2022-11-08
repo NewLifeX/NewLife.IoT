@@ -2,39 +2,59 @@
 
 namespace NewLife.IoT.ThingSpecification;
 
-/// <summary>
-/// 物模型规范
-/// </summary>
+/// <summary>物模型规范</summary>
 public class ThingSpec
 {
     #region 属性
-    /// <summary>
-    /// 模式
-    /// </summary>
+    /// <summary>模式</summary>
     public String Schema { get; set; } = "http://iot.feifan.link/schema.json";
 
-    /// <summary>
-    /// 简介
-    /// </summary>
+    /// <summary>简介</summary>
     public Profile Profile { get; set; }
 
-    /// <summary>
-    /// 属性
-    /// </summary>
+    /// <summary>属性</summary>
     public PropertySpec[] Properties { get; set; }
 
-    /// <summary>
-    /// 事件
-    /// </summary>
+    /// <summary>事件</summary>
     public EventSpec[] Events { get; set; }
 
-    /// <summary>
-    /// 服务
-    /// </summary>
+    /// <summary>服务</summary>
     public ServiceSpec[] Services { get; set; }
+
+    /// <summary>属性扩展</summary>
+    public PropertyExtend[] ExtendedProperties { get; set; }
     #endregion
 
     #region 方法
+    /// <summary>快速创建属性</summary>
+    /// <param name="id">标识</param>
+    /// <param name="name">名称</param>
+    /// <param name="type">类型</param>
+    /// <param name="length">长度</param>
+    /// <param name="address">点位地址</param>
+    /// <returns></returns>
+    public void AddProperty(String id, String name, String type, Int32 length = 0, String address = null)
+    {
+        {
+            var ps = PropertySpec.Create(id, name, type, length);
+
+            var list = new List<PropertySpec>();
+            if (Properties != null) list.AddRange(Properties);
+            list.Add(ps);
+            Properties = list.ToArray();
+        }
+
+        if (address != null)
+        {
+            var pt = new PropertyExtend { Id = id, Address = address };
+
+            var list = new List<PropertyExtend>();
+            if (ExtendedProperties != null) list.AddRange(ExtendedProperties);
+            list.Add(pt);
+            ExtendedProperties = list.ToArray();
+        }
+    }
+
     /// <summary>
     /// 解析Json串
     /// </summary>
