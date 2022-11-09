@@ -291,7 +291,7 @@ public static class TypeHelper
     }
 
     /// <summary>
-    /// 指定类型是否数字类型。包括整数、小数、字节、布尔型等
+    /// 指定类型是否数字类型。包括整数、小数、字节、字符等
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -299,7 +299,8 @@ public static class TypeHelper
     {
         return type.GetTypeCode() switch
         {
-            TypeCode.Boolean or TypeCode.Byte or TypeCode.Char => true,
+            TypeCode.Boolean => false,
+            TypeCode.Byte or TypeCode.Char => true,
             TypeCode.DateTime or TypeCode.DBNull => false,
             TypeCode.Decimal or TypeCode.Double => true,
             TypeCode.Empty => false,
