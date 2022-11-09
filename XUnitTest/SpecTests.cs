@@ -17,7 +17,7 @@ public class SpecTests
 
         var pis = JsonHelper.Convert<PropertySpec[]>(dic["properties"]);
         Assert.NotNull(pis);
-        Assert.Equal(8, pis.Length);
+        Assert.Equal(9, pis.Length);
 
         var pi = pis[0];
         Assert.Equal("memory_usage", pi.Id);
@@ -31,6 +31,22 @@ public class SpecTests
         Assert.Equal("%", pi.DataType.Specs.Unit);
         Assert.Equal("百分比", pi.DataType.Specs.UnitName);
         Assert.Equal(0, pi.DataType.Specs.Length);
+
+        pi = pis[2];
+        Assert.Equal("status", pi.Id);
+        Assert.Equal("状态", pi.Name);
+        Assert.Equal("r", pi.AccessMode);
+        Assert.True(pi.Required);
+        Assert.Equal("int", pi.DataType.Type);
+        Assert.Equal(0, pi.DataType.Specs.Min);
+        Assert.Equal(2, pi.DataType.Specs.Max);
+        Assert.Equal(0, pi.DataType.Specs.Length);
+
+        var map = pi.DataType.Specs.Mapping;
+        Assert.NotNull(map);
+        Assert.Equal(3, map.Count);
+        Assert.Equal("关机", map["0"]);
+        Assert.Equal("异常", map["2"]);
 
         var eis = JsonHelper.Convert<EventSpec[]>(dic["events"]);
         Assert.NotNull(eis);
@@ -88,7 +104,7 @@ public class SpecTests
 
         var pis = thing.Properties;
         Assert.NotNull(pis);
-        Assert.Equal(8, pis.Length);
+        Assert.Equal(9, pis.Length);
 
         var pi = pis[0];
         Assert.Equal("memory_usage", pi.Id);

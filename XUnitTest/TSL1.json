@@ -34,6 +34,24 @@
       }
     },
     {
+      "identifier": "status",
+      "name": "状态",
+      "required": true,
+      "accessMode": "r",
+      "dataType": {
+        "type": "int",
+        "specs": {
+          "min": 0,
+          "max": 2,
+          "mapping": {
+            "0": "关机",
+            "1": "开机",
+            "2": "异常"
+          }
+        }
+      }
+    },
+    {
       "identifier": "cpu_usage",
       "name": "CPU使用率",
       "required": true,

@@ -24,8 +24,8 @@ public class DataSpecs
     /// <summary>长度</summary>
     public Int32 Length { get; set; }
 
-    /// <summary>枚举值。例如“0=关,1=开”，又如“1=东,2=南,3=西,4=北”</summary>
-    public String Enum { get; set; }
+    /// <summary>枚举映射。布尔型和数字型特有，例如“0=关,1=开”，又如“1=东,2=南,3=西,4=北”</summary>
+    public IDictionary<String, String> Mapping { get; set; }
     #endregion
 
     #region 方法
@@ -42,7 +42,7 @@ public class DataSpecs
         switch (t.GetTypeCode())
         {
             case TypeCode.Boolean:
-                ds[nameof(Enum)] = Enum;
+                ds[nameof(Mapping)] = Mapping;
                 break;
             case TypeCode.Byte:
             case TypeCode.SByte:
@@ -65,8 +65,8 @@ public class DataSpecs
                     ds[nameof(UnitName)] = UnitName;
                 if (Step != 0)
                     ds[nameof(Step)] = Step;
-                if (!Enum.IsNullOrEmpty())
-                    ds[nameof(Enum)] = Enum;
+                if (Mapping != null)
+                    ds[nameof(Mapping)] = Mapping;
                 break;
             case TypeCode.Single:
             case TypeCode.Double:
