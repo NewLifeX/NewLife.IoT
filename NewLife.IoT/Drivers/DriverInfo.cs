@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 
 namespace NewLife.IoT.Drivers;

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
-using NewLife.IoT.ThingModels;
 using NewLife.Log;
 using NewLife.Reflection;
 using NewLife.Xml;
