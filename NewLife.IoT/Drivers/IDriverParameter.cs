@@ -7,6 +7,9 @@ public interface IDriverParameter
 {
 }
 
+/// <summary>默认驱动参数实现</summary>
+public class DriverParameter : IDriverParameter { }
+
 /// <summary>
 /// 驱动参数扩展
 /// </summary>
