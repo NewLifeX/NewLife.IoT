@@ -1,4 +1,5 @@
-﻿using NewLife.Collections;
+﻿using System.Reflection;
+using NewLife.Collections;
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -49,6 +50,31 @@ public class PropertySpec : SpecBase, IDictionarySource
             if (length > 0)
                 ps.DataType.Specs = new DataSpecs { Length = length };
         }
+
+        return ps;
+    }
+
+    /// <summary>快速创建属性</summary>
+    /// <param name="member"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static PropertySpec Create(MemberInfo member, Int32 length = 0)
+    {
+        if (member == null) return null;
+
+        var ps = new PropertySpec
+        {
+            Id = member.Name,
+            Name = member.GetDisplayName() ?? member.GetDescription(),
+        };
+
+        if (member is PropertyInfo pi)
+            ps.DataType = new TypeSpec { Type = pi.PropertyType.Name };
+        if (member is FieldInfo fi)
+            ps.DataType = new TypeSpec { Type = fi.FieldType.Name };
+
+        if (length > 0 && ps.DataType != null)
+            ps.DataType.Specs = new DataSpecs { Length = length };
 
         return ps;
     }

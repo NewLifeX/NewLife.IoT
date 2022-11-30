@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -37,5 +38,56 @@ public class ServiceSpec : SpecBase
     /// 输出
     /// </summary>
     public PropertySpec[] OutputData { get; set; }
+    #endregion
+
+    #region 方法
+    /// <summary>快速创建服务</summary>
+    /// <param name="delegate"></param>
+    /// <returns></returns>
+    public static ServiceSpec Create(Delegate @delegate) => Create(@delegate.Method);
+
+    /// <summary>快速创建服务</summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public static ServiceSpec Create(MethodBase method)
+    {
+        if (method == null) return null;
+
+        var ss = new ServiceSpec
+        {
+            Id = method.Name,
+            Name = method.GetDisplayName() ?? method.GetDescription(),
+        };
+
+        var pis = method.GetParameters();
+        if (pis.Length > 0)
+        {
+            var ps = new List<PropertySpec>();
+            foreach (var pi in pis)
+            {
+                ps.Add(Create(pi));
+            }
+
+            ss.InputData = ps.Where(e => e != null).ToArray();
+        }
+
+        return ss;
+    }
+
+    /// <summary>快速创建属性</summary>
+    /// <param name="member"></param>
+    /// <returns></returns>
+    public static PropertySpec Create(ParameterInfo member)
+    {
+        if (member == null) return null;
+
+        var ps = new PropertySpec
+        {
+            Id = member.Name,
+            DataType = new TypeSpec { Type = member.ParameterType.Name }
+        };
+
+        return ps;
+    }
     #endregion
 }
