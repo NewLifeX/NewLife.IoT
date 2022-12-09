@@ -8,7 +8,7 @@ public class Profile
     /// <summary>
     /// 版本
     /// </summary>
-    public String Version { get; set; } = "v1.6";
+    public String Version { get; set; } = "v1.7";
 
     /// <summary>
     /// 产品编码

@@ -22,6 +22,7 @@ public class DriverFactory
     /// <param name="type"></param>
     public static void Register(String name, Type type)
     {
+        if (type == null) throw new ArgumentNullException(nameof(type));
         if (name.IsNullOrEmpty()) name = type.Name;
 
         _map[name] = type;
@@ -34,12 +35,15 @@ public class DriverFactory
 
     private static readonly ConcurrentDictionary<String, IDriver> _cache = new();
     /// <summary>创建协议实例，根据地址确保唯一，多设备共用同一个串口</summary>
-    /// <param name="name">名称</param>
-    /// <param name="identifier">唯一标识</param>
+    /// <param name="name">驱动名称。一般由DriverAttribute特性确定</param>
+    /// <param name="identifier">唯一标识。没有传递标识时，每次返回新实例</param>
     /// <returns></returns>
     public static IDriver Create(String name, String identifier)
     {
-        if (!_map.TryGetValue(name, out var type)) return null;
+        if (!_map.TryGetValue(name, out var type) || type == null) return null;
+
+        // 没有传递标识时，每次返回新实例
+        if (identifier.IsNullOrEmpty()) return type.CreateInstance() as IDriver;
 
         var key = $"{name}-{identifier}";
         return _cache.GetOrAdd(key, k => type.CreateInstance() as IDriver);
@@ -58,37 +62,34 @@ public class DriverFactory
         var iotVersion = iot.GetName().Version + "";
 
         var list = new List<DriverInfo>();
-        foreach (var item in AssemblyX.FindAllPlugins(typeof(IDriver), true, true))
+        foreach (var type in AssemblyX.FindAllPlugins(typeof(IDriver), true, true))
         {
-            var att = item.GetCustomAttribute<DriverAttribute>();
-            var name = att?.Name ?? item.Name.TrimEnd("Procotol");
+            var att = type.GetCustomAttribute<DriverAttribute>();
+            var name = att?.Name ?? type.Name.TrimEnd("Procotol", "Driver");
 
-            XTrace.WriteLine("加载驱动 [{0}] {1} {2}", name, item.FullName, item.GetDisplayName());
+            XTrace.WriteLine("加载驱动 [{0}]\t{1}\t{2}", name, type.FullName, type.GetDisplayName());
 
-            Register(name, item);
+            Register(name, type);
 
             var info = new DriverInfo
             {
                 Name = name,
-                DisplayName = item.GetDisplayName(),
-                Type = item,
-                ClassName = item.FullName,
-                Version = item.Assembly.GetName().Version + "",
+                DisplayName = type.GetDisplayName(),
+                Type = type,
+                ClassName = type.FullName,
+                Version = type.Assembly.GetName().Version + "",
                 IoTVersion = iotVersion,
-                Description = item.GetDescription(),
+                Description = type.GetDescription(),
             };
 
             try
             {
-                var drv = item.CreateInstance() as IDriver;
-                var pm = drv?.GetDefaultParameter();
-                if (pm != null)
-                {
-                    // Xml序列化，去掉前面的BOM编码
-                    info.DefaultParameter = pm.ToXml(null, true).Trim((Char)0xFEFF);
+                var drv = type.CreateInstance() as IDriver;
 
-                    info.Specification = drv?.GetSpecification();
-                }
+                // Xml序列化，去掉前面的BOM编码
+                info.DefaultParameter = drv?.GetDefaultParameter().ToXml(null, true).Trim((Char)0xFEFF);
+
+                info.Specification = drv?.GetSpecification();
             }
             catch { }
 

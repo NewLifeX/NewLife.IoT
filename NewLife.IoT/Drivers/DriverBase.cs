@@ -51,13 +51,22 @@ public class DriverBase<TNode, TParameter> : DriverBase
 public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFeature
 {
     #region 元数据
-    /// <summary>
-    /// 获取默认驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
-    /// </summary>
+    /// <summary>获取默认驱动参数对象</summary>
+    /// <remarks>
+    /// 可序列化成Xml/Json作为该协议的参数模板。由于Xml需要良好的注释特性，优先使用。
+    /// 获取后，按新版本覆盖旧版本。
+    /// </remarks>
     /// <returns></returns>
     public virtual IDriverParameter GetDefaultParameter() => null;
 
-    /// <summary>获取产品物模型。如果设备有固定点位属性、服务和事件，则直接返回，否则返回空</summary>
+    /// <summary>获取产品物模型</summary>
+    /// <remarks>
+    /// 如果设备有固定点位属性、服务和事件，则直接返回，否则返回空。
+    /// 物联网平台有两种情况调用该接口：
+    /// 1，打开设备后。常见于OPC/BACnet等，此时可获取特定设备场景的物模型。
+    /// 2，扫描设备时。此时未连接任何设备，只能返回该类设备的通用物模型，常用于具体硬件产品，例如各种传感器。
+    /// 获取后，按新版本覆盖旧版本。
+    /// </remarks>
     /// <returns></returns>
     public virtual ThingSpec GetSpecification() => null;
     #endregion
@@ -86,28 +95,34 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="node"></param>
     public virtual void Close(INode node) { }
 
-    /// <summary>
-    /// 读取数据
-    /// </summary>
+    /// <summary>读取数据</summary>
+    /// <remarks>
+    /// 驱动实现数据采集的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
     /// <returns></returns>
     public virtual IDictionary<String, Object> Read(INode node, IPoint[] points) => throw new NotImplementedException();
 
-    /// <summary>
-    /// 写入数据
-    /// </summary>
+    /// <summary>写入数据</summary>
+    /// <remarks>
+    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
     public virtual Object Write(INode node, IPoint point, Object value) => throw new NotImplementedException();
 
-    /// <summary>
-    /// 控制设备，特殊功能使用
-    /// </summary>
+    /// <summary>控制设备，特殊功能使用</summary>
+    /// <remarks>
+    /// 除了点位读写之外的其它控制功能。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="parameters">参数</param>
-    public virtual void Control(INode node, IDictionary<String, Object> parameters) => throw new NotImplementedException();
+    public virtual Object Control(INode node, IDictionary<String, Object> parameters) => throw new NotImplementedException();
     #endregion
 
     #region 日志
