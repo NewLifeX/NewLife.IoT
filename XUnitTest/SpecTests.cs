@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Text.Json;
+using NewLife.IoT;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Serialization;
 using Xunit;
@@ -169,6 +171,25 @@ public class SpecTests
 
         var thing = new ThingSpec();
         thing.FromJson(txt);
+
+        var txt2 = thing.ToJson();
+
+        Assert.Equal(txt, txt2);
+    }
+
+    [Fact]
+    public void Test4()
+    {
+        var file = "TSL1.json";
+        var txt = File.ReadAllText(file.GetFullPath());
+
+        //var opt = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var opt = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            TypeInfoResolver = DataMemberResolver.Default
+        };
+
+        var thing = JsonSerializer.Deserialize<ThingSpec>(txt, opt);
 
         var txt2 = thing.ToJson();
 

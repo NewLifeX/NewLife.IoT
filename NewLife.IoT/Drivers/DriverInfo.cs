@@ -36,4 +36,8 @@ public class DriverInfo
     /// <summary>产品物模型。如果设备有固定点位属性、服务和事件，则直接返回，否则返回空</summary>
     public ThingSpec Specification { get; set; }
     #endregion
+
+    /// <summary>友好显示名称</summary>
+    /// <returns></returns>
+    public override String ToString() => !DisplayName.IsNullOrEmpty() ? DisplayName : Name;
 }
