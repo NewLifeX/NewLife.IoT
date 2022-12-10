@@ -14,9 +14,8 @@ public class DriverInfo
     /// <summary>显示名</summary>
     public String DisplayName { get; set; }
 
-    /// <summary>类型</summary>
-    [XmlIgnore, IgnoreDataMember]
-    public Type Type { get; set; }
+    /// <summary>类型。编程语言等，例如.NET</summary>
+    public String Type { get; set; }
 
     /// <summary>类型名</summary>
     public String ClassName { get; set; }

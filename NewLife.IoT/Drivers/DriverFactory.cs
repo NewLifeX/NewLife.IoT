@@ -75,7 +75,7 @@ public class DriverFactory
             {
                 Name = name,
                 DisplayName = type.GetDisplayName(),
-                Type = type,
+                Type = ".NET",
                 ClassName = type.FullName,
                 Version = type.Assembly.GetName().Version + "",
                 IoTVersion = iotVersion,
