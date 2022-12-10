@@ -1,4 +1,5 @@
-﻿using NewLife.IoT.ThingModels;
+﻿using System.Reflection;
+using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using NewLife.Serialization;
@@ -68,7 +69,25 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// 获取后，按新版本覆盖旧版本。
     /// </remarks>
     /// <returns></returns>
-    public virtual ThingSpec GetSpecification() => null;
+    public virtual ThingSpec GetSpecification()
+    {
+        var type = GetType();
+        var spec = new ThingSpec
+        {
+            Profile = new Profile
+            {
+                Version = type.Assembly.GetName().Version + "",
+                ProductKey = type.GetCustomAttribute<DriverAttribute>()?.Name ?? type.Name.TrimEnd("Protocol", "Driver")
+            }
+        };
+
+        return OnGetSpecification(spec) ? spec : null;
+    }
+
+    /// <summary>填充产品物模型</summary>
+    /// <param name="thingSpec"></param>
+    /// <returns>是否填充成功</returns>
+    protected virtual Boolean OnGetSpecification(ThingSpec thingSpec) => false;
     #endregion
 
     #region 核心方法

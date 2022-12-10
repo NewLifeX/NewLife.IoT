@@ -11,11 +11,19 @@ public class DriverTests
         var driver = new PCDriver();
         var spec = driver.GetSpecification();
         Assert.NotNull(spec);
-        Assert.Null(spec.Profile);
+        Assert.NotNull(spec.Profile);
         Assert.NotNull(spec.Properties);
         Assert.Null(spec.Events);
         Assert.NotNull(spec.Services);
         Assert.Null(spec.ExtendedProperties);
+
+        Assert.Equal("PC", spec.Profile.ProductKey);
+        Assert.Equal(7, spec.Properties.Length);
+        Assert.Equal(2, spec.Services.Length);
+
+        var pi = spec.Properties[0];
+        Assert.NotEmpty(pi.Id);
+        Assert.NotEmpty(pi.Name);
 
         var tsl = spec.ToJson();
         Assert.NotEmpty(tsl);

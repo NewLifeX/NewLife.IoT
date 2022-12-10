@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using NewLife.IoT;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Serialization;
@@ -184,15 +186,32 @@ public class SpecTests
         var txt = File.ReadAllText(file.GetFullPath());
 
         //var opt = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var opt = new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        {
-            TypeInfoResolver = DataMemberResolver.Default
-        };
+        //var opt = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        //{
+        //    TypeInfoResolver = DataMemberResolver.Default
+        //};
+        var opt = SystemJson.GetDefaultOptions();
+        //opt.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
 
         var thing = JsonSerializer.Deserialize<ThingSpec>(txt, opt);
 
         var txt2 = thing.ToJson();
-
         Assert.Equal(txt, txt2);
+
+        var sys = new SystemJson();
+
+        var thing2 = sys.Read(txt, typeof(ThingSpec)) as ThingSpec;
+        Assert.NotNull(thing2);
+
+        // 系统级序列化无法做精细化控制
+        var txt3 = sys.Write(thing2, true);
+        //Assert.Equal(txt, txt3);
+
+        // 只要能够反序列化回来，就对了
+        var thing4 = sys.Read(txt3, typeof(ThingSpec)) as ThingSpec;
+        Assert.NotNull(thing4);
+
+        var txt4 = thing.ToJson();
+        Assert.Equal(txt, txt4);
     }
 }
