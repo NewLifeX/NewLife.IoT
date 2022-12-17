@@ -1,4 +1,7 @@
-﻿namespace NewLife.IoT.ThingModels;
+﻿using NewLife.IoT.ThingSpecification;
+using NewLife.Reflection;
+
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>点位</summary>
 public interface IPoint
@@ -15,4 +18,166 @@ public interface IPoint
 
     /// <summary>大小。数据字节数，或字符串长度，Modbus寄存器一般占2个字节</summary>
     Int32 Length { get; set; }
+}
+
+/// <summary>
+/// 点位扩展
+/// </summary>
+public static class PointHelper
+{
+    /// <summary>
+    /// 根据点位类型长度，解析字节数组为目标类型。默认小端字节序，大端需要用IOHelper.Swap提前处理
+    /// </summary>
+    /// <param name="point">点位</param>
+    /// <param name="data">字节数据</param>
+    /// <returns></returns>
+    public static Object Convert(this IPoint point, Byte[] data)
+    {
+        var type = point.GetNetType();
+
+        return type.GetTypeCode() switch
+        {
+            TypeCode.Boolean => BitConverter.ToBoolean(data, 0),
+            TypeCode.Byte => data[0],
+            TypeCode.Char => BitConverter.ToChar(data, 0),
+            TypeCode.Double => BitConverter.ToDouble(data, 0),
+            TypeCode.Int16 => BitConverter.ToInt16(data, 0),
+            TypeCode.Int32 => BitConverter.ToInt32(data, 0),
+            TypeCode.Int64 => BitConverter.ToInt64(data, 0),
+            TypeCode.Single => BitConverter.ToSingle(data, 0),
+            TypeCode.UInt16 => BitConverter.ToUInt16(data, 0),
+            TypeCode.UInt32 => BitConverter.ToUInt32(data, 0),
+            TypeCode.UInt64 => BitConverter.ToUInt64(data, 0),
+            _ => null,
+        };
+    }
+
+    /// <summary>
+    /// 根据点位类型长度，把目标对象转为字节数组。默认小端字节序，大端需要对返回值用IOHelper.Swap处理
+    /// </summary>
+    /// <param name="point">点位</param>
+    /// <param name="value">数据对象</param>
+    /// <returns></returns>
+    public static Byte[] GetBytes(this IPoint point, Object value)
+    {
+        var type = point.GetNetType();
+        var val = value.ChangeType(type);
+
+        return type.GetTypeCode() switch
+        {
+            TypeCode.Boolean => BitConverter.GetBytes((Boolean)val),
+            TypeCode.Byte => new[] { (Byte)val },
+            TypeCode.Char => BitConverter.GetBytes((Char)val),
+            TypeCode.Double => BitConverter.GetBytes((Double)val),
+            TypeCode.Int16 => BitConverter.GetBytes((Int16)val),
+            TypeCode.Int32 => BitConverter.GetBytes((Int32)val),
+            TypeCode.Int64 => BitConverter.GetBytes((Int64)val),
+            TypeCode.Single => BitConverter.GetBytes((Single)val),
+            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)val),
+            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)val),
+            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)val),
+            _ => null,
+        };
+    }
+
+    /// <summary>根据点位信息和物模型信息，把原始数据转为线圈/位</summary>
+    /// <remarks>一般用在向设备写入点位数据之前，例如Modbus.WriteCoil</remarks>
+    /// <param name="point">点位</param>
+    /// <param name="data">原始数据，一般是字符串</param>
+    /// <param name="spec">物模型</param>
+    /// <returns></returns>
+    public static UInt16[] ConvertToBit(this IPoint point, Object data, ThingSpec spec = null)
+    {
+        var type = TypeHelper.GetNetType(point);
+        if (type == null)
+        {
+            // 找到物属性定义
+            var pi = spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            type = TypeHelper.GetNetType(pi?.DataType?.Type);
+        }
+        if (type == null) return null;
+
+        switch (type.GetTypeCode())
+        {
+            case TypeCode.Boolean:
+            case TypeCode.Byte:
+            case TypeCode.SByte:
+                return data.ToBoolean() ? new[] { (UInt16)0x01 } : new[] { (UInt16)0x00 };
+            case TypeCode.Int16:
+            case TypeCode.UInt16:
+            case TypeCode.Int32:
+            case TypeCode.UInt32:
+                return data.ToInt() > 0 ? new[] { (UInt16)0x01 } : new[] { (UInt16)0x00 };
+            case TypeCode.Int64:
+            case TypeCode.UInt64:
+                return data.ToLong() > 0 ? new[] { (UInt16)0x01 } : new[] { (UInt16)0x00 };
+            default:
+                return data.ToBoolean() ? new[] { (UInt16)0x01 } : new[] { (UInt16)0x00 };
+        }
+    }
+
+    /// <summary>根据点位信息和物模型信息，把原始数据转寄存器/字</summary>
+    /// <remarks>一般用在向设备写入点位数据之前，例如Modbus.WriteRegister</remarks>
+    /// <param name="point">点位</param>
+    /// <param name="data">原始数据，一般是字符串</param>
+    /// <param name="spec">物模型</param>
+    /// <returns>返回短整型数组，有可能一个整数拆分为双字</returns>
+    public static UInt16[] ConvertToWord(this IPoint point, Object data, ThingSpec spec = null)
+    {
+        var type = TypeHelper.GetNetType(point);
+        if (type == null)
+        {
+            // 找到物属性定义
+            var pi = spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            type = TypeHelper.GetNetType(pi?.DataType?.Type);
+        }
+        if (type == null) return null;
+
+        switch (type.GetTypeCode())
+        {
+            case TypeCode.Boolean:
+            case TypeCode.Byte:
+            case TypeCode.SByte:
+                return data.ToBoolean() ? new[] { (UInt16)0x01 } : new[] { (UInt16)0x00 };
+            case TypeCode.Int16:
+            case TypeCode.UInt16:
+                return new[] { (UInt16)data.ToInt() };
+            case TypeCode.Int32:
+            case TypeCode.UInt32:
+                {
+                    var n = data.ToInt();
+                    return new[] { (UInt16)(n >> 16), (UInt16)(n & 0xFFFF) };
+                }
+            case TypeCode.Int64:
+            case TypeCode.UInt64:
+                {
+                    var n = data.ToLong();
+                    return new[] { (UInt16)(n >> 48), (UInt16)(n >> 32), (UInt16)(n >> 16), (UInt16)(n & 0xFFFF) };
+                }
+            case TypeCode.Single:
+                {
+                    var d = (Single)data.ToDouble();
+                    //var n = BitConverter.SingleToInt32Bits(d);
+                    var n = (UInt32)d;
+                    return new[] { (UInt16)(n >> 16), (UInt16)(n & 0xFFFF) };
+                }
+            case TypeCode.Double:
+                {
+                    var d = (Double)data.ToDouble();
+                    //var n = BitConverter.DoubleToInt64Bits(d);
+                    var n = (UInt64)d;
+                    return new[] { (UInt16)(n >> 48), (UInt16)(n >> 32), (UInt16)(n >> 16), (UInt16)(n & 0xFFFF) };
+                }
+            case TypeCode.Decimal:
+                {
+                    var d = data.ToDecimal();
+                    var n = (UInt64)d;
+                    return new[] { (UInt16)(n >> 48), (UInt16)(n >> 32), (UInt16)(n >> 16), (UInt16)(n & 0xFFFF) };
+                }
+            //case TypeCode.String:
+            //    break;
+            default:
+                return null;
+        }
+    }
 }

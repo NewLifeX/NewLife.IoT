@@ -236,61 +236,6 @@ public static class TypeHelper
     }
 
     /// <summary>
-    /// 根据点位类型长度，解析字节数组为目标类型。默认小端字节序，大端需要用IOHelper.Swap提前处理
-    /// </summary>
-    /// <param name="point"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Object Convert(this IPoint point, Byte[] data)
-    {
-        var type = point.GetNetType();
-
-        return type.GetTypeCode() switch
-        {
-            TypeCode.Boolean => BitConverter.ToBoolean(data, 0),
-            TypeCode.Byte => data[0],
-            TypeCode.Char => BitConverter.ToChar(data, 0),
-            TypeCode.Double => BitConverter.ToDouble(data, 0),
-            TypeCode.Int16 => BitConverter.ToInt16(data, 0),
-            TypeCode.Int32 => BitConverter.ToInt32(data, 0),
-            TypeCode.Int64 => BitConverter.ToInt64(data, 0),
-            TypeCode.Single => BitConverter.ToSingle(data, 0),
-            TypeCode.UInt16 => BitConverter.ToUInt16(data, 0),
-            TypeCode.UInt32 => BitConverter.ToUInt32(data, 0),
-            TypeCode.UInt64 => BitConverter.ToUInt64(data, 0),
-            _ => null,
-        };
-    }
-
-    /// <summary>
-    /// 根据点位类型长度，把目标对象转为字节数组。默认小端字节序，大端需要对返回值用IOHelper.Swap处理
-    /// </summary>
-    /// <param name="point"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static Byte[] GetBytes(this IPoint point, Object value)
-    {
-        var type = point.GetNetType();
-        var val = value.ChangeType(type);
-
-        return type.GetTypeCode() switch
-        {
-            TypeCode.Boolean => BitConverter.GetBytes((Boolean)val),
-            TypeCode.Byte => new[] { (Byte)val },
-            TypeCode.Char => BitConverter.GetBytes((Char)val),
-            TypeCode.Double => BitConverter.GetBytes((Double)val),
-            TypeCode.Int16 => BitConverter.GetBytes((Int16)val),
-            TypeCode.Int32 => BitConverter.GetBytes((Int32)val),
-            TypeCode.Int64 => BitConverter.GetBytes((Int64)val),
-            TypeCode.Single => BitConverter.GetBytes((Single)val),
-            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)val),
-            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)val),
-            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)val),
-            _ => null,
-        };
-    }
-
-    /// <summary>
     /// 指定类型是否数字类型。包括整数、小数、字节、字符等
     /// </summary>
     /// <param name="type"></param>
