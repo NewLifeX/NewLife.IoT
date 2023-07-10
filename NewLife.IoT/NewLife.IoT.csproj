@@ -27,7 +27,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>恢复支持net45</PackageReleaseNotes>
+    <PackageReleaseNotes>增强IDriver.Open；恢复支持net45</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -49,10 +49,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.3.2023.601" />
+    <PackageReference Include="NewLife.Core" Version="10.4.2023.707" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.3.2023.601-net40" />
+    <PackageReference Include="NewLife.Core" Version="10.4.2023.707-net40" />
   </ItemGroup>
 
   <ItemGroup>

@@ -83,7 +83,7 @@ public class SpecTests
         Assert.True(si.Required);
         Assert.Equal("async", si.Type);
         Assert.Equal("thing.service.property.get", si.Method);
-        Assert.Equal(0, si.InputData.Length);
+        Assert.Empty(si.InputData);
         Assert.Equal(8, si.OutputData.Length);
 
         var pts = JsonHelper.Convert<PropertyExtend[]>(dic["extendedProperties"]);
@@ -154,7 +154,7 @@ public class SpecTests
         Assert.True(si.Required);
         Assert.Equal("async", si.Type);
         Assert.Equal("thing.service.property.get", si.Method);
-        Assert.Equal(0, si.InputData.Length);
+        Assert.Empty(si.InputData);
         Assert.Equal(8, si.OutputData.Length);
 
         var pts = thing.ExtendedProperties;

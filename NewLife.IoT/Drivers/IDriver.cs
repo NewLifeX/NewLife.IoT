@@ -1,5 +1,6 @@
 ﻿using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
+using NewLife.Serialization;
 
 namespace NewLife.IoT.Drivers;
 
@@ -38,9 +39,9 @@ public interface IDriver
     /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
     /// </summary>
     /// <param name="device">逻辑设备</param>
-    /// <param name="parameters">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    INode Open(IDevice device, IDictionary<String, Object> parameters);
+    INode Open(IDevice device, IDriverParameter parameter);
 
     /// <summary>
     /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
@@ -87,16 +88,18 @@ public static class DriverExtensions
     /// </summary>
     /// <param name="driver">驱动对象</param>
     /// <param name="device">逻辑设备</param>
-    /// <param name="parameter">参数对象</param>
+    /// <param name="parameters">参数对象</param>
     /// <returns></returns>
-    public static INode Open(this IDriver driver, IDevice device, IDriverParameter parameter)
+    public static INode Open(this IDriver driver, IDevice device, IDictionary<String, Object> parameters)
     {
-        var ps = parameter?.Serialize();
+        var type = driver.GetDefaultParameter()?.GetType();
+
+        var ps = JsonHelper.Default.Convert(parameters, type) as IDriverParameter;
         var node = driver.Open(device, ps);
 
         node.Driver ??= driver;
         node.Device ??= device;
-        node.Parameter ??= parameter;
+        node.Parameter ??= ps;
 
         return node;
     }

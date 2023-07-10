@@ -2,7 +2,6 @@
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
-using NewLife.Serialization;
 
 namespace NewLife.IoT.Drivers;
 
@@ -26,17 +25,15 @@ public class DriverBase<TNode, TParameter> : DriverBase
     /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
     /// </summary>
     /// <param name="device">逻辑设备</param>
-    /// <param name="parameters">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override INode Open(IDevice device, IDictionary<String, Object> parameters)
+    public override INode Open(IDevice device, IDriverParameter parameter)
     {
-        var pm = JsonHelper.Convert<TParameter>(parameters);
-
         var node = new TNode
         {
             Driver = this,
             Device = device,
-            Parameter = pm,
+            Parameter = parameter,
         };
 
         return node;
@@ -95,9 +92,9 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
     /// </summary>
     /// <param name="device">逻辑设备</param>
-    /// <param name="parameters">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public virtual INode Open(IDevice device, IDictionary<String, Object> parameters)
+    public virtual INode Open(IDevice device, IDriverParameter parameter)
     {
         var node = new Node
         {
