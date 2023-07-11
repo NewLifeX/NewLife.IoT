@@ -421,6 +421,10 @@
     {
       "identifier": "cpu_usage",
       "address": "4x101"
+    },
+    {
+      "identifier": "status",
+      "eventMode": 1
     }
   ]
 }

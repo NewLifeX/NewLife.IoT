@@ -88,7 +88,7 @@ public class SpecTests
 
         var pts = JsonHelper.Convert<PropertyExtend[]>(dic["extendedProperties"]);
         Assert.NotNull(pts);
-        Assert.Equal(2, pts.Length);
+        Assert.Equal(3, pts.Length);
 
         var pt = pts[0];
         Assert.Equal("memory_usage", pt.Id);
@@ -159,7 +159,7 @@ public class SpecTests
 
         var pts = thing.ExtendedProperties;
         Assert.NotNull(pts);
-        Assert.Equal(2, pts.Length);
+        Assert.Equal(3, pts.Length);
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using NewLife.Collections;
+using NewLife.IoT.ThingModels;
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -34,6 +35,9 @@ public class PropertyExtend : IDictionarySource
 
     /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
     public String WriteRule { get; set; }
+
+    /// <summary>事件模式。在客户端或服务端生成属性变更事件</summary>
+    public EventModes EventMode { get; set; }
     #endregion
 
     #region 方法
@@ -48,12 +52,13 @@ public class PropertyExtend : IDictionarySource
         var rs = new Dictionary<String, Object>();
         foreach (var item in dic)
         {
-            if (item.Value != null &&
-                (item.Value is not Single f || f != 0) &&
-                (item.Value is not Boolean b || b != false))
-            {
-                rs.Add(item.Key, item.Value);
-            }
+            if (item.Value == null) continue;
+            if (item.Value is Single f && f == 0) continue;
+            if (item.Value is Boolean b && b == false) continue;
+            if (item.Value is Int32 n && n == 0) continue;
+            if (item.Value is Enum && item.Value.ToInt() == 0) continue;
+
+            rs.Add(item.Key, item.Value);
         }
 
         return rs;
