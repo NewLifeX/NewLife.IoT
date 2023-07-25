@@ -14,13 +14,14 @@ namespace NewLife.IoT.Drivers;
 public interface IDriver
 {
     #region 元数据
-    /// <summary>获取默认驱动参数对象</summary>
+    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <remarks>
     /// 可序列化成Xml/Json作为该协议的参数模板。由于Xml需要良好的注释特性，优先使用。
     /// 获取后，按新版本覆盖旧版本。
     /// </remarks>
+    /// <param name="parameter">Xml/Json参数配置，为空时仅创建默认参数</param>
     /// <returns></returns>
-    IDriverParameter GetDefaultParameter();
+    IDriverParameter CreateParameter(String parameter = null);
 
     /// <summary>获取产品物模型</summary>
     /// <remarks>
@@ -92,7 +93,7 @@ public static class DriverExtensions
     /// <returns></returns>
     public static INode Open(this IDriver driver, IDevice device, IDictionary<String, Object> parameters)
     {
-        var type = driver.GetDefaultParameter()?.GetType();
+        var type = driver.CreateParameter()?.GetType();
 
         var ps = JsonHelper.Default.Convert(parameters, type) as IDriverParameter;
         var node = driver.Open(device, ps);

@@ -2,6 +2,7 @@
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
+using NewLife.Serialization;
 
 namespace NewLife.IoT.Drivers;
 
@@ -13,11 +14,9 @@ public class DriverBase<TNode, TParameter> : DriverBase
     where TParameter : IDriverParameter, new()
 {
     #region 元数据
-    /// <summary>
-    /// 获取默认驱动参数对象，可序列化成Xml/Json作为该协议的参数模板
-    /// </summary>
+    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <returns></returns>
-    public override IDriverParameter GetDefaultParameter() => new TParameter();
+    protected override IDriverParameter OnCreateParameter() => new TParameter();
     #endregion
 
     #region 核心方法
@@ -49,13 +48,35 @@ public class DriverBase<TNode, TParameter> : DriverBase
 public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFeature
 {
     #region 元数据
-    /// <summary>获取默认驱动参数对象</summary>
+    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <remarks>
     /// 可序列化成Xml/Json作为该协议的参数模板。由于Xml需要良好的注释特性，优先使用。
     /// 获取后，按新版本覆盖旧版本。
     /// </remarks>
+    /// <param name="parameter">Xml/Json参数配置</param>
     /// <returns></returns>
-    public virtual IDriverParameter GetDefaultParameter() => null;
+    public virtual IDriverParameter CreateParameter(String parameter)
+    {
+        var p = OnCreateParameter();
+        if (p == null) return null;
+
+        if (!parameter.IsNullOrEmpty())
+        {
+            // 按Xml或Json解析参数成为字典
+            var ps = parameter.StartsWith("<") && parameter.EndsWith(">") ?
+                XmlParser.Decode(parameter) :
+                JsonParser.Decode(parameter);
+
+            // 字段转对象
+            new JsonReader().ToObject(ps, null, p);
+        }
+
+        return p;
+    }
+
+    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
+    /// <returns></returns>
+    protected virtual IDriverParameter OnCreateParameter() => null;
 
     /// <summary>获取产品物模型</summary>
     /// <remarks>

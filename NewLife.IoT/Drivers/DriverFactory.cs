@@ -48,6 +48,19 @@ public class DriverFactory
         var key = $"{name}-{identifier}";
         return _cache.GetOrAdd(key, k => type.CreateInstance() as IDriver);
     }
+
+    private static readonly ConcurrentDictionary<String, IDriver> _defaults = new();
+    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
+    /// <param name="name">驱动名称。一般由DriverAttribute特性确定</param>
+    /// <param name="parameter">Xml/Json参数配置</param>
+    /// <returns></returns>
+    public static IDriverParameter CreateParameter(String name, String parameter)
+    {
+        if (!_map.TryGetValue(name, out var type) || type == null) return null;
+
+        var driver = _defaults.GetOrAdd(name, k => type.CreateInstance() as IDriver);
+        return driver?.CreateParameter(parameter);
+    }
     #endregion
 
     #region 插件
@@ -87,7 +100,7 @@ public class DriverFactory
                 var drv = type.CreateInstance() as IDriver;
 
                 // Xml序列化，去掉前面的BOM编码
-                info.DefaultParameter = drv?.GetDefaultParameter().ToXml(null, true).Trim((Char)0xFEFF);
+                info.DefaultParameter = drv?.CreateParameter().ToXml(null, true).Trim((Char)0xFEFF);
 
                 info.Specification = drv?.GetSpecification();
             }
