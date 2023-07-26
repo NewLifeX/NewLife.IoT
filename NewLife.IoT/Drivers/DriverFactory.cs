@@ -100,7 +100,7 @@ public class DriverFactory
                 var drv = type.CreateInstance() as IDriver;
 
                 // Xml序列化，去掉前面的BOM编码
-                info.DefaultParameter = drv?.CreateParameter().ToXml(null, true).Trim((Char)0xFEFF);
+                info.DefaultParameter = drv?.CreateParameter()?.Serialize();
 
                 info.Specification = drv?.GetSpecification();
             }

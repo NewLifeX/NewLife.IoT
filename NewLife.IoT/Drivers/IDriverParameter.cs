@@ -1,4 +1,6 @@
-﻿namespace NewLife.IoT.Drivers;
+﻿using NewLife.Xml;
+
+namespace NewLife.IoT.Drivers;
 
 /// <summary>
 /// 驱动参数接口。控制设备驱动的参数，可转为字典便于传输与存储
@@ -51,9 +53,9 @@ public static class DriverParameterExtensions
     }
 
     /// <summary>
-    /// 序列化参数对象为名值对
+    /// 序列化参数对象为Xml
     /// </summary>
     /// <param name="driverParameter"></param>
     /// <returns></returns>
-    public static IDictionary<String, Object> Serialize(this IDriverParameter driverParameter) => driverParameter.ToDictionary();
+    public static String Serialize(this IDriverParameter driverParameter) => driverParameter?.ToXml(null, true).Trim((Char)0xFEFF);
 }
