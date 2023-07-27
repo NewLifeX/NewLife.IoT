@@ -1,15 +1,16 @@
-﻿using NewLife.Xml;
+﻿using NewLife.Serialization;
+using NewLife.Xml;
 
 namespace NewLife.IoT.Drivers;
 
 /// <summary>
-/// 驱动参数接口。控制设备驱动的参数，可转为字典便于传输与存储
+/// 驱动参数接口。控制设备驱动的参数，可序列化为Xml便于传输与存储
 /// </summary>
 public interface IDriverParameter
 {
 }
 
-/// <summary>驱动参数唯一标识</summary>
+/// <summary>具有唯一标识的驱动参数</summary>
 /// <remarks>
 /// 相同驱动下，相同的唯一标识共用驱动对象。
 /// 例如多个设备共用一个串口，或者多个设备共用一个ModbusTcp地址。
@@ -52,10 +53,29 @@ public static class DriverParameterExtensions
         return parameter + "";
     }
 
-    /// <summary>
-    /// 序列化参数对象为Xml
-    /// </summary>
-    /// <param name="driverParameter"></param>
+    /// <summary>序列化参数对象为Xml</summary>
+    /// <param name="parameter"></param>
     /// <returns></returns>
-    public static String Serialize(this IDriverParameter driverParameter) => driverParameter?.ToXml(null, true).Trim((Char)0xFEFF);
+    public static String EncodeParameter(this IDriverParameter parameter) => parameter?.ToXml(null, true).Trim((Char)0xFEFF);
+
+    /// <summary>序列化参数字典为Xml</summary>
+    /// <param name="parameter"></param>
+    /// <returns></returns>
+    public static String EncodeParameter(this IDictionary<String, Object> parameter) => parameter?.ToXml(null, true).Trim((Char)0xFEFF);
+
+    /// <summary>从Xml/Json反序列化为字典</summary>
+    /// <param name="parameter"></param>
+    /// <returns></returns>
+    public static IDictionary<String, Object> DecodeParameter(this String parameter)
+    {
+        parameter = parameter?.Trim((Char)0xFEFF);
+        if (parameter.IsNullOrEmpty()) return null;
+
+        // 按Xml或Json解析参数成为字典
+        var ps = parameter.StartsWith("<") && parameter.EndsWith(">") ?
+            XmlParser.Decode(parameter) :
+            JsonParser.Decode(parameter);
+
+        return ps;
+    }
 }
