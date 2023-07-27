@@ -1,6 +1,6 @@
 ﻿namespace NewLife.IoT.Models;
 
-/// <summary>设备模型</summary>
+/// <summary>设备模型。完整版，主要用于服务端下发或者接收</summary>
 public class DeviceModel : IDeviceInfo
 {
     /// <summary>编码</summary>
