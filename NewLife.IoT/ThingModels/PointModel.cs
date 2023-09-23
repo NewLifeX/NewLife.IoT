@@ -22,6 +22,9 @@ public class PointModel : IPoint
     /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
     public String WriteRule { get; set; }
 
+    /// <summary>是否启用 true 启用 false 禁用</summary>
+    public Boolean IsEnable { get; set; }
+
     /// <summary>已重载。友好显示</summary>
     /// <returns></returns>
     public override String ToString() => $"{Name} {Type} {Address}";
