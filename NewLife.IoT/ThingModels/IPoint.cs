@@ -20,9 +20,7 @@ public interface IPoint
     Int32 Length { get; set; }
 }
 
-/// <summary>
-/// 点位扩展
-/// </summary>
+/// <summary>点位扩展</summary>
 public static class PointHelper
 {
     /// <summary>

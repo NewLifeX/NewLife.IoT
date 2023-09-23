@@ -14,4 +14,7 @@ public class EventModel
 
     /// <summary>内容。事件详情</summary>
     public String Remark { get; set; }
+
+    /// <summary>是否启用</summary>
+    public Boolean IsEnable { get; set; }
 }
