@@ -23,7 +23,7 @@ public class PointModel : IPoint
     public String WriteRule { get; set; }
 
     /// <summary>是否启用 true 启用 false 禁用</summary>
-    public Boolean IsEnable { get; set; }
+    public Boolean Enable { get; set; }
 
     /// <summary>已重载。友好显示</summary>
     /// <returns></returns>

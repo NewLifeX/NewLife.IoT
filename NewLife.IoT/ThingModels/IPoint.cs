@@ -20,7 +20,7 @@ public interface IPoint
     Int32 Length { get; set; }
 
     /// <summary>是否启用 true 启用 false 禁用</summary>
-    public Boolean IsEnable { get; set; }
+    public Boolean Enable { get; set; }
 }
 
 /// <summary>点位扩展</summary>
