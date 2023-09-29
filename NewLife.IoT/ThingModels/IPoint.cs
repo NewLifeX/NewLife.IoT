@@ -18,9 +18,6 @@ public interface IPoint
 
     /// <summary>大小。数据字节数，或字符串长度，Modbus寄存器一般占2个字节</summary>
     Int32 Length { get; set; }
-
-    /// <summary>是否启用 true 启用 false 禁用</summary>
-    public Boolean Enable { get; set; }
 }
 
 /// <summary>点位扩展</summary>
