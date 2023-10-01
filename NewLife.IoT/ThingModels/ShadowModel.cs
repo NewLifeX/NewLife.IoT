@@ -6,8 +6,8 @@
 public class ShadowModel
 {
     /// <summary>设备编码</summary>
-    public String DeviceCode { get; set; }
+    public String DeviceCode { get; set; } = null!;
 
     /// <summary>影子</summary>
-    public Object Shadow { get; set; }
+    public Object? Shadow { get; set; }
 }

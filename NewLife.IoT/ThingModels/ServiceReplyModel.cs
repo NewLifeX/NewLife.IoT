@@ -10,5 +10,5 @@ public class ServiceReplyModel
     public ServiceStatus Status { get; set; }
 
     /// <summary>返回数据</summary>
-    public String Data { get; set; }
+    public String? Data { get; set; }
 }

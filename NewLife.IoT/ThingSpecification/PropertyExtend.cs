@@ -13,10 +13,10 @@ public class PropertyExtend : IDictionarySource
     #region 属性
     /// <summary>唯一标识</summary>
     [DataMember(Name = "identifier")]
-    public String Id { get; set; }
+    public String Id { get; set; } = null!;
 
     /// <summary>采集点位置信息。常规地址6，Modbus地址 4x0023，位域地址D12.05，虚拟点位地址#</summary>
-    public String Address { get; set; }
+    public String? Address { get; set; }
 
     /// <summary>交换16。字节交换，12转21，默认false大端</summary>
     public Boolean Swap16 { get; set; }
@@ -31,10 +31,10 @@ public class PropertyExtend : IDictionarySource
     public Single Constant { get; set; }
 
     /// <summary>读取规则。数据解析规则，表达式或脚本</summary>
-    public String ReadRule { get; set; }
+    public String? ReadRule { get; set; }
 
     /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
-    public String WriteRule { get; set; }
+    public String? WriteRule { get; set; }
 
     /// <summary>事件模式。在客户端或服务端生成属性变更事件</summary>
     public EventModes EventMode { get; set; }

@@ -16,28 +16,28 @@ public class ServiceSpec : SpecBase
     /// 调用类型。sync/async
     /// </summary>
     [DataMember(Name = "callType")]
-    public String Type { get; set; }
+    public String? Type { get; set; }
 
     /// <summary>
     /// 描述
     /// </summary>
     [DataMember(Name = "desc")]
-    public String Description { get; set; }
+    public String? Description { get; set; }
 
     /// <summary>
     /// 方法
     /// </summary>
-    public String Method { get; set; }
+    public String? Method { get; set; }
 
     /// <summary>
     /// 输入
     /// </summary>
-    public PropertySpec[] InputData { get; set; }
+    public PropertySpec[]? InputData { get; set; }
 
     /// <summary>
     /// 输出
     /// </summary>
-    public PropertySpec[] OutputData { get; set; }
+    public PropertySpec[]? OutputData { get; set; }
     #endregion
 
     #region 方法
@@ -51,7 +51,7 @@ public class ServiceSpec : SpecBase
     /// <returns></returns>
     public static ServiceSpec Create(MethodBase method)
     {
-        if (method == null) return null;
+        //if (method == null) return null;
 
         var ss = new ServiceSpec
         {
@@ -79,7 +79,7 @@ public class ServiceSpec : SpecBase
     /// <returns></returns>
     public static PropertySpec Create(ParameterInfo member)
     {
-        if (member == null) return null;
+        //if (member == null) return null;
 
         var ps = new PropertySpec
         {

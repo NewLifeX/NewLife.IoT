@@ -15,13 +15,13 @@ public interface IDevice
     public String Code { get; set; }
 
     /// <summary>属性集合</summary>
-    IDictionary<String, Object> Properties { get; }
+    IDictionary<String, Object?> Properties { get; }
 
     /// <summary>产品物模型。自定义客户端或驱动插件内部，可借助物模型去规范所需要采集的数据</summary>
-    ThingSpec Specification { get; set; }
+    ThingSpec? Specification { get; set; }
 
     /// <summary>点位集合</summary>
-    IPoint[] Points { get; set; }
+    IPoint[]? Points { get; set; }
 
     /// <summary>服务集合</summary>
     IDictionary<String, Delegate> Services { get; }
@@ -60,7 +60,7 @@ public interface IDevice
     /// <summary>设置属性</summary>
     /// <param name="name"></param>
     /// <param name="value"></param>
-    void SetProperty(String name, Object value);
+    void SetProperty(String name, Object? value);
 
     /// <summary>添加自定义数据，批量上传</summary>
     /// <param name="name"></param>

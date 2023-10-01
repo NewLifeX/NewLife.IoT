@@ -64,7 +64,7 @@ public static class TypeHelper
     /// <param name="type"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static Type GetNetType(String type)
+    public static Type? GetNetType(String? type)
     {
         if (type.IsNullOrEmpty()) return null;
 

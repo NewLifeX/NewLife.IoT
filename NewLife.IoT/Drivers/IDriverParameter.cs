@@ -56,20 +56,20 @@ public static class DriverParameterExtensions
     /// <summary>序列化参数对象为Xml</summary>
     /// <param name="parameter"></param>
     /// <returns></returns>
-    public static String EncodeParameter(this IDriverParameter parameter) => parameter?.ToXml(null, true).Trim((Char)0xFEFF);
+    public static String EncodeParameter(this IDriverParameter parameter) => parameter.ToXml(null, true).Trim((Char)0xFEFF);
 
     /// <summary>序列化参数字典为Xml</summary>
     /// <param name="parameter"></param>
     /// <returns></returns>
-    public static String EncodeParameter(this IDictionary<String, Object> parameter) => parameter?.ToXml(null, true).Trim((Char)0xFEFF);
+    public static String EncodeParameter(this IDictionary<String, Object> parameter) => parameter.ToXml(null, true).Trim((Char)0xFEFF);
 
     /// <summary>从Xml/Json反序列化为字典</summary>
     /// <param name="parameter"></param>
     /// <returns></returns>
-    public static IDictionary<String, Object> DecodeParameter(this String parameter)
+    public static IDictionary<String, Object?>? DecodeParameter(this String parameter)
     {
-        parameter = parameter?.Trim((Char)0xFEFF);
-        if (parameter.IsNullOrEmpty()) return null;
+        parameter = parameter.Trim((Char)0xFEFF);
+        if (parameter.IsNullOrEmpty()) throw new ArgumentNullException(nameof(parameter));
 
         // 按Xml或Json解析参数成为字典
         var ps = parameter.StartsWith("<") && parameter.EndsWith(">") ?

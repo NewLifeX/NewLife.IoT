@@ -13,19 +13,19 @@ public class ThingSpec
     public String Schema { get; set; } = "http://iot.feifan.link/schema.json";
 
     /// <summary>简介</summary>
-    public Profile Profile { get; set; }
+    public Profile? Profile { get; set; }
 
     /// <summary>属性</summary>
-    public PropertySpec[] Properties { get; set; }
+    public PropertySpec[]? Properties { get; set; }
 
     /// <summary>事件</summary>
-    public EventSpec[] Events { get; set; }
+    public EventSpec[]? Events { get; set; }
 
     /// <summary>服务</summary>
-    public ServiceSpec[] Services { get; set; }
+    public ServiceSpec[]? Services { get; set; }
 
     /// <summary>属性扩展</summary>
-    public PropertyExtend[] ExtendedProperties { get; set; }
+    public PropertyExtend[]? ExtendedProperties { get; set; }
     #endregion
 
     #region 方法
@@ -36,7 +36,7 @@ public class ThingSpec
     /// <param name="length">长度</param>
     /// <param name="address">点位地址</param>
     /// <returns></returns>
-    public void AddProperty(String id, String name, String type, Int32 length = 0, String address = null)
+    public void AddProperty(String id, String name, String type, Int32 length = 0, String? address = null)
     {
         {
             var ps = PropertySpec.Create(id, name, type, length);

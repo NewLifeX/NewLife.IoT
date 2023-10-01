@@ -15,12 +15,12 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// <summary>
     /// 访问模式
     /// </summary>
-    public String AccessMode { get; set; }
+    public String? AccessMode { get; set; }
 
     /// <summary>
     /// 数据类型
     /// </summary>
-    public TypeSpec DataType { get; set; }
+    public TypeSpec? DataType { get; set; }
 
     ///// <summary>
     ///// 采集点位置信息
@@ -60,7 +60,7 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// <returns></returns>
     public static PropertySpec Create(MemberInfo member, Int32 length = 0)
     {
-        if (member == null) return null;
+        //if (member == null) return null;
 
         var ps = new PropertySpec
         {
@@ -83,9 +83,9 @@ public class PropertySpec : SpecBase, IDictionarySource
     #region 方法
     /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
     /// <returns></returns>
-    public IDictionary<String, Object> ToDictionary()
+    public IDictionary<String, Object?> ToDictionary()
     {
-        var dic = new Dictionary<String, Object>();
+        var dic = new Dictionary<String, Object?>();
         if (!Id.IsNullOrEmpty())
             dic.Add("identifier", Id);
         if (!Name.IsNullOrEmpty())

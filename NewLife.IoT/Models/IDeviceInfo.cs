@@ -13,8 +13,8 @@ public interface IDeviceInfo
     String Code { get; set; }
 
     /// <summary>名称</summary>
-    String Name { get; set; }
+    String? Name { get; set; }
 
     /// <summary>产品编码</summary>
-    String ProductCode { get; set; }
+    String? ProductCode { get; set; }
 }

@@ -13,12 +13,12 @@ public interface INode
     /// <summary>
     /// 设备。业务逻辑设备
     /// </summary>
-    IDevice Device { get; set; }
+    IDevice? Device { get; set; }
 
     /// <summary>
     /// 参数。设备使用的专用参数
     /// </summary>
-    IDriverParameter Parameter { get; set; }
+    IDriverParameter? Parameter { get; set; }
 }
 
 /// <summary>
@@ -29,15 +29,15 @@ public class Node : INode
     /// <summary>
     /// 驱动。设备节点使用的驱动对象，可能多设备共用
     /// </summary>
-    public IDriver Driver { get; set; }
+    public IDriver Driver { get; set; } = null!;
 
     /// <summary>
     /// 设备。业务逻辑设备
     /// </summary>
-    public IDevice Device { get; set; }
+    public IDevice? Device { get; set; }
 
     /// <summary>
     /// 参数。设备使用的专用参数
     /// </summary>
-    public IDriverParameter Parameter { get; set; }
+    public IDriverParameter? Parameter { get; set; }
 }

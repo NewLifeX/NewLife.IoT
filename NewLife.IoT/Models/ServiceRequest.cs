@@ -7,13 +7,13 @@ public class ServiceRequest
     public Int32 DeviceId { get; set; }
 
     /// <summary>设备编码。目标设备或其子设备</summary>
-    public String DeviceCode { get; set; }
+    public String? DeviceCode { get; set; }
 
     /// <summary>服务名</summary>
-    public String ServiceName { get; set; }
+    public String ServiceName { get; set; } = null!;
 
     /// <summary>入参。传递给该服务的参数，常见Json格式</summary>
-    public String InputData { get; set; }
+    public String? InputData { get; set; }
 
     /// <summary>开始执行时间。用于提前下发指令后延期执行</summary>
     public DateTime StartTime { get;set; }

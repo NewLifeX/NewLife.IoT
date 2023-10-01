@@ -2,7 +2,6 @@
 using System.Reflection;
 using NewLife.Log;
 using NewLife.Reflection;
-using NewLife.Xml;
 
 namespace NewLife.IoT.Drivers;
 
@@ -15,12 +14,12 @@ public class DriverFactory
     public static IDictionary<String, Type> Map => _map;
 
     /// <summary>驱动集合</summary>
-    public static IList<DriverInfo> Drivers { get; private set; }
+    public static IList<DriverInfo> Drivers { get; private set; } = null!;
 
     /// <summary>注册协议实现</summary>
     /// <param name="name"></param>
     /// <param name="type"></param>
-    public static void Register(String name, Type type)
+    public static void Register(String? name, Type type)
     {
         if (type == null) throw new ArgumentNullException(nameof(type));
         if (name.IsNullOrEmpty()) name = type.Name;
@@ -31,14 +30,14 @@ public class DriverFactory
     /// <summary>注册协议实现</summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="name"></param>
-    public static void Register<T>(String name = null) where T : IDriver => Register(name, typeof(T));
+    public static void Register<T>(String? name = null) where T : IDriver => Register(name, typeof(T));
 
-    private static readonly ConcurrentDictionary<String, IDriver> _cache = new();
+    private static readonly ConcurrentDictionary<String, IDriver?> _cache = new();
     /// <summary>创建协议实例，根据地址确保唯一，多设备共用同一个串口</summary>
     /// <param name="name">驱动名称。一般由DriverAttribute特性确定</param>
     /// <param name="identifier">唯一标识。没有传递标识时，每次返回新实例</param>
     /// <returns></returns>
-    public static IDriver Create(String name, String identifier)
+    public static IDriver? Create(String name, String identifier)
     {
         if (!_map.TryGetValue(name, out var type) || type == null) return null;
 
@@ -49,12 +48,12 @@ public class DriverFactory
         return _cache.GetOrAdd(key, k => type.CreateInstance() as IDriver);
     }
 
-    private static readonly ConcurrentDictionary<String, IDriver> _defaults = new();
+    private static readonly ConcurrentDictionary<String, IDriver?> _defaults = new();
     /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <param name="name">驱动名称。一般由DriverAttribute特性确定</param>
     /// <param name="parameter">Xml/Json参数配置</param>
     /// <returns></returns>
-    public static IDriverParameter CreateParameter(String name, String parameter)
+    public static IDriverParameter? CreateParameter(String name, String parameter)
     {
         if (!_map.TryGetValue(name, out var type) || type == null) return null;
 

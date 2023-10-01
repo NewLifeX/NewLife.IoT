@@ -21,7 +21,7 @@ public interface IDriver
     /// </remarks>
     /// <param name="parameter">Xml/Json参数配置，为空时仅创建默认参数</param>
     /// <returns></returns>
-    IDriverParameter CreateParameter(String parameter = null);
+    IDriverParameter? CreateParameter(String? parameter = null);
 
     /// <summary>获取产品物模型</summary>
     /// <remarks>
@@ -32,7 +32,7 @@ public interface IDriver
     /// 获取后，按新版本覆盖旧版本。
     /// </remarks>
     /// <returns></returns>
-    ThingSpec GetSpecification();
+    ThingSpec? GetSpecification();
     #endregion
 
     #region 核心方法
@@ -42,7 +42,7 @@ public interface IDriver
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    INode Open(IDevice device, IDriverParameter parameter);
+    INode Open(IDevice device, IDriverParameter? parameter);
 
     /// <summary>
     /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
@@ -58,7 +58,7 @@ public interface IDriver
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
     /// <returns></returns>
-    IDictionary<String, Object> Read(INode node, IPoint[] points);
+    IDictionary<String, Object?> Read(INode node, IPoint[] points);
 
     /// <summary>写入数据</summary>
     /// <remarks>
@@ -68,7 +68,7 @@ public interface IDriver
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
-    Object Write(INode node, IPoint point, Object value);
+    Object? Write(INode node, IPoint point, Object? value);
 
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>
@@ -77,7 +77,7 @@ public interface IDriver
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="parameters">参数</param>
-    Object Control(INode node, IDictionary<String, Object> parameters);
+    Object? Control(INode node, IDictionary<String, Object?> parameters);
     #endregion
 }
 
@@ -94,6 +94,7 @@ public static class DriverExtensions
     public static INode Open(this IDriver driver, IDevice device, IDictionary<String, Object> parameters)
     {
         var type = driver.CreateParameter()?.GetType();
+        if (type == null) throw new InvalidOperationException();
 
         var ps = JsonHelper.Default.Convert(parameters, type) as IDriverParameter;
         var node = driver.Open(device, ps);

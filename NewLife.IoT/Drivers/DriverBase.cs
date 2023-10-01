@@ -26,7 +26,7 @@ public class DriverBase<TNode, TParameter> : DriverBase
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override INode Open(IDevice device, IDriverParameter parameter)
+    public override INode Open(IDevice device, IDriverParameter? parameter)
     {
         var node = new TNode
         {
@@ -55,7 +55,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// </remarks>
     /// <param name="parameter">Xml/Json参数配置</param>
     /// <returns></returns>
-    public virtual IDriverParameter CreateParameter(String parameter)
+    public virtual IDriverParameter? CreateParameter(String? parameter)
     {
         var p = OnCreateParameter();
         if (p == null) return null;
@@ -76,7 +76,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
 
     /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <returns></returns>
-    protected virtual IDriverParameter OnCreateParameter() => null;
+    protected virtual IDriverParameter? OnCreateParameter() => null;
 
     /// <summary>获取产品物模型</summary>
     /// <remarks>
@@ -87,7 +87,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// 获取后，按新版本覆盖旧版本。
     /// </remarks>
     /// <returns></returns>
-    public virtual ThingSpec GetSpecification()
+    public virtual ThingSpec? GetSpecification()
     {
         var type = GetType();
         var spec = new ThingSpec
@@ -115,7 +115,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public virtual INode Open(IDevice device, IDriverParameter parameter)
+    public virtual INode Open(IDevice device, IDriverParameter? parameter)
     {
         var node = new Node
         {
@@ -140,7 +140,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
     /// <returns></returns>
-    public virtual IDictionary<String, Object> Read(INode node, IPoint[] points) => throw new NotImplementedException();
+    public virtual IDictionary<String, Object?> Read(INode node, IPoint[] points) => throw new NotImplementedException();
 
     /// <summary>写入数据</summary>
     /// <remarks>
@@ -150,7 +150,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
-    public virtual Object Write(INode node, IPoint point, Object value) => throw new NotImplementedException();
+    public virtual Object? Write(INode node, IPoint point, Object? value) => throw new NotImplementedException();
 
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>
@@ -159,15 +159,15 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="parameters">参数</param>
-    public virtual Object Control(INode node, IDictionary<String, Object> parameters) => throw new NotImplementedException();
+    public virtual Object? Control(INode node, IDictionary<String, Object?> parameters) => throw new NotImplementedException();
     #endregion
 
     #region 日志
     /// <summary>日志</summary>
-    public ILog Log { get; set; }
+    public ILog Log { get; set; } = Logger.Null;
 
     /// <summary>性能追踪器</summary>
-    public ITracer Tracer { get; set; }
+    public ITracer? Tracer { get; set; }
 
     /// <summary>写日志</summary>
     /// <param name="format"></param>

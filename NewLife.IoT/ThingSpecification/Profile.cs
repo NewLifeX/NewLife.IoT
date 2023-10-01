@@ -13,5 +13,5 @@ public class Profile
     /// <summary>
     /// 产品编码
     /// </summary>
-    public String ProductKey { get; set; }
+    public String? ProductKey { get; set; }
 }

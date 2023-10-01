@@ -14,22 +14,22 @@ public class EventSpec : SpecBase
     /// <summary>
     /// 类型。info/warning/error
     /// </summary>
-    public String Type { get; set; }
+    public String? Type { get; set; }
 
     /// <summary>
     /// 描述
     /// </summary>
     [DataMember(Name="desc")]
-    public String Description { get; set; }
+    public String? Description { get; set; }
 
     /// <summary>
     /// 方法
     /// </summary>
-    public String Method { get; set; }
+    public String? Method { get; set; }
 
     /// <summary>
     /// 输出
     /// </summary>
-    public PropertySpec[] OutputData { get; set; }
+    public PropertySpec[]? OutputData { get; set; }
     #endregion
 }

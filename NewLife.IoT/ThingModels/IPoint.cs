@@ -7,14 +7,14 @@ namespace NewLife.IoT.ThingModels;
 public interface IPoint
 {
     /// <summary>名称</summary>
-    String Name { get; set; }
+    String? Name { get; set; }
 
     /// <summary>地址。表示点位的地址，具体含义由设备驱动决定。例如常规地址6，字母地址DI07，Modbus地址4x0015，位域地址D012.05，比特位置0~15</summary>
     /// <remarks>在某些场景中，特殊点位地址（如#）表示虚拟地址，该点位数值由ReadRule表达式动态计算得到，点位信息并不会传递给驱动层</remarks>
-    String Address { get; set; }
+    String? Address { get; set; }
 
     /// <summary>数据类型。来自物模型</summary>
-    String Type { get; set; }
+    String? Type { get; set; }
 
     /// <summary>大小。数据字节数，或字符串长度，Modbus寄存器一般占2个字节</summary>
     Int32 Length { get; set; }
@@ -46,7 +46,7 @@ public static class PointHelper
             TypeCode.UInt16 => BitConverter.ToUInt16(data, 0),
             TypeCode.UInt32 => BitConverter.ToUInt32(data, 0),
             TypeCode.UInt64 => BitConverter.ToUInt64(data, 0),
-            _ => null,
+            _ => throw new NotSupportedException(),
         };
     }
 
@@ -56,24 +56,24 @@ public static class PointHelper
     /// <param name="point">点位</param>
     /// <param name="value">数据对象</param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this IPoint point, Object value)
+    public static Byte[]? GetBytes(this IPoint point, Object value)
     {
         var type = point.GetNetType();
         var val = value.ChangeType(type);
 
         return type.GetTypeCode() switch
         {
-            TypeCode.Boolean => BitConverter.GetBytes((Boolean)val),
-            TypeCode.Byte => new[] { (Byte)val },
-            TypeCode.Char => BitConverter.GetBytes((Char)val),
-            TypeCode.Double => BitConverter.GetBytes((Double)val),
-            TypeCode.Int16 => BitConverter.GetBytes((Int16)val),
-            TypeCode.Int32 => BitConverter.GetBytes((Int32)val),
-            TypeCode.Int64 => BitConverter.GetBytes((Int64)val),
-            TypeCode.Single => BitConverter.GetBytes((Single)val),
-            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)val),
-            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)val),
-            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)val),
+            TypeCode.Boolean => BitConverter.GetBytes((Boolean)(val ?? false)),
+            TypeCode.Byte => new[] { (Byte)(val ?? 0) },
+            TypeCode.Char => BitConverter.GetBytes((Char)(val ?? 0)),
+            TypeCode.Double => BitConverter.GetBytes((Double)(val ?? 0)),
+            TypeCode.Int16 => BitConverter.GetBytes((Int16)(val ?? 0)),
+            TypeCode.Int32 => BitConverter.GetBytes((Int32)(val ?? 0)),
+            TypeCode.Int64 => BitConverter.GetBytes((Int64)(val ?? 0)),
+            TypeCode.Single => BitConverter.GetBytes((Single)(val ?? 0)),
+            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)(val ?? 0)),
+            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)(val ?? 0)),
+            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)(val ?? 0)),
             _ => null,
         };
     }
@@ -84,7 +84,7 @@ public static class PointHelper
     /// <param name="data">原始数据，一般是字符串</param>
     /// <param name="spec">物模型</param>
     /// <returns></returns>
-    public static UInt16[] ConvertToBit(this IPoint point, Object data, ThingSpec spec = null)
+    public static UInt16[]? ConvertToBit(this IPoint point, Object data, ThingSpec? spec = null)
     {
         var type = TypeHelper.GetNetType(point);
         if (type == null)
@@ -120,7 +120,7 @@ public static class PointHelper
     /// <param name="data">原始数据，一般是字符串</param>
     /// <param name="spec">物模型</param>
     /// <returns>返回短整型数组，有可能一个整数拆分为双字</returns>
-    public static UInt16[] ConvertToWord(this IPoint point, Object data, ThingSpec spec = null)
+    public static UInt16[]? ConvertToWord(this IPoint point, Object data, ThingSpec? spec = null)
     {
         var type = TypeHelper.GetNetType(point);
         if (type == null)

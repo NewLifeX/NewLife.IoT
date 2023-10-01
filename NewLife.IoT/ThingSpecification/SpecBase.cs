@@ -12,12 +12,12 @@ public abstract class SpecBase
     /// 唯一标识
     /// </summary>
     [DataMember(Name = "identifier")]
-    public String Id { get; set; }
+    public String Id { get; set; } = null!;
 
     /// <summary>
     /// 名称
     /// </summary>
-    public String Name { get; set; }
+    public String? Name { get; set; }
 
     /// <summary>
     /// 是否必须

@@ -8,10 +8,10 @@ public class ServiceEventArgs : EventArgs
     /// <summary>
     /// 命令
     /// </summary>
-    public ServiceModel Model { get; set; }
+    public ServiceModel? Model { get; set; }
 
     /// <summary>
     /// 响应
     /// </summary>
-    public ServiceReplyModel Reply { get; set; }
+    public ServiceReplyModel? Reply { get; set; }
 }

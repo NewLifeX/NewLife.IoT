@@ -13,10 +13,10 @@ public class DataSpecs
     public Double Max { get; set; }
 
     /// <summary>单位</summary>
-    public String Unit { get; set; }
+    public String? Unit { get; set; }
 
     /// <summary>单位名称</summary>
-    public String UnitName { get; set; }
+    public String? UnitName { get; set; }
 
     /// <summary>步进</summary>
     public Double Step { get; set; }
@@ -25,16 +25,16 @@ public class DataSpecs
     public Int32 Length { get; set; }
 
     /// <summary>枚举映射。布尔型和数字型特有，例如“0=关,1=开”，又如“1=东,2=南,3=西,4=北”</summary>
-    public IDictionary<String, String> Mapping { get; set; }
+    public IDictionary<String, String>? Mapping { get; set; }
     #endregion
 
     #region 方法
     /// <summary>根据指定数据类型获取成员字典，不同类型所需要的字段不一样</summary>
     /// <param name="type">数据类型</param>
     /// <returns></returns>
-    public IDictionary<String, Object> GetDictionary(String type)
+    public IDictionary<String, Object?> GetDictionary(String type)
     {
-        var ds = new Dictionary<String, Object>();
+        var ds = new Dictionary<String, Object?>();
 
         var t = TypeHelper.GetNetType(type);
         if (t == null) return this.ToDictionary();
