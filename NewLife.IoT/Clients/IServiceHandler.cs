@@ -128,17 +128,17 @@ public static class ServiceHandlerHelper
     /// <summary>分发执行服务</summary>
     /// <param name="client">命令客户端</param>
     /// <param name="model"></param>
-    private static async Task<Object> OnService(IServiceHandler client, ServiceModel model)
+    private static async Task<Object?> OnService(IServiceHandler client, ServiceModel model)
     {
         if (!client.Services.TryGetValue(model.Name, out var d))
             // 通用方法
             if (!client.Services.TryGetValue("*", out d))
                 throw new ApiException(400, $"找不到服务[{model.Name}]");
 
-        if (d is Func<String, String> func) return func(model.InputData);
+        if (d is Func<String?, String?> func) return func(model.InputData);
         if (d is Func<ServiceModel, ServiceReplyModel> func2) return func2(model);
 
-        if (d is Func<String, Task<String>> func3) return await func3(model.InputData);
+        if (d is Func<String?, Task<String?>> func3) return await func3(model.InputData);
         if (d is Func<ServiceModel, Task<ServiceReplyModel>> func4) return await func4(model);
 
         return null;
