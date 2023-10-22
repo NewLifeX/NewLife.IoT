@@ -22,6 +22,15 @@ public class PointModel : IPoint
     /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
     public String? WriteRule { get; set; }
 
+    /// <summary>主站地址</summary>
+    public String? SiteAddress { get; set; }
+
+    /// <summary>发送原因</summary>
+    public Int32 SReason { get; set; }
+
+    /// <summary>ASDYType</summary>
+    public Int32 ASDUType { get; set; }
+
     /// <summary>已重载。友好显示</summary>
     /// <returns></returns>
     public override String ToString() => $"{Name} {Type} {Address}";
