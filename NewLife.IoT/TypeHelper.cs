@@ -13,7 +13,7 @@ public static class TypeHelper
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static Int32 GetLength(String type)
+    public static Int32 GetLength(String? type)
     {
         if (type.IsNullOrEmpty()) return 0;
 
@@ -32,7 +32,7 @@ public static class TypeHelper
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static Int32 GetLength(Type type)
+    public static Int32 GetLength(Type? type)
     {
         if (type == null) return 0;
 
@@ -84,6 +84,7 @@ public static class TypeHelper
             "decimal" => typeof(Decimal),
             "string" or "text" => typeof(String),
             "date" or "time" or "datetime" => typeof(DateTime),
+            "byte[]" or "hex" => typeof(Byte[]),
             _ => null,
         };
     }
@@ -93,11 +94,13 @@ public static class TypeHelper
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public static Type GetNetType(this IPoint point)
+    public static Type? GetNetType(this IPoint point)
     {
         if ((point?.Type).IsNullOrEmpty()) return null;
 
         var type = GetNetType(point.Type);
+        if (type == null) return null;
+
         if (point.Length > 0)
         {
             // 如果长度一致，直接返回
@@ -141,12 +144,14 @@ public static class TypeHelper
     /// <param name="type"></param>
     /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
     /// <returns></returns>
-    public static String GetIoTType(Type type, Boolean full = false)
+    public static String? GetIoTType(Type? type, Boolean full = false)
     {
         if (type == null) return null;
 
         if (full)
         {
+            if (type == typeof(Byte[])) return "hex";
+
             return type.GetTypeCode() switch
             {
                 TypeCode.Boolean => "bool",
@@ -158,7 +163,7 @@ public static class TypeHelper
                 TypeCode.Double or TypeCode.Decimal => "double",
                 TypeCode.String => "text",
                 TypeCode.DateTime => "time",
-                _ => null,
+                _ => type?.Name.ToLower(),
             };
         }
         else
@@ -185,14 +190,14 @@ public static class TypeHelper
     /// <param name="point"></param>
     /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
     /// <returns></returns>
-    public static String GetIoTType(this IPoint point, Boolean full = false)
+    public static String? GetIoTType(this IPoint point, Boolean full = false)
     {
         var type = point.GetNetType();
         return GetIoTType(type, full);
     }
 
-    private static IDictionary<String, String> _fullTypes;
-    private static IDictionary<String, String> _iotTypes;
+    private static IDictionary<String, String>? _fullTypes;
+    private static IDictionary<String, String>? _iotTypes;
     /// <summary>
     /// 获取所有可用IoT类型
     /// </summary>

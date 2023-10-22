@@ -40,7 +40,8 @@ public static class PointHelper
     /// <returns></returns>
     public static Object Convert(this IPoint point, Byte[] data)
     {
-        var type = point.GetNetType();
+        var type = point.GetNetType() ?? throw new NotSupportedException();
+        if (type == typeof(Byte[])) return data;
 
         return type.GetTypeCode() switch
         {
@@ -67,7 +68,9 @@ public static class PointHelper
     /// <returns></returns>
     public static Byte[]? GetBytes(this IPoint point, Object value)
     {
-        var type = point.GetNetType();
+        var type = point.GetNetType() ?? throw new NotSupportedException();
+        if (type == typeof(Byte[]) && value is Byte[] data) return data;
+
         var val = value.ChangeType(type);
 
         return type.GetTypeCode() switch

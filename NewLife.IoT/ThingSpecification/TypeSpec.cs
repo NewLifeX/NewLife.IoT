@@ -21,6 +21,8 @@ public class TypeSpec : IDictionarySource
     /// <returns></returns>
     public IDictionary<String, Object> ToDictionary()
     {
+        if (Type.IsNullOrEmpty()) return new Dictionary<String, Object>();
+
         var ds = Specs?.GetDictionary(Type);
 
         var dic = new Dictionary<String, Object>
@@ -38,5 +40,5 @@ public class TypeSpec : IDictionarySource
     /// 已重载。友好显示
     /// </summary>
     /// <returns></returns>
-    public override String ToString() => Type;
+    public override String? ToString() => Type;
 }
