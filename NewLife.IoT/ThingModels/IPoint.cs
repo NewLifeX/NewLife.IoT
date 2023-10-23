@@ -18,15 +18,6 @@ public interface IPoint
 
     /// <summary>大小。数据字节数，或字符串长度，Modbus寄存器一般占2个字节</summary>
     Int32 Length { get; set; }
-
-    /// <summary>主站地址(IEC)</summary>
-    String? SiteAddress { get; set; }
-
-    /// <summary>发送原因(IEC)</summary>
-    Int32 SReason { get; set; }
-
-    /// <summary>ASDUType(IEC)</summary>
-    Int32 ASDUType { get; set; }
 }
 
 /// <summary>点位扩展</summary>
