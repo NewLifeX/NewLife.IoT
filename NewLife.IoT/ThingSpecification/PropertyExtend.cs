@@ -38,6 +38,9 @@ public class PropertyExtend : IDictionarySource
 
     /// <summary>事件模式。在客户端或服务端生成属性变更事件</summary>
     public EventModes EventMode { get; set; }
+
+    /// <summary>属性分组</summary>
+    public String? Subset { get; set; }
     #endregion
 
     #region 方法
