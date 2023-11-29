@@ -14,4 +14,7 @@ public class EventModel
 
     /// <summary>内容。事件详情</summary>
     public String? Remark { get; set; }
+
+    /// <summary>事件关联的数据对象。例如设备事件中的设备模型对象</summary>
+    public Object? Data { get; set; }
 }
