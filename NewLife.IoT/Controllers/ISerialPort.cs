@@ -1,4 +1,6 @@
-﻿using NewLife.Data;
+﻿using System.Diagnostics;
+using NewLife.Data;
+using NewLife.Net;
 
 namespace NewLife.IoT.Controllers;
 
@@ -13,6 +15,12 @@ public interface ISerialPort
 
     /// <summary>波特率</summary>
     Int32 Baudrate { get; set; }
+
+    /// <summary>收到数据事件</summary>
+    event EventHandler<ReceivedEventArgs> Received;
+
+    /// <summary>串口对象</summary>
+    Object Port { get; }
 
     /// <summary>打开</summary>
     void Open();

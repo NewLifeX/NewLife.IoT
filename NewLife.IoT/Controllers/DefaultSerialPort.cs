@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
 using NewLife.Data;
+using NewLife.Net;
 
 namespace NewLife.IoT.Controllers;
 
@@ -24,7 +25,12 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
     /// <summary>缓冲区大小。默认256</summary>
     public Int32 BufferSize { get; set; } = 256;
 
+    /// <summary>收到数据事件</summary>
+    public event EventHandler<ReceivedEventArgs>? Received;
+
     private SerialPort? _port;
+    /// <summary>串口对象</summary>
+    public Object Port => _port ??= new(PortName, Baudrate) { ReadTimeout = Timeout, WriteTimeout = Timeout };
 
     /// <summary>销毁</summary>
     /// <param name="disposing"></param>
@@ -32,7 +38,12 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
     {
         base.Dispose(disposing);
 
-        _port.TryDispose();
+        if (_port != null)
+        {
+            if (Received != null) _port.DataReceived -= OnReceiveSerial;
+
+            _port.TryDispose();
+        }
     }
 
     /// <summary>打开</summary>
@@ -49,7 +60,19 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
             ReadTimeout = Timeout,
             WriteTimeout = Timeout
         };
+
+        if (Received != null) _port.DataReceived += OnReceiveSerial;
+
         _port.Open();
+    }
+
+    void OnReceiveSerial(Object sender, SerialDataReceivedEventArgs e)
+    {
+        var rs = Invoke(null, 1);
+        if (rs != null)
+        {
+            Received?.Invoke(this, new ReceivedEventArgs { Packet = rs });
+        }
     }
 
     /// <summary>发送数据</summary>
