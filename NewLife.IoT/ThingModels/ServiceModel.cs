@@ -23,4 +23,7 @@ public class ServiceModel
 
     /// <summary>链路追踪</summary>
     public String? TraceId { get; set; }
+
+    /// <summary>服务类型</summary>
+    public String? Type { get; set; }
 }
