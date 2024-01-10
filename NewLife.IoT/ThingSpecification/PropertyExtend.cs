@@ -46,13 +46,13 @@ public class PropertyExtend : IDictionarySource
     #region 方法
     /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
     /// <returns></returns>
-    public IDictionary<String, Object> ToDictionary()
+    public IDictionary<String, Object?> ToDictionary()
     {
         var dic = CollectionHelper.ToDictionary(this);
 
         //return dic.Where(e => e.Value != null).ToDictionary(e => e.Key, e => e.Value);
 
-        var rs = new Dictionary<String, Object>();
+        var rs = new Dictionary<String, Object?>();
         foreach (var item in dic)
         {
             if (item.Value == null) continue;

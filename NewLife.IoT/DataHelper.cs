@@ -22,7 +22,7 @@ public static class DataHelper
         using var span = DefaultTracer.Instance?.NewSpan(nameof(EncodeByThingModel), $"name={point.Name} data={data} type={type.Name} rawType={point.Type}");
 
         // 找到物属性定义
-        var pt = spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+        var pt = point.Name.IsNullOrEmpty() ? null : spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
         if (pt != null)
         {
             // 反向操作常量因子和缩放因子
@@ -80,7 +80,7 @@ public static class DataHelper
         try
         {
             // 找到物属性定义
-            var pt = spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pt = point.Name.IsNullOrEmpty() ? null : spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
             if (pt != null)
             {
                 if (type == typeof(Boolean)) return data[0];

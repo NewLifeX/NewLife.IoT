@@ -5,7 +5,7 @@
     <Description>IoT standard library, which defines various communication protocol standards and specifications in the Internet of Things field, without specific implementation. Used for IoT platform construction and unifying various hardware driver protocols. IoT标准库，定义物联网领域的各种通信协议标准规范，不含具体实现。用于IoT平台建设，以及统一各种硬件驱动协议</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2024 新生命开发团队</Copyright>
-    <VersionPrefix>2.0</VersionPrefix>
+    <VersionPrefix>2.1</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -28,7 +28,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>增加控制器层，新增输入输出口、串口、Modbus接口和板卡接口等接口统一定义，约定各种板卡及工业计算机所具备的基础功能</PackageReleaseNotes>
+    <PackageReleaseNotes>新增异步驱动接口IAsyncDriver</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

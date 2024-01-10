@@ -19,13 +19,13 @@ public class TypeSpec : IDictionarySource
 
     /// <summary>转字典。根据不同类型，提供不一样的序列化能力</summary>
     /// <returns></returns>
-    public IDictionary<String, Object> ToDictionary()
+    public IDictionary<String, Object?> ToDictionary()
     {
-        if (Type.IsNullOrEmpty()) return new Dictionary<String, Object>();
+        if (Type.IsNullOrEmpty()) return new Dictionary<String, Object?>();
 
         var ds = Specs?.GetDictionary(Type);
 
-        var dic = new Dictionary<String, Object>
+        var dic = new Dictionary<String, Object?>
         {
             { nameof(Type), Type }
         };
