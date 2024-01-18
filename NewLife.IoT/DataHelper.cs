@@ -97,11 +97,15 @@ public static class DataHelper
             if (type.IsInt())
             {
                 var scaling = pt.Scaling != 0 ? pt.Scaling : 1;
-                var v = (Int64)Math.Round((data.ToLong() - pt.Constant) / scaling);
+                var v = data.ToLong();
+                //if (pt.Constant != 0 || scaling != 1) v = (Int64)Math.Round(v * scaling + pt.Constant);
+                // 编码是反向操作，先减去常量，再除以缩放因子。为了避免精度问题，单精度范围先计算缩放因子倒数，再相乘
+                if (pt.Constant != 0 || scaling != 1) v = (Int64)Math.Round(((Double)v - pt.Constant) * (1 / scaling));
 
                 // 常见的2字节和4字节整型，直接转字节数组返回
                 var rs = type.GetTypeCode() switch
                 {
+                    TypeCode.Byte or TypeCode.SByte => new[] { (Byte)v },
                     // Swap16为false表示大端
                     TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(pt.Endian),
                     // 先按照小端读取出来，如果Swap16/Swap32是大端false，则需要交换字节序
