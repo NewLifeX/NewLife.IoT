@@ -19,8 +19,8 @@ public class DataHelperTests
     [Theory]
     [InlineData(0xABCD, EndianType.BigEndian, "ABCD")]
     [InlineData(0xABCD, EndianType.LittleEndian, "CDAB")]
-    [InlineData(0xABCD, EndianType.BigSwap, "ABCD")]
-    [InlineData(0xABCD, EndianType.LittleSwap, "CDAB")]
+    [InlineData(0xABCD, EndianType.BigSwap, "CDAB")]
+    [InlineData(0xABCD, EndianType.LittleSwap, "ABCD")]
     public void GetBytesUInt16(UInt16 value, EndianType endian, String hex)
     {
         var buf = value.GetBytes(endian);
@@ -30,8 +30,8 @@ public class DataHelperTests
     [Theory]
     [InlineData(0xABCD, ByteOrder.ABCD, "ABCD")]
     [InlineData(0xABCD, ByteOrder.DCBA, "CDAB")]
-    [InlineData(0xABCD, ByteOrder.BADC, "ABCD")]
-    [InlineData(0xABCD, ByteOrder.CDAB, "CDAB")]
+    [InlineData(0xABCD, ByteOrder.BADC, "CDAB")]
+    [InlineData(0xABCD, ByteOrder.CDAB, "ABCD")]
     public void GetBytesUInt16_Order(UInt16 value, ByteOrder order, String hex)
     {
         var buf = value.GetBytes(order);
@@ -66,6 +66,12 @@ public class DataHelperTests
     [InlineData("12345678", ByteOrder.BADC, "34127856")]
     [InlineData("12345678", ByteOrder.CDAB, "56781234")]
     [InlineData("12345678", (ByteOrder)0, "12345678")]
+    [InlineData("12", ByteOrder.DCBA, "12")]
+    [InlineData("1234", ByteOrder.DCBA, "3412")]
+    [InlineData("123456", ByteOrder.DCBA, "563412")]
+    [InlineData("12", ByteOrder.BADC, "12")]
+    [InlineData("1234", ByteOrder.BADC, "3412")]
+    [InlineData("123456", ByteOrder.BADC, "341256")]
     public void Swap(String hex, ByteOrder order, String hex2)
     {
         var buf = hex.ToHex();
@@ -79,6 +85,12 @@ public class DataHelperTests
         var f = 12.34f;
         var buf = BitConverter.GetBytes(f);
         Assert.Equal("A4704541", buf.ToHex());
+
+        f = 0.1234f;
+        buf = BitConverter.GetBytes(f);
+        Assert.Equal("24B9FC3D", buf.ToHex());
+        buf = buf.Swap(ByteOrder.BADC);
+        Assert.Equal("B9243DFC", buf.ToHex());
 
         var d = 1234.5678d;
         buf = BitConverter.GetBytes(d);
@@ -121,13 +133,13 @@ public class DataHelperTests
     [InlineData((Int32)0x12345678, EndianType.LittleEndian, "78563412")]
     [InlineData((UInt32)0x12345678, EndianType.LittleEndian, "78563412")]
     [InlineData((Byte)0x12, EndianType.BigSwap, "12")]
-    [InlineData((Int16)0x1234, EndianType.BigSwap, "1234")]
-    [InlineData((UInt16)0x1234, EndianType.BigSwap, "1234")]
+    [InlineData((Int16)0x1234, EndianType.BigSwap, "3412")]
+    [InlineData((UInt16)0x1234, EndianType.BigSwap, "3412")]
     [InlineData((Int32)0x12345678, EndianType.BigSwap, "34127856")]
     [InlineData((UInt32)0x12345678, EndianType.BigSwap, "34127856")]
     [InlineData((Byte)0x12, EndianType.LittleSwap, "12")]
-    [InlineData((Int16)0x1234, EndianType.LittleSwap, "3412")]
-    [InlineData((UInt16)0x1234, EndianType.LittleSwap, "3412")]
+    [InlineData((Int16)0x1234, EndianType.LittleSwap, "1234")]
+    [InlineData((UInt16)0x1234, EndianType.LittleSwap, "1234")]
     [InlineData((Int32)0x12345678, EndianType.LittleSwap, "56781234")]
     [InlineData((UInt32)0x12345678, EndianType.LittleSwap, "56781234")]
     public void EncodeByThingModel_Endian(Object data, EndianType endian, String hex)

@@ -12,13 +12,13 @@ public static class DataHelper
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt16 value, EndianType endian) => value.GetBytes(endian is EndianType.LittleEndian or EndianType.LittleSwap);
+    public static Byte[] GetBytes(this UInt16 value, EndianType endian) => value.GetBytes(endian is EndianType.LittleEndian or EndianType.BigSwap);
 
     /// <summary>短整数转为指定字节序的字节数组，仅AB/BA两种</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt16 value, ByteOrder order) => value.GetBytes(order is ByteOrder.DCBA or ByteOrder.CDAB);
+    public static Byte[] GetBytes(this UInt16 value, ByteOrder order) => value.GetBytes(order is ByteOrder.DCBA or ByteOrder.BADC);
 
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
@@ -80,6 +80,9 @@ public static class DataHelper
                     rs[i] = buf[i + 1];
                     rs[i + 1] = buf[i];
                 }
+                // 奇数个字节时，最后一个字节不变
+                if (buf.Length % 2 == 1)
+                    rs[buf.Length - 1] = buf[buf.Length - 1];
                 break;
             case ByteOrder.CDAB:
                 for (var i = 0; i < buf.Length - 1; i += 2)
@@ -87,6 +90,9 @@ public static class DataHelper
                     rs[i] = buf[buf.Length - i - 2];
                     rs[i + 1] = buf[buf.Length - i - 1];
                 }
+                // 奇数个字节时，最后一个字节不变
+                if (buf.Length % 2 == 1)
+                    rs[buf.Length - 1] = buf[0];
                 break;
         }
 

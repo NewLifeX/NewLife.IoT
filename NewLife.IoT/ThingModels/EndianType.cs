@@ -17,9 +17,10 @@ public enum EndianType : Byte
     //MiddleEndian = 3,
 
     /// <summary>大端字节交换。BADC/2143，高序字存储在起始地址，每个字内部字节交换。仅支持4/8字节</summary>
+    /// <remarks>Modbus发送Float常用</remarks>
     BigSwap = 3,
 
-    /// <summary>小端字节交换。CDAB/3412，低序字存储在起始地址，每个字内部字节交换。仅支持4/8字节</summary>
+    /// <summary>小端字节交换。CDAB/3412，低序字存储在起始地址，每个字内部没有字节交换（相对于全倒序是交换了两次）。仅支持4/8字节</summary>
     LittleSwap = 4,
 }
 
@@ -37,8 +38,9 @@ public enum ByteOrder : Byte
     DCBA = 2,
 
     /// <summary>大端字节交换。BADC/2143，高序字存储在起始地址，每个字内部字节交换。仅支持4/8字节</summary>
+    /// <remarks>Modbus发送Float常用</remarks>
     BADC = 3,
 
-    /// <summary>小端字节交换。CDAB/3412，低序字存储在起始地址，每个字内部字节交换。仅支持4/8字节</summary>
+    /// <summary>小端字节交换。CDAB/3412，低序字存储在起始地址，每个字内部没有字节交换（相对于全倒序是交换了两次）。仅支持4/8字节</summary>
     CDAB = 4,
 }
