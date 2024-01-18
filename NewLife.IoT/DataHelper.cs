@@ -8,6 +8,74 @@ namespace NewLife.IoT;
 /// <summary>数据处理助手</summary>
 public static class DataHelper
 {
+    /// <summary>短整数转为指定字节序的字节数组，仅大小端两种</summary>
+    /// <param name="value"></param>
+    /// <param name="endian"></param>
+    /// <returns></returns>
+    public static Byte[] GetBytes(this UInt16 value, EndianType endian) => value.GetBytes(endian is EndianType.LittleEndian or EndianType.LittleSwap);
+
+    /// <summary>短整数转为指定字节序的字节数组，仅AB/BA两种</summary>
+    /// <param name="value"></param>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    public static Byte[] GetBytes(this UInt16 value, ByteOrder order) => value.GetBytes(order is ByteOrder.DCBA or ByteOrder.CDAB);
+
+    /// <summary>整数转为指定字节序的字节数组</summary>
+    /// <param name="value"></param>
+    /// <param name="endian"></param>
+    /// <returns></returns>
+    public static Byte[] GetBytes(this UInt32 value, EndianType endian)
+    {
+        var buf = value.GetBytes(endian is EndianType.LittleEndian or EndianType.LittleSwap);
+        if (endian is EndianType.BigSwap or EndianType.LittleSwap)
+        {
+#if NET40
+            var tmp = buf[0];
+            buf[0] = buf[1];
+            buf[1] = tmp;
+
+            tmp = buf[2];
+            buf[2] = buf[3];
+            buf[3] = tmp;
+#else
+            (buf[0], buf[1]) = (buf[1], buf[0]);
+            (buf[2], buf[3]) = (buf[3], buf[2]);
+#endif
+        }
+
+        return buf;
+    }
+
+    /// <summary>按字节序交换字节数组</summary>
+    /// <param name="buf"></param>
+    /// <param name="endian"></param>
+    /// <returns></returns>
+    public static Byte[] Swap(this Byte[] buf, EndianType endian)
+    {
+        var rs = new Byte[buf.Length];
+        switch (endian)
+        {
+            case EndianType.BigEndian:
+                break;
+            case EndianType.LittleEndian:
+                break;
+            case EndianType.BigSwap:
+                break;
+            case EndianType.LittleSwap:
+                break;
+            default:
+                break;
+        }
+
+        return rs;
+    }
+
+    /// <summary>整数转为指定字节序的字节数组</summary>
+    /// <param name="value"></param>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    public static Byte[] GetBytes(this UInt32 value, ByteOrder order) => GetBytes(value, (EndianType)order);
+
     /// <summary>把点位数据编码成为字节数组。常用于Modbus等协议</summary>
     /// <param name="spec">物模型</param>
     /// <param name="data">数据</param>
@@ -35,9 +103,9 @@ public static class DataHelper
                 var rs = type.GetTypeCode() switch
                 {
                     // Swap16为false表示大端
-                    TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(pt.Swap16),
+                    TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(pt.Endian),
                     // 先按照小端读取出来，如果Swap16/Swap32是大端false，则需要交换字节序
-                    TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes().Swap(!pt.Swap16, !pt.Swap32),
+                    TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(pt.Endian),
                     _ => v.ChangeType(type),
                 };
                 span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={scaling}");
