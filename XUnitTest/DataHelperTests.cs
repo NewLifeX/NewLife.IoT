@@ -61,6 +61,31 @@ public class DataHelperTests
     }
 
     [Theory]
+    [InlineData("12345678", ByteOrder.ABCD, "12345678")]
+    [InlineData("12345678", ByteOrder.DCBA, "78563412")]
+    [InlineData("12345678", ByteOrder.BADC, "34127856")]
+    [InlineData("12345678", ByteOrder.CDAB, "56781234")]
+    [InlineData("12345678", (ByteOrder)0, "12345678")]
+    public void Swap(String hex, ByteOrder order, String hex2)
+    {
+        var buf = hex.ToHex();
+        var rs = buf.Swap(order);
+        Assert.Equal(hex2, rs.ToHex());
+    }
+
+    [Fact]
+    public void Swap2()
+    {
+        var f = 12.34f;
+        var buf = BitConverter.GetBytes(f);
+        Assert.Equal("A4704541", buf.ToHex());
+
+        var d = 1234.5678d;
+        buf = BitConverter.GetBytes(d);
+        Assert.Equal("ADFA5C6D454A9340", buf.ToHex());
+    }
+
+    [Theory]
     [InlineData((Byte)0x12, "12")]
     [InlineData((Int16)0x1234, "1234")]
     [InlineData((UInt16)0x1234, "1234")]
@@ -128,14 +153,20 @@ public class DataHelperTests
     [InlineData((UInt16)0x1234, 1, 0, "1234")]
     [InlineData((Int32)0x12345678, 1, 0, "12345678")]
     [InlineData((UInt32)0x12345678, 1, 0, "12345678")]
+    [InlineData((Single)12.34, 1, 0, "A4704541")]
+    [InlineData((Double)1234.5678, 1, 0, "ADFA5C6D454A9340")]
     [InlineData((Int16)0x1234, 0.1, 40, "B478")]
     [InlineData((UInt16)0x1234, 0.1, 40, "B478")]
     [InlineData((Int32)0x12345678, 0.1, 40, "B60B5F20")]
     [InlineData((UInt32)0x12345678, 0.1, 40, "B60B5F20")]
+    [InlineData((Single)12.34, 0.1, 40, "CD4C8AC3")]
+    [InlineData((Double)1234.5678, 0.1, 40, "A803DFC2D654C740")]
     [InlineData((Int16)0x1234, 0.3, 57, "3BEF")]
     [InlineData((UInt16)0x1234, 0.3, 57, "3BEF")]
     [InlineData((Int32)0x12345678, 0.3, 57, "3CAE74BA")]
     [InlineData((UInt32)0x12345678, 0.3, 57, "3CAE74BA")]
+    [InlineData((Single)12.34, 0.3, 57, "DDDD14C3")]
+    [InlineData((Double)1234.5678, 0.3, 57, "5FFFD3A173AAAE40")]
     public void EncodeByThingModel_Scaling(Object data, Single scaling, Single constant, String hex)
     {
         _output.WriteLine($"type={data.GetType().Name} scaling={scaling} constant={constant} hex={hex}");

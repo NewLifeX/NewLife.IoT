@@ -46,35 +46,52 @@ public static class DataHelper
         return buf;
     }
 
-    /// <summary>按字节序交换字节数组</summary>
-    /// <param name="buf"></param>
-    /// <param name="endian"></param>
-    /// <returns></returns>
-    public static Byte[] Swap(this Byte[] buf, EndianType endian)
-    {
-        var rs = new Byte[buf.Length];
-        switch (endian)
-        {
-            case EndianType.BigEndian:
-                break;
-            case EndianType.LittleEndian:
-                break;
-            case EndianType.BigSwap:
-                break;
-            case EndianType.LittleSwap:
-                break;
-            default:
-                break;
-        }
-
-        return rs;
-    }
-
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
     public static Byte[] GetBytes(this UInt32 value, ByteOrder order) => GetBytes(value, (EndianType)order);
+
+    /// <summary>按字节序交换字节数组</summary>
+    /// <param name="buf"></param>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    public static Byte[] Swap(this Byte[] buf, ByteOrder order)
+    {
+        var rs = new Byte[buf.Length];
+        switch (order)
+        {
+            case ByteOrder.ABCD:
+            default:
+                for (var i = 0; i < buf.Length; i++)
+                {
+                    rs[i] = buf[i];
+                }
+                break;
+            case ByteOrder.DCBA:
+                for (var i = 0; i < buf.Length; i++)
+                {
+                    rs[i] = buf[buf.Length - i - 1];
+                }
+                break;
+            case ByteOrder.BADC:
+                for (var i = 0; i < buf.Length - 1; i += 2)
+                {
+                    rs[i] = buf[i + 1];
+                    rs[i + 1] = buf[i];
+                }
+                break;
+            case ByteOrder.CDAB:
+                for (var i = 0; i < buf.Length - 1; i += 2)
+                {
+                    rs[i] = buf[buf.Length - i - 2];
+                    rs[i + 1] = buf[buf.Length - i - 1];
+                }
+                break;
+        }
+
+        return rs;
+    }
 
     /// <summary>把点位数据编码成为字节数组。常用于Modbus等协议</summary>
     /// <param name="spec">物模型</param>
@@ -96,11 +113,10 @@ public static class DataHelper
             // 反向操作常量因子和缩放因子
             if (type.IsInt())
             {
-                var scaling = pt.Scaling != 0 ? pt.Scaling : 1;
                 var v = data.ToLong();
                 //if (pt.Constant != 0 || scaling != 1) v = (Int64)Math.Round(v * scaling + pt.Constant);
                 // 编码是反向操作，先减去常量，再除以缩放因子。为了避免精度问题，单精度范围先计算缩放因子倒数，再相乘
-                if (pt.Constant != 0 || scaling != 1) v = (Int64)Math.Round(((Double)v - pt.Constant) * (1 / scaling));
+                if (pt.Constant != 0 || pt.Scaling != 0) v = (Int64)Math.Round(((Double)v - pt.Constant) * (1 / pt.Scaling));
 
                 // 常见的2字节和4字节整型，直接转字节数组返回
                 var rs = type.GetTypeCode() switch
@@ -112,7 +128,7 @@ public static class DataHelper
                     TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(pt.Endian),
                     _ => v.ChangeType(type),
                 };
-                span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={scaling}");
+                span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={pt.Scaling}");
 
                 return rs;
             }
@@ -123,7 +139,18 @@ public static class DataHelper
 
                 return rs;
             }
-            else
+            else if (type == typeof(Single))
+            {
+                var v = (Single)data.ToDouble();
+                if (pt.Constant > 0) v -= pt.Constant;
+                if (pt.Scaling != 0) v /= pt.Scaling;
+
+                span?.AppendTag($"result={v} type={type.Name} scaling={pt.Scaling} constant={pt.Constant}");
+
+                // 按照小端读取出来，如果不是小端，则需要交换字节序
+                return BitConverter.GetBytes(v).Swap((ByteOrder)pt.Endian);
+            }
+            else if (type == typeof(Double))
             {
                 var v = data.ToDouble();
                 if (pt.Constant > 0) v -= pt.Constant;
@@ -131,7 +158,8 @@ public static class DataHelper
 
                 span?.AppendTag($"result={v} type={type.Name} scaling={pt.Scaling} constant={pt.Constant}");
 
-                return v;
+                // 按照小端读取出来，如果不是小端，则需要交换字节序
+                return BitConverter.GetBytes(v).Swap((ByteOrder)pt.Endian);
             }
         }
 
