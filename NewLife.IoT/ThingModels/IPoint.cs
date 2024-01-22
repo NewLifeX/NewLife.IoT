@@ -24,7 +24,7 @@ public interface IPoint
 public static class PointHelper
 {
     /// <summary>
-    /// 根据点位类型长度，解析字节数组为目标类型。默认小端字节序，大端需要用IOHelper.Swap提前处理
+    /// 根据点位类型长度，解析字节数组为目标类型。默认小端字节序，大端需要用Swap提前处理
     /// </summary>
     /// <param name="point">点位</param>
     /// <param name="data">字节数据</param>
@@ -52,7 +52,7 @@ public static class PointHelper
     }
 
     /// <summary>
-    /// 根据点位类型长度，把目标对象转为字节数组。默认小端字节序，大端需要对返回值用IOHelper.Swap处理
+    /// 根据点位类型长度，把目标对象转为字节数组。默认小端字节序，大端需要对返回值用Swap处理
     /// </summary>
     /// <param name="point">点位</param>
     /// <param name="value">数据对象</param>

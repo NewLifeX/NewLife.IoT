@@ -58,5 +58,12 @@ public class PointHelperTests
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
+
+        // 先倒序转为小端，再转为目标字节序
+        buf = hex.ToHex();
+        if (data.GetType().IsInt()) buf = buf.Swap(ByteOrder.DCBA);
+        buf = buf.Swap(order);
+        var v = point.Convert(buf);
+        Assert.Equal(data, v);
     }
 }

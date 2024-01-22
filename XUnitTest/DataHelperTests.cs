@@ -25,6 +25,9 @@ public class DataHelperTests
     {
         var buf = value.GetBytes(endian);
         Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToUInt16(endian);
+        Assert.Equal(value, rs);
     }
 
     [Theory]
@@ -36,6 +39,9 @@ public class DataHelperTests
     {
         var buf = value.GetBytes(order);
         Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToUInt16(order);
+        Assert.Equal(value, rs);
     }
 
     [Theory]
@@ -47,6 +53,9 @@ public class DataHelperTests
     {
         var buf = value.GetBytes(endian);
         Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToUInt32(endian);
+        Assert.Equal(value, rs);
     }
 
     [Theory]
@@ -58,6 +67,9 @@ public class DataHelperTests
     {
         var buf = value.GetBytes(order);
         Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToUInt32(order);
+        Assert.Equal(value, rs);
     }
 
     [Theory]
@@ -119,6 +131,9 @@ public class DataHelperTests
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
+
+        var v = spec.DecodeByThingModel(hex.ToHex(), point);
+        Assert.Equal(data, v);
     }
 
     [Theory]
