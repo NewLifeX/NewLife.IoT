@@ -28,7 +28,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>新增异步驱动接口IAsyncDriver</PackageReleaseNotes>
+    <PackageReleaseNotes>新增异步驱动接口IAsyncDriver；增加大小端字节序EndianType和ByteOrder</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -50,10 +50,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.6.2024.0101" />
+    <PackageReference Include="NewLife.Core" Version="10.7.2024.0201" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.6.2024.0101-net40" />
+    <PackageReference Include="NewLife.Core" Version="10.7.2024.0201-net40" />
   </ItemGroup>
 
   <ItemGroup>
