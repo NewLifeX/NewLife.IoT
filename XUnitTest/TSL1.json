@@ -1,7 +1,7 @@
 {
   "schema": "http://iot.feifan.link/schema.json",
   "profile": {
-    "version": "1.6",
+    "version": "2.1",
     "productKey": "EdgeGateway"
   },
   "properties": [
@@ -416,15 +416,17 @@
   "extendedProperties": [
     {
       "identifier": "memory_usage",
-      "address": "4x100"
+      "address": "4x100",
+      "order": "DCBA"
     },
     {
       "identifier": "cpu_usage",
-      "address": "4x101"
+      "address": "4x101",
+      "order": "DCBA"
     },
     {
       "identifier": "status",
-      "eventMode": 1
+      "eventMode": "Client"
     }
   ]
 }

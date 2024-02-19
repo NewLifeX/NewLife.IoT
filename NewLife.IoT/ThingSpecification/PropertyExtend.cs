@@ -26,7 +26,7 @@ public class PropertyExtend : IDictionarySource
     //public Boolean Swap32 { get; set; }
 
     /// <summary>字节序</summary>
-    public EndianType Endian { get; set; }
+    public ByteOrder Order { get; set; }
 
     /// <summary>缩放因子。不能是0，默认1，n*scaling+constant</summary>
     public Single Scaling { get; set; }
@@ -58,7 +58,7 @@ public class PropertyExtend : IDictionarySource
 
     /// <summary>字节序。另一种表达形式</summary>
     [XmlIgnore, IgnoreDataMember]
-    public ByteOrder Order { get => (ByteOrder)Endian; set => Endian = (EndianType)value; }
+    public EndianType Endian { get => (EndianType)Order; set => Order = (ByteOrder)value; }
     #endregion
 
     #region 方法

@@ -83,6 +83,7 @@ public class ThingSpec
             Indented = true,
             IndentedLength = 2,
             CamelCase = true,
+            EnumString = true,
         };
         jw.Write(dic);
 

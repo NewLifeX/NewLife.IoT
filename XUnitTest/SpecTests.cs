@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using NewLife.IoT;
+using System.Text.Json.Serialization;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Serialization;
 using Xunit;
@@ -12,7 +10,7 @@ namespace XUnitTest;
 public class SpecTests
 {
     [Fact]
-    public void Test1()
+    public void Decode()
     {
         var file = "TSL1.json";
         var txt = File.ReadAllText(file.GetFullPath());
@@ -96,14 +94,14 @@ public class SpecTests
     }
 
     [Fact]
-    public void Test2()
+    public void ToJsonEntity()
     {
         var file = "TSL1.json";
         var txt = File.ReadAllText(file.GetFullPath());
 
         var thing = txt.ToJsonEntity<ThingSpec>();
         Assert.Equal("http://iot.feifan.link/schema.json", thing.Schema);
-        Assert.Equal("1.6", thing.Profile.Version);
+        Assert.Equal("2.1", thing.Profile.Version);
         Assert.Equal("EdgeGateway", thing.Profile.ProductKey);
 
         var pis = thing.Properties;
@@ -163,7 +161,7 @@ public class SpecTests
     }
 
     [Fact]
-    public void Test3()
+    public void FromJson()
     {
         var file = "TSL1.json";
         var txt = File.ReadAllText(file.GetFullPath());
@@ -177,10 +175,19 @@ public class SpecTests
         var txt2 = thing.ToJson();
 
         Assert.Equal(txt, txt2);
+
+        var opt = SystemJson.GetDefaultOptions();
+        opt.Converters.Add(new JsonStringEnumConverter());
+        opt.WriteIndented = true;
+        opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+        var txt3 = JsonSerializer.Serialize(thing, opt);
+        //Assert.Equal(txt, txt3);
+        Assert.Contains("DCBA", txt3);
     }
 
     [Fact]
-    public void Test4()
+    public void ToJson()
     {
         var file = "TSL1.json";
         var txt = File.ReadAllText(file.GetFullPath());
@@ -192,6 +199,7 @@ public class SpecTests
         //};
         var opt = SystemJson.GetDefaultOptions();
         //opt.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+        opt.Converters.Add(new JsonStringEnumConverter());
 
         var thing = JsonSerializer.Deserialize<ThingSpec>(txt, opt);
 
@@ -199,6 +207,8 @@ public class SpecTests
         Assert.Equal(txt, txt2);
 
         var sys = new SystemJson();
+        opt = sys.Options;
+        opt.Converters.Add(new JsonStringEnumConverter());
 
         var thing2 = sys.Read(txt, typeof(ThingSpec)) as ThingSpec;
         Assert.NotNull(thing2);

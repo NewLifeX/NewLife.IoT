@@ -176,6 +176,45 @@ public class DataHelperTests
     }
 
     [Theory]
+    [InlineData((Byte)0x12, ByteOrder.ABCD, "12")]
+    [InlineData((Int16)0x1234, ByteOrder.ABCD, "1234")]
+    [InlineData((UInt16)0x1234, ByteOrder.ABCD, "1234")]
+    [InlineData((Int32)0x12345678, ByteOrder.ABCD, "12345678")]
+    [InlineData((UInt32)0x12345678, ByteOrder.ABCD, "12345678")]
+    [InlineData((Byte)0x12, ByteOrder.DCBA, "12")]
+    [InlineData((Int16)0x1234, ByteOrder.DCBA, "3412")]
+    [InlineData((UInt16)0x1234, ByteOrder.DCBA, "3412")]
+    [InlineData((Int32)0x12345678, ByteOrder.DCBA, "78563412")]
+    [InlineData((UInt32)0x12345678, ByteOrder.DCBA, "78563412")]
+    [InlineData((Byte)0x12, ByteOrder.BADC, "12")]
+    [InlineData((Int16)0x1234, ByteOrder.BADC, "3412")]
+    [InlineData((UInt16)0x1234, ByteOrder.BADC, "3412")]
+    [InlineData((Int32)0x12345678, ByteOrder.BADC, "34127856")]
+    [InlineData((UInt32)0x12345678, ByteOrder.BADC, "34127856")]
+    [InlineData((Byte)0x12, ByteOrder.CDAB, "12")]
+    [InlineData((Int16)0x1234, ByteOrder.CDAB, "1234")]
+    [InlineData((UInt16)0x1234, ByteOrder.CDAB, "1234")]
+    [InlineData((Int32)0x12345678, ByteOrder.CDAB, "56781234")]
+    [InlineData((UInt32)0x12345678, ByteOrder.CDAB, "56781234")]
+    public void EncodeByThingModel_Order(Object data, ByteOrder order, String hex)
+    {
+        _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} order={order}");
+
+        var property = new PropertyExtend { Id = "test", Order = order };
+        var spec = new ThingSpec
+        {
+            ExtendedProperties = new[] { property }
+        };
+
+        var point = new PointModel { Name = "test", Type = data.GetType().Name };
+
+        var rs = spec.EncodeByThingModel(data, point);
+        var buf = rs as Byte[];
+        Assert.NotNull(buf);
+        Assert.Equal(hex, buf.ToHex());
+    }
+
+    [Theory]
     [InlineData((Int16)0x1234, 1, 0, "1234")]
     [InlineData((UInt16)0x1234, 1, 0, "1234")]
     [InlineData((Int32)0x12345678, 1, 0, "12345678")]
