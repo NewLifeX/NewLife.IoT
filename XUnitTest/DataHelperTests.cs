@@ -73,6 +73,66 @@ public class DataHelperTests
     }
 
     [Theory]
+    [InlineData(1234.5678, EndianType.BigEndian, "449A522B")]
+    [InlineData(1234.5678, EndianType.LittleEndian, "2B529A44")]
+    [InlineData(1234.5678, EndianType.BigSwap, "9A442B52")]
+    [InlineData(1234.5678, EndianType.LittleSwap, "522B449A")]
+    [InlineData(1.2, EndianType.BigEndian, "3F99999A")]
+    [InlineData(-1.5, EndianType.BigEndian, "BFC00000")]
+    public void GetBytesSingle(Single value, EndianType endian, String hex)
+    {
+        var buf = value.GetBytes(endian);
+        Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToSingle(endian);
+        Assert.Equal(value, rs);
+    }
+
+    [Theory]
+    [InlineData(1234.5678, ByteOrder.ABCD, "449A522B")]
+    [InlineData(1234.5678, ByteOrder.DCBA, "2B529A44")]
+    [InlineData(1234.5678, ByteOrder.BADC, "9A442B52")]
+    [InlineData(1234.5678, ByteOrder.CDAB, "522B449A")]
+    [InlineData(1.2, ByteOrder.ABCD, "3F99999A")]
+    [InlineData(-1.5, ByteOrder.ABCD, "BFC00000")]
+    public void GetBytesSingle_Order(Single value, ByteOrder order, String hex)
+    {
+        var buf = value.GetBytes(order);
+        Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToSingle(order);
+        Assert.Equal(value, rs);
+    }
+
+    [Theory]
+    [InlineData(-12.345678, EndianType.BigEndian, "C028B0FCB4F1E4B4")]
+    [InlineData(-12.345678, EndianType.LittleEndian, "B4E4F1B4FCB028C0")]
+    [InlineData(-12.345678, EndianType.BigSwap, "28C0FCB0F1B4B4E4")]
+    [InlineData(-12.345678, EndianType.LittleSwap, "E4B4B4F1B0FCC028")]
+    public void GetBytesDouble(Double value, EndianType endian, String hex)
+    {
+        var buf = value.GetBytes(endian);
+        Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToDouble(endian);
+        Assert.Equal(value, rs);
+    }
+
+    [Theory]
+    [InlineData(-12.345678, ByteOrder.ABCD, "C028B0FCB4F1E4B4")]
+    [InlineData(-12.345678, ByteOrder.DCBA, "B4E4F1B4FCB028C0")]
+    [InlineData(-12.345678, ByteOrder.BADC, "28C0FCB0F1B4B4E4")]
+    [InlineData(-12.345678, ByteOrder.CDAB, "E4B4B4F1B0FCC028")]
+    public void GetBytesDouble_Order(Double value, ByteOrder order, String hex)
+    {
+        var buf = value.GetBytes(order);
+        Assert.Equal(hex, buf.ToHex());
+
+        var rs = hex.ToHex().ToDouble(order);
+        Assert.Equal(value, rs);
+    }
+
+    [Theory]
     [InlineData("12345678", ByteOrder.ABCD, "12345678")]
     [InlineData("12345678", ByteOrder.DCBA, "78563412")]
     [InlineData("12345678", ByteOrder.BADC, "34127856")]
@@ -119,10 +179,10 @@ public class DataHelperTests
     {
         _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex}");
 
-        var property = new PropertyExtend { Id = "test" };
+        var property = new PropertyExtend { Id = "test", Order = ByteOrder.ABCD };
         var spec = new ThingSpec
         {
-            ExtendedProperties = new[] { property }
+            ExtendedProperties = [property]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
@@ -164,7 +224,7 @@ public class DataHelperTests
         var property = new PropertyExtend { Id = "test", Endian = endian };
         var spec = new ThingSpec
         {
-            ExtendedProperties = new[] { property }
+            ExtendedProperties = [property]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
@@ -203,7 +263,7 @@ public class DataHelperTests
         var property = new PropertyExtend { Id = "test", Order = order };
         var spec = new ThingSpec
         {
-            ExtendedProperties = new[] { property }
+            ExtendedProperties = [property]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
@@ -219,28 +279,42 @@ public class DataHelperTests
     [InlineData((UInt16)0x1234, 1, 0, "1234")]
     [InlineData((Int32)0x12345678, 1, 0, "12345678")]
     [InlineData((UInt32)0x12345678, 1, 0, "12345678")]
-    [InlineData((Single)12.34, 1, 0, "A4704541")]
-    [InlineData((Double)1234.5678, 1, 0, "ADFA5C6D454A9340")]
+    [InlineData((Single)1.2, 1, 0, "3F99999A")]
+    [InlineData((Double)(-12.345678), 1, 0, "C028B0FCB4F1E4B4")]
     [InlineData((Int16)0x1234, 0.1, 40, "B478")]
     [InlineData((UInt16)0x1234, 0.1, 40, "B478")]
     [InlineData((Int32)0x12345678, 0.1, 40, "B60B5F20")]
     [InlineData((UInt32)0x12345678, 0.1, 40, "B60B5F20")]
-    [InlineData((Single)12.34, 0.1, 40, "CD4C8AC3")]
-    [InlineData((Double)1234.5678, 0.1, 40, "A803DFC2D654C740")]
+    [InlineData((Single)1.2, 0.1, 40, "C3C20000")]
+    [InlineData((Double)(-12.345678), 0.1, 40, "C0805BA7782EE1DE")]
     [InlineData((Int16)0x1234, 0.3, 57, "3BEF")]
     [InlineData((UInt16)0x1234, 0.3, 57, "3BEF")]
     [InlineData((Int32)0x12345678, 0.3, 57, "3CAE74BA")]
     [InlineData((UInt32)0x12345678, 0.3, 57, "3CAE74BA")]
-    [InlineData((Single)12.34, 0.3, 57, "DDDD14C3")]
-    [InlineData((Double)1234.5678, 0.3, 57, "5FFFD3A173AAAE40")]
+    [InlineData((Single)1.2, 0.3, 57, "C339FFFF")]
+    [InlineData((Double)(-12.345678), 0.3, 57, "C06CE4DF3D19D027")]
     public void EncodeByThingModel_Scaling(Object data, Single scaling, Single constant, String hex)
     {
         _output.WriteLine($"type={data.GetType().Name} scaling={scaling} constant={constant} hex={hex}");
 
-        var property = new PropertyExtend { Id = "test", Scaling = scaling, Constant = constant };
+        var order = ByteOrder.ABCD;
+        if (data is Int16 n16)
+            _output.WriteLine(n16.GetBytes(order).ToHex());
+        else if (data is UInt16 u16)
+            _output.WriteLine(u16.GetBytes(order).ToHex());
+        else if (data is Int32 n32)
+            _output.WriteLine(n32.GetBytes(order).ToHex());
+        else if (data is UInt32 u32)
+            _output.WriteLine(u32.GetBytes(order).ToHex());
+        else if (data is Single f)
+            _output.WriteLine(f.GetBytes(order).ToHex());
+        else if (data is Double d)
+            _output.WriteLine(d.GetBytes(order).ToHex());
+
+        var property = new PropertyExtend { Id = "test", Scaling = scaling, Constant = constant, Order = ByteOrder.ABCD };
         var spec = new ThingSpec
         {
-            ExtendedProperties = new[] { property }
+            ExtendedProperties = [property]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
