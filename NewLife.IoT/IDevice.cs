@@ -12,7 +12,7 @@ public interface IDevice
 {
     #region 属性
     /// <summary>设备编码。在平台中唯一标识设备</summary>
-    public String Code { get; set; }
+    String Code { get; set; }
 
     /// <summary>属性集合</summary>
     IDictionary<String, Object?> Properties { get; }
