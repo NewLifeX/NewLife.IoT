@@ -236,9 +236,8 @@ public static class DataHelper
     /// <returns></returns>
     public static Object? EncodeByThingModel(this ThingSpec spec, Object data, IPoint point)
     {
-        // 仅支持数字类型
         var type = point.GetNetType();
-        if (type == null || !type.IsNumber()) return data;
+        if (type == null) return data;
 
         using var span = DefaultTracer.Instance?.NewSpan(nameof(EncodeByThingModel), $"name={point.Name} data={data} type={type.Name} rawType={point.Type}");
         try
