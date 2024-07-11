@@ -240,6 +240,7 @@ public static class TypeHelper
         }
     }
 
+#if NET40
     /// <summary>
     /// 指定类型是否数字类型。包括整数、小数、字节、字符等
     /// </summary>
@@ -262,4 +263,5 @@ public static class TypeHelper
             _ => false,
         };
     }
+#endif
 }
