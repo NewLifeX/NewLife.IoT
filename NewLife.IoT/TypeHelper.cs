@@ -239,27 +239,4 @@ public static class TypeHelper
             return _iotTypes = dic;
         }
     }
-
-    /// <summary>
-    /// 指定类型是否数字类型。包括整数、小数、字节、字符等
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public static Boolean IsNumber(this Type type)
-    {
-        return type.GetTypeCode() switch
-        {
-            TypeCode.Boolean => false,
-            TypeCode.Byte or TypeCode.Char => true,
-            TypeCode.DateTime or TypeCode.DBNull => false,
-            TypeCode.Decimal or TypeCode.Double => true,
-            TypeCode.Empty => false,
-            TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 => true,
-            TypeCode.Object => false,
-            TypeCode.SByte or TypeCode.Single => true,
-            TypeCode.String => false,
-            TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 => true,
-            _ => false,
-        };
-    }
 }

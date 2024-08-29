@@ -80,11 +80,13 @@ public class ThingSpec
 
         var jw = new JsonWriter
         {
-            Indented = true,
+            //Indented = true,
             IndentedLength = 2,
-            CamelCase = true,
+            //CamelCase = true,
             EnumString = true,
         };
+        jw.Options.WriteIndented = true;
+        jw.Options.CamelCase = true;
         jw.Write(dic);
 
         return jw.GetString();
