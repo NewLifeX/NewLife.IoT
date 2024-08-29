@@ -50,10 +50,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.10.2024.0701" />
+    <PackageReference Include="NewLife.Core" Version="10.10.2024.803" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.10.2024.0701-net40" />
+    <PackageReference Include="NewLife.Core" Version="10.10.2024.801-net40" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Fuji" Version="1.0.2022.1015-beta0123" />
+    <PackageReference Include="NewLife.Fuji" Version="1.0.2023.927-beta1809" />
     <PackageReference Include="NewLife.Melsec" Version="1.2.2024.517" />
     <PackageReference Include="NewLife.NetPing" Version="1.1.2024.217" />
     <PackageReference Include="NewLife.Omron" Version="1.0.2023.511" />
