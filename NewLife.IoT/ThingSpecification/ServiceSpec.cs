@@ -92,7 +92,7 @@ public class ServiceSpec : SpecBase
 
         var ps = new PropertySpec
         {
-            Id = member.Name,
+            Id = member.Name!,
             DataType = new TypeSpec { Type = member.ParameterType.Name }
         };
 

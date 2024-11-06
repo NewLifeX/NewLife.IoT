@@ -72,6 +72,9 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
         if (rs != null)
         {
             Received?.Invoke(this, new ReceivedEventArgs { Packet = rs });
+
+            // 回收内存池
+            rs.TryDispose();
         }
     }
 
@@ -102,7 +105,7 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
     /// <param name="request">待发送数据</param>
     /// <param name="minLength">等待响应数据的最小长度，默认1</param>
     /// <returns></returns>
-    public virtual Packet Invoke(Packet? request, Int32 minLength)
+    public virtual IPacket Invoke(IPacket? request, Int32 minLength)
     {
         Open();
 
@@ -111,10 +114,10 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
             // 清空缓冲区
             _port.DiscardInBuffer();
 
-            if (request.Next == null)
-                _port.Write(request.Data, request.Offset, request.Count);
+            if (request.Next == null && request is ArrayPacket ap)
+                _port.Write(ap.Buffer, ap.Offset, ap.Length);
             else
-                _port.Write(request.ToArray(), 0, request.Total);
+                _port.Write(request.ReadBytes(), 0, request.Total);
 
             if (ByteTimeout > 10) Thread.Sleep(ByteTimeout);
         }
@@ -122,10 +125,11 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
         // 串口速度较慢，等待收完数据
         WaitMore(_port, minLength);
 
-        var buf = new Byte[BufferSize];
-        var rs = _port.Read(buf, 0, buf.Length);
+        var p = new OwnerPacket(BufferSize);
+        var rs = _port.Read(p.Buffer, p.Offset, p.Length);
+        p.Resize(rs);
 
-        return new Packet(buf, 0, rs);
+        return p;
     }
 
     private void WaitMore(SerialPort sp, Int32 minLength)

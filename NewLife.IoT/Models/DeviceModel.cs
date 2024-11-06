@@ -27,9 +27,9 @@ public class DeviceModel : IDeviceInfo
     /// <summary>设备参数。Xml/Json格式配置，根据协议驱动来解析</summary>
     public String? Parameter { get; set; }
 
+    /// <summary>是否启用</summary>
+    public Boolean Enable { get; set; }
+
     /// <summary>更新时间。用于判断数据变化</summary>
     public DateTime UpdateTime { get; set; }
-
-    /// <summary>是否启用 true 启用 false 停用</summary>
-    public Boolean Enable { get; set; }
 }

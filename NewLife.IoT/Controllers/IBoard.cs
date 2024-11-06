@@ -1,4 +1,6 @@
-﻿namespace NewLife.IoT.Controllers;
+﻿using NewLife.Reflection;
+
+namespace NewLife.IoT.Controllers;
 
 /// <summary>板卡接口。约定板卡所具备的一些基础功能</summary>
 /// <remarks>
@@ -55,6 +57,18 @@ public class Board : IBoard
             Baudrate = baudrate,
         };
         return sp;
+#else
+        var type = "DefaultSerialPort".GetTypeEx();
+        if (type != null)
+        {
+            if (type.CreateInstance() is ISerialPort sp)
+            {
+                sp.PortName = portName;
+                sp.Baudrate = baudrate;
+
+                return sp;
+            }
+        }
 #endif
 
         throw new NotImplementedException();

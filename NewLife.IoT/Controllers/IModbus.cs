@@ -11,28 +11,28 @@ public interface IModbus
     /// <param name="address">地址。例如0x0002</param>
     /// <param name="count">线圈数量。一般要求8的倍数</param>
     /// <returns>线圈状态字节数组</returns>
-    Packet ReadCoil(Byte host, UInt16 address, UInt16 count);
+    IPacket ReadCoil(Byte host, UInt16 address, UInt16 count);
 
     /// <summary>读离散量输入，0x02</summary>
     /// <param name="host">主机。一般是1</param>
     /// <param name="address">地址。例如0x0002</param>
     /// <param name="count">输入数量。一般要求8的倍数</param>
     /// <returns>输入状态字节数组</returns>
-    Packet ReadDiscrete(Byte host, UInt16 address, UInt16 count);
+    IPacket ReadDiscrete(Byte host, UInt16 address, UInt16 count);
 
     /// <summary>读取保持寄存器，0x03</summary>
     /// <param name="host">主机。一般是1</param>
     /// <param name="address">地址。例如0x0002</param>
     /// <param name="count">寄存器数量。每个寄存器2个字节</param>
     /// <returns>寄存器值数组</returns>
-    Packet ReadRegister(Byte host, UInt16 address, UInt16 count);
+    IPacket ReadRegister(Byte host, UInt16 address, UInt16 count);
 
     /// <summary>读取输入寄存器，0x04</summary>
     /// <param name="host">主机。一般是1</param>
     /// <param name="address">地址。例如0x0002</param>
     /// <param name="count">输入寄存器数量。每个寄存器2个字节</param>
     /// <returns>输入寄存器值数组</returns>
-    Packet ReadInput(Byte host, UInt16 address, UInt16 count);
+    IPacket ReadInput(Byte host, UInt16 address, UInt16 count);
     #endregion
 
     #region 写入

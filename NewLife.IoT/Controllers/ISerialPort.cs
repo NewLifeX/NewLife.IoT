@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using NewLife.Data;
+﻿using NewLife.Data;
 using NewLife.Net;
 
 namespace NewLife.IoT.Controllers;
@@ -42,5 +41,5 @@ public interface ISerialPort
     /// <param name="request">待发送数据</param>
     /// <param name="minLength">等待响应数据的最小长度，默认1</param>
     /// <returns></returns>
-    Packet Invoke(Packet? request, Int32 minLength = 1);
+    IPacket Invoke(IPacket? request, Int32 minLength = 1);
 }

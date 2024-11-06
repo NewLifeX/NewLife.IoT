@@ -100,7 +100,7 @@ public static class ServiceHandlerHelper
             if (result is ServiceReplyModel reply)
             {
                 reply.Id = model.Id;
-                if (reply.Status == ServiceStatus.就绪 || reply.Status == ServiceStatus.处理中)
+                if (reply.Status is ServiceStatus.就绪 or ServiceStatus.处理中)
                     reply.Status = ServiceStatus.已完成;
 
                 return reply;
@@ -131,9 +131,11 @@ public static class ServiceHandlerHelper
     private static async Task<Object?> OnService(IServiceHandler client, ServiceModel model)
     {
         if (!client.Services.TryGetValue(model.Name, out var d))
+        {
             // 通用方法
             if (!client.Services.TryGetValue("*", out d))
                 throw new ApiException(400, $"找不到服务[{model.Name}]");
+        }
 
         if (d is Func<String?, String?> func) return func(model.InputData);
         if (d is Func<ServiceModel, ServiceReplyModel> func2) return func2(model);

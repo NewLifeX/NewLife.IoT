@@ -21,9 +21,9 @@ public class ServiceModel
     /// <summary>设备编码。服务调用请求发送给网关设备时，该参数指定子设备编码</summary>
     public String? DeviceCode { get; set; }
 
-    /// <summary>链路追踪</summary>
-    public String? TraceId { get; set; }
-
     /// <summary>服务类型</summary>
     public String? Type { get; set; }
+
+    /// <summary>链路追踪</summary>
+    public String? TraceId { get; set; }
 }
