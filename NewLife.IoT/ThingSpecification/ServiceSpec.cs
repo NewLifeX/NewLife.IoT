@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -15,12 +18,18 @@ public class ServiceSpec : SpecBase
     /// <summary>
     /// 调用类型。sync/async
     /// </summary>
+#if NETCOREAPP
+    [JsonPropertyName("callType")]
+#endif
     [DataMember(Name = "callType")]
     public String? Type { get; set; }
 
     /// <summary>
     /// 描述
     /// </summary>
+#if NETCOREAPP
+    [JsonPropertyName("desc")]
+#endif
     [DataMember(Name = "desc")]
     public String? Description { get; set; }
 

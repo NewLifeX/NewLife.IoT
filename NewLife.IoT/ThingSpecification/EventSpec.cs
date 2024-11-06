@@ -1,4 +1,7 @@
 ﻿using System.Runtime.Serialization;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -19,7 +22,10 @@ public class EventSpec : SpecBase
     /// <summary>
     /// 描述
     /// </summary>
-    [DataMember(Name="desc")]
+#if NETCOREAPP
+    [JsonPropertyName("desc")]
+#endif
+    [DataMember(Name = "desc")]
     public String? Description { get; set; }
 
     /// <summary>

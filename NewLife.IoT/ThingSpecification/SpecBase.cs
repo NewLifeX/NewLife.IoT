@@ -1,4 +1,7 @@
 ﻿using System.Runtime.Serialization;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -11,6 +14,9 @@ public abstract class SpecBase
     /// <summary>
     /// 唯一标识
     /// </summary>
+#if NETCOREAPP
+    [JsonPropertyName("identifier")]
+#endif
     [DataMember(Name = "identifier")]
     public String Id { get; set; } = null!;
 

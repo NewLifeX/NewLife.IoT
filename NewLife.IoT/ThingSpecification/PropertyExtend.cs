@@ -2,6 +2,9 @@
 using System.Xml.Serialization;
 using NewLife.Collections;
 using NewLife.IoT.ThingModels;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -13,6 +16,9 @@ public class PropertyExtend : IDictionarySource
 {
     #region 属性
     /// <summary>唯一标识</summary>
+#if NETCOREAPP
+    [JsonPropertyName("identifier")]
+#endif
     [DataMember(Name = "identifier")]
     public String Id { get; set; } = null!;
 
