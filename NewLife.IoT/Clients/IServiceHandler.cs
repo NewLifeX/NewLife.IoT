@@ -96,7 +96,7 @@ public static class ServiceHandlerHelper
         var rs = new ServiceReplyModel { Id = model.Id, Status = ServiceStatus.已完成 };
         try
         {
-            var result = await OnService(client, model);
+            var result = await OnService(client, model).ConfigureAwait(false);
             if (result is ServiceReplyModel reply)
             {
                 reply.Id = model.Id;
@@ -140,8 +140,8 @@ public static class ServiceHandlerHelper
         if (d is Func<String?, String?> func) return func(model.InputData);
         if (d is Func<ServiceModel, ServiceReplyModel> func2) return func2(model);
 
-        if (d is Func<String?, Task<String?>> func3) return await func3(model.InputData);
-        if (d is Func<ServiceModel, Task<ServiceReplyModel>> func4) return await func4(model);
+        if (d is Func<String?, Task<String?>> func3) return await func3(model.InputData).ConfigureAwait(false);
+        if (d is Func<ServiceModel, Task<ServiceReplyModel>> func4) return await func4(model).ConfigureAwait(false);
 
         return null;
     }
