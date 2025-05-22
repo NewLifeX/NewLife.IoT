@@ -7,7 +7,7 @@ namespace NewLife.IoT.Controllers;
 /// <remarks>
 /// 基础串口类SerialPort的接口，方便模拟串口，以及使用其它串口类。
 /// </remarks>
-public interface ISerialPort
+public interface ISerialPort : IDisposable
 {
     /// <summary>串口名</summary>
     String PortName { get; set; }
@@ -23,6 +23,9 @@ public interface ISerialPort
 
     /// <summary>打开</summary>
     void Open();
+
+    /// <summary>关闭</summary>
+    void Close();
 
     /// <summary>发送数据</summary>
     /// <param name="buffer">待发送数据</param>

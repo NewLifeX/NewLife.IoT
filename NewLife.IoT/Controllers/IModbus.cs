@@ -1,7 +1,7 @@
 ﻿namespace NewLife.IoT.Controllers;
 
 /// <summary>Modbus操作接口</summary>
-public interface IModbus
+public interface IModbus : IDisposable
 {
     #region 读取
     /// <summary>读取线圈，0x01</summary>
