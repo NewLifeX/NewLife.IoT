@@ -10,6 +10,7 @@ namespace NewLife.IoT.Controllers;
 /// <summary>默认串口实现</summary>
 public class DefaultSerialPort : DisposeBase, ISerialPort
 {
+    #region 属性
     /// <summary>串口名</summary>
     public String PortName { get; set; } = null!;
 
@@ -31,6 +32,7 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
     private SerialPort? _port;
     /// <summary>串口对象</summary>
     public Object Port => _port ??= new(PortName, Baudrate) { ReadTimeout = Timeout, WriteTimeout = Timeout };
+    #endregion
 
     /// <summary>销毁</summary>
     /// <param name="disposing"></param>
