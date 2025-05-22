@@ -31,7 +31,9 @@ public class FileOutputPort(String fileName) : DisposeBase, IOutputPort
         _fs.TryDispose();
     }
 
-    private FileStream GetFile() => _fs ??= new FileStream(FileName.GetFullPath(), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+    /// <summary>获取文件流</summary>
+    /// <returns></returns>
+    protected virtual FileStream GetFile() => _fs ??= new FileStream(FileName.GetFullPath(), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
     /// <summary>读取开关值</summary>
     /// <returns></returns>
