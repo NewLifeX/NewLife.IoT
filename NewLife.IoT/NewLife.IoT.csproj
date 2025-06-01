@@ -30,7 +30,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>使用IPacket</PackageReleaseNotes>
+    <PackageReleaseNotes>新增IRelayController继电器控制器</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -52,7 +52,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="11.5.2025.501" />
+    <PackageReference Include="NewLife.Core" Version="11.5.2025.601" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
     <PackageReference Include="NewLife.Core" Version="10.10.2024.801-net40" />
