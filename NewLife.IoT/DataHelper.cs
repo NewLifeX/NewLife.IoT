@@ -315,7 +315,13 @@ public static class DataHelper
     public static Object? DecodeByThingModel(this ThingSpec spec, Byte[] data, IPoint point)
     {
         var type = point.GetNetType();
-        if (type == null) return data;
+        if (type == null)
+        {
+            var pi = spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            type = TypeHelper.GetNetType(pi?.DataType?.Type);
+
+            if (type == null) return data;
+        }
         if (type == typeof(Byte[]) || !type.IsNumber()) return data;
 
         using var span = DefaultTracer.Instance?.NewSpan(nameof(DecodeByThingModel), $"name={point.Name} data={data.ToHex()} type={type.Name} rawType={point.Type}");
@@ -345,15 +351,33 @@ public static class DataHelper
                 }
                 else if (type == typeof(Single))
                 {
-                    var rs = data.ToSingle(pt.Endian);
-                    if (pt.Constant != 0 || pt.Scaling != 0) rs = (Single)Math.Round(rs * pt.Scaling + pt.Constant);
-                    return rs;
+                    // 如果未指定字节序，且使用了缩放因子，则先转换成大端整数。常见Modbus寄存器保存浮点数
+                    if (pt.Endian == 0 && (pt.Constant != 0 || pt.Scaling != 0))
+                    {
+                        var rs = data.ToUInt16(EndianType.BigEndian);
+                        return rs * pt.Scaling + pt.Constant;
+                    }
+                    else
+                    {
+                        var rs = data.ToSingle(pt.Endian);
+                        if (pt.Constant != 0 || pt.Scaling != 0) rs = (Single)Math.Round(rs * pt.Scaling + pt.Constant);
+                        return rs;
+                    }
                 }
                 else if (type == typeof(Double))
                 {
-                    var rs = data.ToDouble(pt.Endian);
-                    if (pt.Constant != 0 || pt.Scaling != 0) rs = Math.Round(rs * pt.Scaling + pt.Constant);
-                    return rs;
+                    // 如果未指定字节序，且使用了缩放因子，则先转换成大端整数。常见Modbus寄存器保存浮点数
+                    if (pt.Endian == 0 && (pt.Constant != 0 || pt.Scaling != 0))
+                    {
+                        var rs = data.ToUInt32(EndianType.BigEndian);
+                        return (Double)(rs * pt.Scaling + pt.Constant);
+                    }
+                    else
+                    {
+                        var rs = data.ToDouble(pt.Endian);
+                        if (pt.Constant != 0 || pt.Scaling != 0) rs = Math.Round(rs * pt.Scaling + pt.Constant);
+                        return rs;
+                    }
                 }
             }
 
@@ -366,5 +390,12 @@ public static class DataHelper
             //return null;
         }
     }
+
+    /// <summary>借助物模型解析数值</summary>
+    /// <param name="spec">物模型</param>
+    /// <param name="data">数据</param>
+    /// <param name="name">点位名称</param>
+    /// <returns></returns>
+    public static Object? DecodeByThingModel(this ThingSpec spec, Byte[] data, String name) => DecodeByThingModel(spec, data, new PointModel { Name = name });
     #endregion
 }

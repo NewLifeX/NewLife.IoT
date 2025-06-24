@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using NewLife;
@@ -323,5 +324,29 @@ public class DataHelperTests
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
+    }
+
+    [Fact]
+    public void DecodeByThingModel()
+    {
+        var hex = "02-84-02-97-02-84";
+        var buf = hex.ToHex();
+
+        var humi = buf.ToUInt16(0, false) / 1000.0;
+        var temp = buf.ToUInt16(2, false) / 10.0 - 40;
+
+        var spec = new ThingSpec();
+        spec.Properties = [new PropertySpec { Id = "temp", DataType = new TypeSpec { Type = "float" } }];
+        spec.ExtendedProperties = [
+            new PropertyExtend { Id = "humi", Scaling = 0.001f, Constant = 0 },
+            new PropertyExtend { Id = "temp", Scaling = 0.1f, Constant = -40 }
+            ];
+
+        var point = new PointModel { Name = "humi", Type = "float" };
+        var h = spec.DecodeByThingModel(buf, point);
+        Assert.Equal(Math.Round(humi, 4), Math.Round((Single)h, 4));
+
+        var t = spec.DecodeByThingModel(buf.Skip(2).ToArray(), "temp");
+        Assert.Equal(Math.Round(temp, 4), Math.Round((Single)t, 4));
     }
 }
