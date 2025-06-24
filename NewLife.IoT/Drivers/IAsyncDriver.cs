@@ -40,14 +40,16 @@ public interface IAsyncDriver
     /// </summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter);
+    Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
     /// </summary>
     /// <param name="node"></param>
-    Task CloseAsync(INode node);
+    /// <param name="cancellationToken">取消令牌</param>
+    Task CloseAsync(INode node, CancellationToken cancellationToken = default);
 
     /// <summary>读取数据</summary>
     /// <remarks>
@@ -56,8 +58,9 @@ public interface IAsyncDriver
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns></returns>
-    Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points);
+    Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default);
 
     /// <summary>写入数据</summary>
     /// <remarks>
@@ -67,7 +70,18 @@ public interface IAsyncDriver
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
-    Task<Object?> WriteAsync(INode node, IPoint point, Object? value);
+    /// <param name="cancellationToken">取消令牌</param>
+    Task<Object?> WriteAsync(INode node, IPoint point, Object? value, CancellationToken cancellationToken = default);
+
+    /// <summary>批量写入数据</summary>
+    /// <remarks>
+    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
+    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
+    /// <param name="values">点位数值</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    Task WriteAsync(INode node, IDictionary<IPoint, Object> values, CancellationToken cancellationToken = default);
 
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>
@@ -76,6 +90,7 @@ public interface IAsyncDriver
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="parameters">参数</param>
-    Task<Object?> ControlAsync(INode node, IDictionary<String, Object?> parameters);
+    /// <param name="cancellationToken">取消令牌</param>
+    Task<Object?> ControlAsync(INode node, IDictionary<String, Object?> parameters, CancellationToken cancellationToken = default);
     #endregion
 }

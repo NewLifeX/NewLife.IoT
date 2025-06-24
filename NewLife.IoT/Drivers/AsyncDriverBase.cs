@@ -24,6 +24,24 @@ public class AsyncDriverBase<TNode, TParameter> : AsyncDriverBase
     /// </summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
+    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
+    {
+        var node = new TNode
+        {
+            Driver = this,
+            Device = device,
+        };
+
+        return TaskEx.FromResult(node as INode);
+    }
+
+    /// <summary>
+    /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
+    /// </summary>
+    /// <param name="device">逻辑设备</param>
+    /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
     public override INode Open(IDevice device, IDriverParameter? parameter)
     {
@@ -54,8 +72,9 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// </summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public virtual Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter)
+    public virtual Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         var node = new Node
         {
@@ -70,10 +89,11 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
     /// </summary>
     /// <param name="node"></param>
+    /// <param name="cancellationToken">取消令牌</param>
 #if NET40 || NET45
-    public virtual Task CloseAsync(INode node) => TaskEx.FromResult(0);
+    public virtual Task CloseAsync(INode node, CancellationToken cancellationToken = default) => TaskEx.FromResult(0);
 #else
-    public virtual Task CloseAsync(INode node) => TaskEx.CompletedTask;
+    public virtual Task CloseAsync(INode node, CancellationToken cancellationToken = default) => TaskEx.CompletedTask;
 #endif
 
     /// <summary>读取数据</summary>
@@ -83,8 +103,9 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns></returns>
-    public virtual Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points) => throw new NotImplementedException();
+    public virtual Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
     /// <summary>写入数据</summary>
     /// <remarks>
@@ -94,7 +115,24 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
-    public virtual Task<Object?> WriteAsync(INode node, IPoint point, Object? value) => throw new NotImplementedException();
+    /// <param name="cancellationToken">取消令牌</param>
+    public virtual Task<Object?> WriteAsync(INode node, IPoint point, Object? value, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+    /// <summary>批量写入数据</summary>
+    /// <remarks>
+    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
+    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
+    /// <param name="values">点位数值</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    public virtual async Task WriteAsync(INode node, IDictionary<IPoint, Object> values, CancellationToken cancellationToken = default)
+    {
+        foreach (var item in values)
+        {
+            await WriteAsync(node, item.Key, item.Value, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>
@@ -103,7 +141,8 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="parameters">参数</param>
-    public virtual Task<Object?> ControlAsync(INode node, IDictionary<String, Object?> parameters) => throw new NotImplementedException();
+    /// <param name="cancellationToken">取消令牌</param>
+    public virtual Task<Object?> ControlAsync(INode node, IDictionary<String, Object?> parameters, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     #endregion
 
     #region 覆盖同步接口
@@ -140,6 +179,15 @@ public abstract class AsyncDriverBase : DriverBase, IAsyncDriver
     /// <param name="point">点位</param>
     /// <param name="value">数值</param>
     public override Object? Write(INode node, IPoint point, Object? value) => WriteAsync(node, point, value).ConfigureAwait(false).GetAwaiter().GetResult();
+
+    /// <summary>批量写入数据</summary>
+    /// <remarks>
+    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
+    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
+    /// <param name="values">点位数值</param>
+    public override void Write(INode node, IDictionary<IPoint, Object> values) => WriteAsync(node, values).ConfigureAwait(false).GetAwaiter().GetResult();
 
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>

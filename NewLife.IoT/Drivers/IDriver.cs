@@ -70,6 +70,15 @@ public interface IDriver
     /// <param name="value">数值</param>
     Object? Write(INode node, IPoint point, Object? value);
 
+    /// <summary>批量写入数据</summary>
+    /// <remarks>
+    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
+    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
+    /// </remarks>
+    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
+    /// <param name="values">点位数值</param>
+    void Write(INode node, IDictionary<IPoint, Object> values);
+
     /// <summary>控制设备，特殊功能使用</summary>
     /// <remarks>
     /// 除了点位读写之外的其它控制功能。
