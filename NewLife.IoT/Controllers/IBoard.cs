@@ -19,13 +19,13 @@ public interface IBoard
     IInputPort CreateInput(String name);
 
     /// <summary>创建串口</summary>
-    /// <param name="portName">串口名，在Windowns上一般是COM1/COM3等，在Linux上是串口设备路径</param>
+    /// <param name="portName">串口名，在Windows上一般是COM1/COM3等，在Linux上是串口设备路径，工控Linux也可以把COM1/COM3映射到内部串口</param>
     /// <param name="baudrate">波特率，默认9600</param>
     /// <returns></returns>
     ISerialPort CreateSerial(String portName, Int32 baudrate = 9600);
 
     /// <summary>创建Modbus</summary>
-    /// <param name="portName">串口名，在Windowns上一般是COM1/COM3等，在Linux上是串口设备路径</param>
+    /// <param name="portName">串口名，在Windows上一般是COM1/COM3等，在Linux上是串口设备路径，工控Linux也可以把COM1/COM3映射到内部串口</param>
     /// <param name="baudrate">波特率，默认9600</param>
     /// <returns></returns>
     IModbus CreateModbus(String portName, Int32 baudrate = 9600);
@@ -45,7 +45,7 @@ public class Board : IBoard
     public virtual IInputPort CreateInput(String name) => new FileInputPort(name);
 
     /// <summary>创建串口</summary>
-    /// <param name="portName">串口名，在Windowns上一般是COM1/COM3等，在Linux上是串口设备路径</param>
+    /// <param name="portName">串口名，在Windows上一般是COM1/COM3等，在Linux上是串口设备路径，工控Linux也可以把COM1/COM3映射到内部串口</param>
     /// <param name="baudrate">波特率，默认9600</param>
     /// <returns></returns>
     public virtual ISerialPort CreateSerial(String portName, Int32 baudrate = 9600)
@@ -75,7 +75,7 @@ public class Board : IBoard
     }
 
     /// <summary>创建Modbus</summary>
-    /// <param name="portName">串口名，在Windowns上一般是COM1/COM3等，在Linux上是串口设备路径</param>
+    /// <param name="portName">串口名，在Windows上一般是COM1/COM3等，在Linux上是串口设备路径，工控Linux也可以把COM1/COM3映射到内部串口</param>
     /// <param name="baudrate">波特率，默认9600</param>
     /// <returns></returns>
     public virtual IModbus CreateModbus(String portName, Int32 baudrate = 9600) => throw new NotImplementedException();

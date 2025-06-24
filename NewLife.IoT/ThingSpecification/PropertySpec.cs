@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using NewLife.Collections;
+using NewLife.IoT.ThingModels;
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -34,8 +35,9 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// <param name="name">名称</param>
     /// <param name="type">类型</param>
     /// <param name="length">长度</param>
+    /// <param name="address">地址</param>
     /// <returns></returns>
-    public static PropertySpec Create(String id, String name, String type, Int32 length = 0)
+    public static PropertySpec Create(String id, String name, String type, Int32 length = 0, String? address = null)
     {
         var ps = new PropertySpec
         {
@@ -44,11 +46,43 @@ public class PropertySpec : SpecBase, IDictionarySource
         };
 
         if (type != null)
-        {
             ps.DataType = new TypeSpec { Type = type };
 
-            if (length > 0)
-                ps.DataType.Specs = new DataSpecs { Length = length };
+        if (length > 0)
+        {
+            ps.DataType ??= new TypeSpec();
+            ps.DataType.Specs ??= new DataSpecs();
+            ps.DataType.Specs.Length = length;
+        }
+        if (!address.IsNullOrEmpty())
+        {
+            ps.DataType ??= new TypeSpec();
+            ps.DataType.Specs ??= new DataSpecs();
+            ps.DataType.Specs.Address = address;
+        }
+
+        return ps;
+    }
+
+    /// <summary>快速创建属性</summary>
+    /// <param name="id">标识</param>
+    /// <param name="type">类型</param>
+    /// <param name="order">字节序</param>
+    /// <returns></returns>
+    public static PropertySpec Create(String id, String type, ByteOrder order = ByteOrder.ABCD)
+    {
+        var ps = new PropertySpec
+        {
+            Id = id,
+        };
+
+        if (type != null)
+            ps.DataType = new TypeSpec { Type = type };
+
+        if (order > 0)
+        {
+            ps.DataType ??= new TypeSpec();
+            ps.DataType.Specs = new DataSpecs { Order = order };
         }
 
         return ps;

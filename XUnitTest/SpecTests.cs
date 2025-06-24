@@ -84,13 +84,13 @@ public class SpecTests
         Assert.Empty(si.InputData);
         Assert.Equal(8, si.OutputData.Length);
 
-        var pts = JsonHelper.Convert<PropertyExtend[]>(dic["extendedProperties"]);
-        Assert.NotNull(pts);
-        Assert.Equal(3, pts.Length);
+        //var pts = JsonHelper.Convert<PropertyExtend[]>(dic["extendedProperties"]);
+        //Assert.NotNull(pts);
+        //Assert.Equal(3, pts.Length);
 
-        var pt = pts[0];
-        Assert.Equal("memory_usage", pt.Id);
-        Assert.Equal("4x100", pt.Address);
+        //var pt = pts[0];
+        //Assert.Equal("memory_usage", pt.Id);
+        //Assert.Equal("4x100", pt.Address);
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public class SpecTests
         var txt = File.ReadAllText(file.GetFullPath());
 
         var thing = txt.ToJsonEntity<ThingSpec>();
-        Assert.Equal("http://iot.feifan.link/schema.json", thing.Schema);
-        Assert.Equal("2.1", thing.Profile.Version);
+        Assert.Equal("https://iot.feifan.link/schema.json", thing.Schema);
+        Assert.Equal("2.6", thing.Profile.Version);
         Assert.Equal("EdgeGateway", thing.Profile.ProductKey);
 
         var pis = thing.Properties;
@@ -155,9 +155,9 @@ public class SpecTests
         Assert.Empty(si.InputData);
         Assert.Equal(8, si.OutputData.Length);
 
-        var pts = thing.ExtendedProperties;
-        Assert.NotNull(pts);
-        Assert.Equal(3, pts.Length);
+        //var pts = thing.ExtendedProperties;
+        //Assert.NotNull(pts);
+        //Assert.Equal(3, pts.Length);
     }
 
     [Fact]

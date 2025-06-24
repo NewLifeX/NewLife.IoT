@@ -237,13 +237,20 @@ public static class DataHelper
     public static Object? EncodeByThingModel(this ThingSpec spec, Object data, IPoint point)
     {
         var type = point.GetNetType();
-        if (type == null) return data;
+        if (type == null)
+        {
+            var pi = spec?.GetProperty(point.Name);
+            type = TypeHelper.GetNetType(pi?.DataType?.Type);
+
+            if (type == null) return data;
+        }
 
         using var span = DefaultTracer.Instance?.NewSpan(nameof(EncodeByThingModel), $"name={point.Name} data={data} type={type.Name} rawType={point.Type}");
         try
         {
             // 找到物属性定义
-            var pt = point.Name.IsNullOrEmpty() ? null : spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pi = spec?.GetProperty(point.Name);
+            var pt = pi?.DataType?.Specs;
             if (pt != null)
             {
                 // 反向操作常量因子和缩放因子
@@ -252,14 +259,14 @@ public static class DataHelper
                     var v = data.ToLong();
                     //if (pt.Constant != 0 || scaling != 1) v = (Int64)Math.Round(v * scaling + pt.Constant);
                     // 编码是反向操作，先减去常量，再除以缩放因子。为了避免精度问题，单精度范围先计算缩放因子倒数，再相乘
-                    if (pt.Constant != 0 || pt.Scaling != 0) v = (Int64)Math.Round(((Double)v - pt.Constant) * (1 / pt.Scaling));
+                    if (pt.Constant != 0 || pt.Scaling != 1) v = (Int64)Math.Round(((Double)v - pt.Constant) * (1 / pt.Scaling));
 
                     // 常见的2字节和4字节整型，直接转字节数组返回
                     var rs = type.GetTypeCode() switch
                     {
                         TypeCode.Byte or TypeCode.SByte => [(Byte)v],
-                        TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(pt.Endian),
-                        TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(pt.Endian),
+                        TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(pt.Order),
+                        TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(pt.Order),
                         _ => throw new NotImplementedException(),
                     };
                     span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={pt.Scaling}");
@@ -277,23 +284,23 @@ public static class DataHelper
                 {
                     var v = (Single)data.ToDouble();
                     if (pt.Constant > 0) v -= pt.Constant;
-                    if (pt.Scaling != 0) v /= pt.Scaling;
+                    if (pt.Scaling != 0 && pt.Scaling != 1) v /= pt.Scaling;
 
                     span?.AppendTag($"result={v} type={type.Name} scaling={pt.Scaling} constant={pt.Constant}");
 
                     // 按照小端读取出来，如果不是小端，则需要交换字节序
-                    return v.GetBytes(pt.Endian);
+                    return v.GetBytes(pt.Order);
                 }
                 else if (type == typeof(Double))
                 {
                     var v = data.ToDouble();
                     if (pt.Constant > 0) v -= pt.Constant;
-                    if (pt.Scaling != 0) v /= pt.Scaling;
+                    if (pt.Scaling != 0 && pt.Scaling != 1) v /= pt.Scaling;
 
                     span?.AppendTag($"result={v} type={type.Name} scaling={pt.Scaling} constant={pt.Constant}");
 
                     // 按照小端读取出来，如果不是小端，则需要交换字节序
-                    return v.GetBytes(pt.Endian);
+                    return v.GetBytes(pt.Order);
                 }
             }
 
@@ -307,6 +314,13 @@ public static class DataHelper
         }
     }
 
+    /// <summary>把点位数据编码成为字节数组。常用于Modbus等协议</summary>
+    /// <param name="spec">物模型</param>
+    /// <param name="data">数据</param>
+    /// <param name="name">点位名称</param>
+    /// <returns></returns>
+    public static Object? EncodeByThingModel(this ThingSpec spec, Object data, String name) => EncodeByThingModel(spec, data, new PointModel { Name = name });
+
     /// <summary>借助物模型解析数值</summary>
     /// <param name="spec">物模型</param>
     /// <param name="data">数据</param>
@@ -317,7 +331,7 @@ public static class DataHelper
         var type = point.GetNetType();
         if (type == null)
         {
-            var pi = spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pi = spec?.GetProperty(point.Name);
             type = TypeHelper.GetNetType(pi?.DataType?.Type);
 
             if (type == null) return data;
@@ -328,7 +342,8 @@ public static class DataHelper
         try
         {
             // 找到物属性定义
-            var pt = point.Name.IsNullOrEmpty() ? null : spec?.ExtendedProperties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pi = spec?.GetProperty(point.Name);
+            var pt = pi?.DataType?.Specs;
             if (pt != null)
             {
                 if (type == typeof(Boolean)) return data[0] > 0;
@@ -340,11 +355,11 @@ public static class DataHelper
                     // 常见的2字节和4字节整型，直接转
                     var rs = type.GetTypeCode() switch
                     {
-                        TypeCode.Int16 or TypeCode.UInt16 => data.ToUInt16(pt.Endian),
-                        TypeCode.Int32 or TypeCode.UInt32 => data.ToUInt32(pt.Endian),
+                        TypeCode.Int16 or TypeCode.UInt16 => data.ToUInt16(pt.Order),
+                        TypeCode.Int32 or TypeCode.UInt32 => data.ToUInt32(pt.Order),
                         _ => throw new NotImplementedException(),
                     };
-                    if (pt.Constant != 0 || pt.Scaling != 0) rs = (UInt32)Math.Round(rs * pt.Scaling + pt.Constant);
+                    if (pt.Constant != 0 || pt.Scaling != 1) rs = (UInt32)Math.Round(rs * pt.Scaling + pt.Constant);
                     span?.AppendTag($"result={rs} type={type.Name}");
 
                     return rs.ChangeType(type);
@@ -352,30 +367,30 @@ public static class DataHelper
                 else if (type == typeof(Single))
                 {
                     // 如果未指定字节序，且使用了缩放因子，则先转换成大端整数。常见Modbus寄存器保存浮点数
-                    if (pt.Endian == 0 && (pt.Constant != 0 || pt.Scaling != 0))
+                    if (pt.Order == 0 && (pt.Constant != 0 || pt.Scaling != 1))
                     {
                         var rs = data.ToUInt16(EndianType.BigEndian);
                         return rs * pt.Scaling + pt.Constant;
                     }
                     else
                     {
-                        var rs = data.ToSingle(pt.Endian);
-                        if (pt.Constant != 0 || pt.Scaling != 0) rs = (Single)Math.Round(rs * pt.Scaling + pt.Constant);
+                        var rs = data.ToSingle(pt.Order);
+                        if (pt.Constant != 0 || pt.Scaling != 1) rs = (Single)Math.Round(rs * pt.Scaling + pt.Constant);
                         return rs;
                     }
                 }
                 else if (type == typeof(Double))
                 {
                     // 如果未指定字节序，且使用了缩放因子，则先转换成大端整数。常见Modbus寄存器保存浮点数
-                    if (pt.Endian == 0 && (pt.Constant != 0 || pt.Scaling != 0))
+                    if (pt.Order == 0 && (pt.Constant != 0 || pt.Scaling != 1))
                     {
                         var rs = data.ToUInt32(EndianType.BigEndian);
                         return (Double)(rs * pt.Scaling + pt.Constant);
                     }
                     else
                     {
-                        var rs = data.ToDouble(pt.Endian);
-                        if (pt.Constant != 0 || pt.Scaling != 0) rs = Math.Round(rs * pt.Scaling + pt.Constant);
+                        var rs = data.ToDouble(pt.Order);
+                        if (pt.Constant != 0 || pt.Scaling != 1) rs = Math.Round(rs * pt.Scaling + pt.Constant);
                         return rs;
                     }
                 }

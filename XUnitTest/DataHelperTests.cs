@@ -180,20 +180,17 @@ public class DataHelperTests
     {
         _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex}");
 
-        var property = new PropertyExtend { Id = "test", Order = ByteOrder.ABCD };
         var spec = new ThingSpec
         {
-            ExtendedProperties = [property]
+            Properties = [PropertySpec.Create("test", data.GetType().Name, ByteOrder.ABCD)]
         };
 
-        var point = new PointModel { Name = "test", Type = data.GetType().Name };
-
-        var rs = spec.EncodeByThingModel(data, point);
+        var rs = spec.EncodeByThingModel(data, "test");
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
 
-        var v = spec.DecodeByThingModel(hex.ToHex(), point);
+        var v = spec.DecodeByThingModel(hex.ToHex(), "test");
         Assert.Equal(data, v);
     }
 
@@ -222,10 +219,9 @@ public class DataHelperTests
     {
         _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} endian={endian}");
 
-        var property = new PropertyExtend { Id = "test", Endian = endian };
         var spec = new ThingSpec
         {
-            ExtendedProperties = [property]
+            Properties = [PropertySpec.Create("test", null, (ByteOrder)endian)]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
@@ -261,10 +257,9 @@ public class DataHelperTests
     {
         _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} order={order}");
 
-        var property = new PropertyExtend { Id = "test", Order = order };
         var spec = new ThingSpec
         {
-            ExtendedProperties = [property]
+            Properties = [PropertySpec.Create("test", null, order)]
         };
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
@@ -312,11 +307,13 @@ public class DataHelperTests
         else if (data is Double d)
             _output.WriteLine(d.GetBytes(order).ToHex());
 
-        var property = new PropertyExtend { Id = "test", Scaling = scaling, Constant = constant, Order = ByteOrder.ABCD };
         var spec = new ThingSpec
         {
-            ExtendedProperties = [property]
+            Properties = [PropertySpec.Create("test", null, ByteOrder.ABCD)]
         };
+        var specs = spec.GetProperty("test").DataType.Specs;
+        specs.Scaling = scaling;
+        specs.Constant = constant;
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
 
@@ -336,11 +333,10 @@ public class DataHelperTests
         var temp = buf.ToUInt16(2, false) / 10.0 - 40;
 
         var spec = new ThingSpec();
-        spec.Properties = [new PropertySpec { Id = "temp", DataType = new TypeSpec { Type = "float" } }];
-        spec.ExtendedProperties = [
-            new PropertyExtend { Id = "humi", Scaling = 0.001f, Constant = 0 },
-            new PropertyExtend { Id = "temp", Scaling = 0.1f, Constant = -40 }
-            ];
+        var dt = spec.AddProperty("temp", "温度", "float").DataType;
+        dt.Specs = new DataSpecs { Scaling = 0.1f, Constant = -40, };
+        dt = spec.AddProperty("humi", "湿度", "float").DataType;
+        dt.Specs = new DataSpecs { Scaling = 0.001f, Constant = 0, };
 
         var point = new PointModel { Name = "humi", Type = "float" };
         var h = spec.DecodeByThingModel(buf, point);

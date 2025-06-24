@@ -1,7 +1,7 @@
 {
-  "schema": "http://iot.feifan.link/schema.json",
+  "schema": "https://iot.feifan.link/schema.json",
   "profile": {
-    "version": "2.1",
+    "version": "2.6",
     "productKey": "EdgeGateway"
   },
   "properties": [
@@ -17,7 +17,9 @@
           "max": 100,
           "unit": "%",
           "unitName": "百分比",
-          "step": 0.1
+          "step": 0.1,
+          "order": "DCBA",
+          "address": "4x100"
         }
       }
     },
@@ -47,7 +49,8 @@
             "0": "关机",
             "1": "开机",
             "2": "异常"
-          }
+          },
+          "eventMode": "Client"
         }
       }
     },
@@ -63,7 +66,9 @@
           "max": 100,
           "unit": "%",
           "unitName": "百分比",
-          "step": 0.1
+          "step": 0.1,
+          "order": "DCBA",
+          "address": "4x101"
         }
       }
     },
@@ -411,22 +416,6 @@
           }
         }
       ]
-    }
-  ],
-  "extendedProperties": [
-    {
-      "identifier": "memory_usage",
-      "address": "4x100",
-      "order": "DCBA"
-    },
-    {
-      "identifier": "cpu_usage",
-      "address": "4x101",
-      "order": "DCBA"
-    },
-    {
-      "identifier": "status",
-      "eventMode": "Client"
     }
   ]
 }

@@ -93,7 +93,7 @@ public static class PointHelper
         if (type == null)
         {
             // 找到物属性定义
-            var pi = point.Name.IsNullOrEmpty() ? null : spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pi = spec?.GetProperty(point.Name);
             type = TypeHelper.GetNetType(pi?.DataType?.Type);
         }
         if (type == null) return null;
@@ -119,7 +119,7 @@ public static class PointHelper
         if (type == null)
         {
             // 找到物属性定义
-            var pi = point.Name.IsNullOrEmpty() ? null : spec?.Properties?.FirstOrDefault(e => e.Id.EqualIgnoreCase(point.Name));
+            var pi = spec?.GetProperty(point.Name);
             type = TypeHelper.GetNetType(pi?.DataType?.Type);
         }
         if (type == null) return null;

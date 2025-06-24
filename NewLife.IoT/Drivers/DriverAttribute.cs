@@ -2,6 +2,7 @@
 
 /// <summary>驱动特性</summary>
 /// <param name="name">驱动名称</param>
+[AttributeUsage(AttributeTargets.Class)]
 public class DriverAttribute(String name) : Attribute
 {
     /// <summary>名称</summary>

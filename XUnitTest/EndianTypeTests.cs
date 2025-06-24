@@ -55,27 +55,27 @@ public class EndianTypeTests
         Assert.Equal("CDAB", type2 + "");
     }
 
-    [Theory]
-    [InlineData(EndianType.BigEndian, false, false)]
-    [InlineData(EndianType.LittleEndian, true, true)]
-    [InlineData(EndianType.BigSwap, true, false)]
-    [InlineData(EndianType.LittleSwap, false, true)]
-    public void PropertyExtendTest(EndianType endian, Boolean swap16, Boolean swap32)
-    {
-        var property = new PropertyExtend { Endian = endian };
-        Assert.Equal(swap16, property.Swap16);
-        Assert.Equal(swap32, property.Swap32);
-    }
+    //[Theory]
+    //[InlineData(EndianType.BigEndian, false, false)]
+    //[InlineData(EndianType.LittleEndian, true, true)]
+    //[InlineData(EndianType.BigSwap, true, false)]
+    //[InlineData(EndianType.LittleSwap, false, true)]
+    //public void PropertyExtendTest(EndianType endian, Boolean swap16, Boolean swap32)
+    //{
+    //    var property = new PropertyExtend { Endian = endian };
+    //    Assert.Equal(swap16, property.Swap16);
+    //    Assert.Equal(swap32, property.Swap32);
+    //}
 
-    [Theory]
-    [InlineData(ByteOrder.ABCD, false, false)]
-    [InlineData(ByteOrder.DCBA, true, true)]
-    [InlineData(ByteOrder.BADC, true, false)]
-    [InlineData(ByteOrder.CDAB, false, true)]
-    public void PropertyExtendTest2(ByteOrder order, Boolean swap16, Boolean swap32)
-    {
-        var property = new PropertyExtend { Order = order };
-        Assert.Equal(swap16, property.Swap16);
-        Assert.Equal(swap32, property.Swap32);
-    }
+    //[Theory]
+    //[InlineData(ByteOrder.ABCD, false, false)]
+    //[InlineData(ByteOrder.DCBA, true, true)]
+    //[InlineData(ByteOrder.BADC, true, false)]
+    //[InlineData(ByteOrder.CDAB, false, true)]
+    //public void PropertyExtendTest2(ByteOrder order, Boolean swap16, Boolean swap32)
+    //{
+    //    var property = new PropertyExtend { Order = order };
+    //    Assert.Equal(swap16, property.Swap16);
+    //    Assert.Equal(swap32, property.Swap32);
+    //}
 }

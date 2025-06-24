@@ -1,4 +1,5 @@
-﻿using NewLife.Reflection;
+﻿using NewLife.IoT.ThingModels;
+using NewLife.Reflection;
 
 namespace NewLife.IoT.ThingSpecification;
 
@@ -26,6 +27,27 @@ public class DataSpecs
 
     /// <summary>枚举映射。布尔型和数字型特有，例如“0=关,1=开”，又如“1=东,2=南,3=西,4=北”</summary>
     public IDictionary<String, String>? Mapping { get; set; }
+
+    /// <summary>字节序</summary>
+    public ByteOrder Order { get; set; }
+
+    /// <summary>缩放因子。不能是0，默认1，n*scaling+constant</summary>
+    public Single Scaling { get; set; } = 1;
+
+    /// <summary>常量因子。默认0，n*scaling+constant</summary>
+    public Single Constant { get; set; }
+
+    /// <summary>采集点位置信息。常规地址6，Modbus地址 4x0023，位域地址D12.05，虚拟点位地址#</summary>
+    public String? Address { get; set; }
+
+    /// <summary>读取规则。数据解析规则，表达式或脚本</summary>
+    public String? ReadRule { get; set; }
+
+    /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
+    public String? WriteRule { get; set; }
+
+    /// <summary>事件模式。在客户端或服务端生成属性变更事件</summary>
+    public EventModes EventMode { get; set; }
     #endregion
 
     #region 方法
@@ -67,6 +89,12 @@ public class DataSpecs
                     ds[nameof(Step)] = Step;
                 if (Mapping != null)
                     ds[nameof(Mapping)] = Mapping;
+                if (Order != 0)
+                    ds[nameof(Order)] = Order;
+                if (Scaling != 1)
+                    ds[nameof(Scaling)] = Scaling;
+                if (Constant != 0)
+                    ds[nameof(Constant)] = Constant;
                 break;
             case TypeCode.Single:
             case TypeCode.Double:
@@ -83,6 +111,12 @@ public class DataSpecs
                     ds[nameof(UnitName)] = UnitName;
                 if (Step != 0)
                     ds[nameof(Step)] = Step;
+                if (Order != 0)
+                    ds[nameof(Order)] = Order;
+                if (Scaling != 1)
+                    ds[nameof(Scaling)] = Scaling;
+                if (Constant != 0)
+                    ds[nameof(Constant)] = Constant;
                 break;
             case TypeCode.String:
                 ds[nameof(Length)] = Length;
@@ -90,6 +124,15 @@ public class DataSpecs
             default:
                 return this.ToDictionary();
         }
+
+        if (!Address.IsNullOrEmpty())
+            ds[nameof(Address)] = Address;
+        if (!ReadRule.IsNullOrEmpty())
+            ds[nameof(ReadRule)] = ReadRule;
+        if (!WriteRule.IsNullOrEmpty())
+            ds[nameof(WriteRule)] = WriteRule;
+        if (EventMode != EventModes.None)
+            ds[nameof(EventMode)] = EventMode;
 
         return ds;
     }
