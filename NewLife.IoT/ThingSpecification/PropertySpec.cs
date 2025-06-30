@@ -23,10 +23,23 @@ public class PropertySpec : SpecBase, IDictionarySource
     /// </summary>
     public TypeSpec? DataType { get; set; }
 
-    ///// <summary>
-    ///// 采集点位置信息
-    ///// </summary>
-    //public String Address { get; set; }
+    /// <summary>采集点位置信息。常规地址6，Modbus地址 4x0023，位域地址D12.05，虚拟点位地址#</summary>
+    public String? Address { get; set; }
+
+    /// <summary>缩放因子。不能是0，默认1，n*scaling+constant</summary>
+    public Single Scaling { get; set; } = 1;
+
+    /// <summary>常量因子。默认0，n*scaling+constant</summary>
+    public Single Constant { get; set; }
+
+    /// <summary>读取规则。数据解析规则，表达式或脚本</summary>
+    public String? ReadRule { get; set; }
+
+    /// <summary>写入规则。数据反解析规则，表达式或脚本</summary>
+    public String? WriteRule { get; set; }
+
+    /// <summary>事件模式。在客户端或服务端生成属性变更事件</summary>
+    public EventModes EventMode { get; set; }
     #endregion
 
     #region 创建
@@ -43,6 +56,7 @@ public class PropertySpec : SpecBase, IDictionarySource
         {
             Id = id,
             Name = name,
+            Address = address,
         };
 
         if (type != null)
@@ -54,12 +68,12 @@ public class PropertySpec : SpecBase, IDictionarySource
             ps.DataType.Specs ??= new DataSpecs();
             ps.DataType.Specs.Length = length;
         }
-        if (!address.IsNullOrEmpty())
-        {
-            ps.DataType ??= new TypeSpec();
-            ps.DataType.Specs ??= new DataSpecs();
-            ps.DataType.Specs.Address = address;
-        }
+        //if (!address.IsNullOrEmpty())
+        //{
+        //    ps.DataType ??= new TypeSpec();
+        //    ps.DataType.Specs ??= new DataSpecs();
+        //    ps.DataType.Specs.Address = address;
+        //}
 
         return ps;
     }
@@ -134,8 +148,20 @@ public class PropertySpec : SpecBase, IDictionarySource
         if (dt != null)
             dic.Add(nameof(DataType), dt);
 
-        //if (!Address.IsNullOrEmpty())
-        //    dic.Add(nameof(Address), Address);
+        if (!Address.IsNullOrEmpty())
+            dic.Add(nameof(Address), Address);
+
+        if (Scaling != 1)
+            dic[nameof(Scaling)] = Scaling;
+        if (Constant != 0)
+            dic[nameof(Constant)] = Constant;
+
+        if (!ReadRule.IsNullOrEmpty())
+            dic[nameof(ReadRule)] = ReadRule;
+        if (!WriteRule.IsNullOrEmpty())
+            dic[nameof(WriteRule)] = WriteRule;
+        if (EventMode != EventModes.None)
+            dic[nameof(EventMode)] = EventMode;
 
         return dic;
     }

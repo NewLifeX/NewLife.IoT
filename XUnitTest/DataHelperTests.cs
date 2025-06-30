@@ -11,12 +11,8 @@ using Xunit.Abstractions;
 
 namespace XUnitTest;
 
-public class DataHelperTests
+public class DataHelperTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public DataHelperTests(ITestOutputHelper output) => _output = output;
-
     [Theory]
     [InlineData(0xABCD, EndianType.BigEndian, "ABCD")]
     [InlineData(0xABCD, EndianType.LittleEndian, "CDAB")]
@@ -178,19 +174,19 @@ public class DataHelperTests
     [InlineData((UInt32)0x12345678, "12345678")]
     public void EncodeByThingModel(Object data, String hex)
     {
-        _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex}");
+        output.WriteLine($"data={data} type={data.GetType().Name} hex={hex}");
 
         var spec = new ThingSpec
         {
             Properties = [PropertySpec.Create("test", data.GetType().Name, ByteOrder.ABCD)]
         };
 
-        var rs = spec.EncodeByThingModel(data, "test");
+        var rs = spec.Encode(data, "test");
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
 
-        var v = spec.DecodeByThingModel(hex.ToHex(), "test");
+        var v = spec.Decode(hex.ToHex(), "test");
         Assert.Equal(data, v);
     }
 
@@ -217,7 +213,7 @@ public class DataHelperTests
     [InlineData((UInt32)0x12345678, EndianType.LittleSwap, "56781234")]
     public void EncodeByThingModel_Endian(Object data, EndianType endian, String hex)
     {
-        _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} endian={endian}");
+        output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} endian={endian}");
 
         var spec = new ThingSpec
         {
@@ -226,7 +222,7 @@ public class DataHelperTests
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
 
-        var rs = spec.EncodeByThingModel(data, point);
+        var rs = spec.Encode(data, point);
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
@@ -255,7 +251,7 @@ public class DataHelperTests
     [InlineData((UInt32)0x12345678, ByteOrder.CDAB, "56781234")]
     public void EncodeByThingModel_Order(Object data, ByteOrder order, String hex)
     {
-        _output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} order={order}");
+        output.WriteLine($"data={data} type={data.GetType().Name} hex={hex} order={order}");
 
         var spec = new ThingSpec
         {
@@ -264,7 +260,7 @@ public class DataHelperTests
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
 
-        var rs = spec.EncodeByThingModel(data, point);
+        var rs = spec.Encode(data, point);
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
@@ -291,33 +287,33 @@ public class DataHelperTests
     [InlineData((Double)(-12.345678), 0.3, 57, "C06CE4DF3D19D027")]
     public void EncodeByThingModel_Scaling(Object data, Single scaling, Single constant, String hex)
     {
-        _output.WriteLine($"type={data.GetType().Name} scaling={scaling} constant={constant} hex={hex}");
+        output.WriteLine($"type={data.GetType().Name} scaling={scaling} constant={constant} hex={hex}");
 
         var order = ByteOrder.ABCD;
         if (data is Int16 n16)
-            _output.WriteLine(n16.GetBytes(order).ToHex());
+            output.WriteLine(n16.GetBytes(order).ToHex());
         else if (data is UInt16 u16)
-            _output.WriteLine(u16.GetBytes(order).ToHex());
+            output.WriteLine(u16.GetBytes(order).ToHex());
         else if (data is Int32 n32)
-            _output.WriteLine(n32.GetBytes(order).ToHex());
+            output.WriteLine(n32.GetBytes(order).ToHex());
         else if (data is UInt32 u32)
-            _output.WriteLine(u32.GetBytes(order).ToHex());
+            output.WriteLine(u32.GetBytes(order).ToHex());
         else if (data is Single f)
-            _output.WriteLine(f.GetBytes(order).ToHex());
+            output.WriteLine(f.GetBytes(order).ToHex());
         else if (data is Double d)
-            _output.WriteLine(d.GetBytes(order).ToHex());
+            output.WriteLine(d.GetBytes(order).ToHex());
 
         var spec = new ThingSpec
         {
             Properties = [PropertySpec.Create("test", null, ByteOrder.ABCD)]
         };
-        var specs = spec.GetProperty("test").DataType.Specs;
+        var specs = spec.GetProperty("test");
         specs.Scaling = scaling;
         specs.Constant = constant;
 
         var point = new PointModel { Name = "test", Type = data.GetType().Name };
 
-        var rs = spec.EncodeByThingModel(data, point);
+        var rs = spec.Encode(data, point);
         var buf = rs as Byte[];
         Assert.NotNull(buf);
         Assert.Equal(hex, buf.ToHex());
@@ -333,16 +329,18 @@ public class DataHelperTests
         var temp = buf.ToUInt16(2, false) / 10.0 - 40;
 
         var spec = new ThingSpec();
-        var dt = spec.AddProperty("temp", "温度", "float").DataType;
-        dt.Specs = new DataSpecs { Scaling = 0.1f, Constant = -40, };
-        dt = spec.AddProperty("humi", "湿度", "float").DataType;
-        dt.Specs = new DataSpecs { Scaling = 0.001f, Constant = 0, };
+        var pi = spec.AddProperty("temp", "温度", "float");
+        pi.Scaling = 0.1f;
+        pi.Constant = -40;
+        pi = spec.AddProperty("humi", "湿度", "float");
+        pi.Scaling = 0.001f;
+        pi.Constant = 0;
 
         var point = new PointModel { Name = "humi", Type = "float" };
-        var h = spec.DecodeByThingModel(buf, point);
+        var h = spec.Decode(buf, point);
         Assert.Equal(Math.Round(humi, 4), Math.Round((Single)h, 4));
 
-        var t = spec.DecodeByThingModel(buf.Skip(2).ToArray(), "temp");
+        var t = spec.Decode(buf.Skip(2).ToArray(), "temp");
         Assert.Equal(Math.Round(temp, 4), Math.Round((Single)t, 4));
     }
 }

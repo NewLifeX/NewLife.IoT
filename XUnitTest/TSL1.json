@@ -18,10 +18,10 @@
           "unit": "%",
           "unitName": "百分比",
           "step": 0.1,
-          "order": "DCBA",
-          "address": "4x100"
+          "order": "DCBA"
         }
-      }
+      },
+      "address": "4x100"
     },
     {
       "identifier": "gateway_version",
@@ -49,10 +49,10 @@
             "0": "关机",
             "1": "开机",
             "2": "异常"
-          },
-          "eventMode": "Client"
+          }
         }
-      }
+      },
+      "eventMode": "Client"
     },
     {
       "identifier": "cpu_usage",
@@ -67,10 +67,10 @@
           "unit": "%",
           "unitName": "百分比",
           "step": 0.1,
-          "order": "DCBA",
-          "address": "4x101"
+          "order": "DCBA"
         }
-      }
+      },
+      "address": "4x101"
     },
     {
       "identifier": "system_info",
