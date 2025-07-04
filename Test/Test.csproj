@@ -9,11 +9,11 @@
 
   <ItemGroup>
     <PackageReference Include="NewLife.Fuji" Version="1.0.2023.927-beta1809" />
-    <PackageReference Include="NewLife.Melsec" Version="1.2.2024.517" />
-    <PackageReference Include="NewLife.NetPing" Version="1.1.2024.217" />
+    <PackageReference Include="NewLife.Melsec" Version="1.2.2025.701" />
+    <PackageReference Include="NewLife.NetPing" Version="1.1.2025.701" />
     <PackageReference Include="NewLife.Omron" Version="1.0.2023.511" />
     <PackageReference Include="NewLife.OpcUa" Version="1.0.2023.511" />
-    <PackageReference Include="NewLife.PC" Version="1.0.2024.217" />
+    <PackageReference Include="NewLife.PC" Version="1.0.2025.701" />
     <PackageReference Include="NewLife.Schneider" Version="1.0.2024.218" />
     <PackageReference Include="NewLife.Siemens" Version="1.1.2024.218" />
   </ItemGroup>
