@@ -15,7 +15,7 @@
     <PackageReference Include="NewLife.OpcUa" Version="1.0.2023.511" />
     <PackageReference Include="NewLife.PC" Version="1.0.2025.701" />
     <PackageReference Include="NewLife.Schneider" Version="1.0.2024.218" />
-    <PackageReference Include="NewLife.Siemens" Version="1.1.2024.218" />
+    <PackageReference Include="NewLife.Siemens" Version="1.1.2025.701" />
   </ItemGroup>
 
   <ItemGroup>
