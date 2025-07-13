@@ -96,10 +96,11 @@ public class ThingSpec
             //Indented = true,
             IndentedLength = 2,
             //CamelCase = true,
-            EnumString = true,
+            //EnumString = true,
         };
         jw.Options.WriteIndented = true;
         jw.Options.CamelCase = true;
+        jw.Options.EnumString = true;
         jw.Write(dic);
 
         return jw.GetString();
