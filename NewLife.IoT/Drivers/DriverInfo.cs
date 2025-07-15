@@ -18,6 +18,9 @@ public class DriverInfo
     /// <summary>类型名</summary>
     public String? ClassName { get; set; }
 
+    /// <summary>参数类型名</summary>
+    public String? ParameterClassName { get; set; }
+
     /// <summary>驱动版本</summary>
     public String? Version { get; set; }
 

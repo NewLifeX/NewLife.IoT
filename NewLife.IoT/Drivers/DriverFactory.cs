@@ -96,12 +96,14 @@ public class DriverFactory
 
             try
             {
-                var drv = type.CreateInstance() as IDriver;
+                var driver = type.CreateInstance() as IDriver;
+                var driverParameter = driver?.CreateParameter();
+                info.ParameterClassName = driverParameter?.GetType().FullName;
 
                 // Xml序列化，去掉前面的BOM编码
-                info.DefaultParameter = drv?.CreateParameter()?.EncodeParameter();
+                info.DefaultParameter = driverParameter?.EncodeParameter();
 
-                info.Specification = drv?.GetSpecification();
+                info.Specification = driver?.GetSpecification();
             }
             catch { }
 
