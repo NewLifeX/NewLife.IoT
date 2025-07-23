@@ -47,6 +47,14 @@ public class DriverBase<TNode, TParameter> : DriverBase
 /// </remarks>
 public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFeature
 {
+    #region 属性
+    /// <summary>服务提供者。驱动可在此取得外部注入到容器中的服务对象</summary>
+    /// <remarks>
+    /// 例如：Modbus驱动可以获取外部注入的IBoard服务对象，在A2工业计算机中，借助其中的Map方法把串口COM1映射到/dev/ttyAMA0。
+    /// </remarks>
+    public IServiceProvider? ServiceProvider { get; set; }
+    #endregion
+
     #region 元数据
     /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
     /// <remarks>

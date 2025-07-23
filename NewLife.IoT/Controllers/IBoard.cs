@@ -8,6 +8,12 @@ namespace NewLife.IoT.Controllers;
 /// </remarks>
 public interface IBoard
 {
+    /// <summary>映射设备名的真实地址</summary>
+    /// <remarks>例如在A2工业计算机中，COM1可映射到/dev/ttyAMA0，项目实施人员仅需配置通用名COM1即可</remarks>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    String Map(String name);
+
     /// <summary>创建输出口</summary>
     /// <param name="name"></param>
     /// <returns></returns>
@@ -34,6 +40,12 @@ public interface IBoard
 /// <summary>板卡基类，包含一些端口的默认实现</summary>
 public class Board : IBoard
 {
+    /// <summary>映射设备名的真实地址</summary>
+    /// <remarks>例如在A2工业计算机中，COM1可映射到/dev/ttyAMA0，项目实施人员仅需配置通用名COM1即可</remarks>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public virtual String Map(String name) => name;
+
     /// <summary>创建输出口</summary>
     /// <param name="name"></param>
     /// <returns></returns>
