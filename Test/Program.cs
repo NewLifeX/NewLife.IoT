@@ -1,6 +1,7 @@
 ﻿using System;
 using NewLife.IoT.Drivers;
 using NewLife.Log;
+using NewLife.Serialization;
 
 namespace Test;
 
@@ -34,6 +35,7 @@ class Program
             Console.WriteLine();
             XTrace.WriteLine("{0}\t{1}", item.Name, item.DisplayName);
             XTrace.WriteLine(item.DefaultParameter?.Trim());
+            XTrace.WriteLine(item.Specification?.ToJson(true));
         }
 
         //var drv = DriverFactory.Drivers[0];

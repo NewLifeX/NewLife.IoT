@@ -8,14 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Fuji" Version="1.0.2023.927-beta1809" />
+    <PackageReference Include="NewLife.BACnet" Version="1.0.2025.723-beta1719" />
+    <PackageReference Include="NewLife.Fatek" Version="1.0.2025.708-beta1831" />
+    <PackageReference Include="NewLife.Fuji" Version="1.0.2025.704-beta1809" />
+    <PackageReference Include="NewLife.Keyence" Version="1.0.2025.528-beta1321" />
+    <PackageReference Include="NewLife.LoRa" Version="1.1.2025.704-beta1758" />
     <PackageReference Include="NewLife.Melsec" Version="1.2.2025.701" />
+    <PackageReference Include="NewLife.Modbus" Version="2.0.2025.701" />
+    <PackageReference Include="NewLife.ModbusRTU" Version="2.0.2025.701" />
     <PackageReference Include="NewLife.NetPing" Version="1.1.2025.701" />
-    <PackageReference Include="NewLife.Omron" Version="1.0.2023.511" />
-    <PackageReference Include="NewLife.OpcUa" Version="1.0.2023.511" />
+    <PackageReference Include="NewLife.Omron" Version="1.0.2025.704-beta1812" />
+    <PackageReference Include="NewLife.OpcDa" Version="1.0.2025.627-beta0844" />
+    <PackageReference Include="NewLife.OpcUa" Version="1.0.2025.627-beta0844" />
+    <PackageReference Include="NewLife.Panasonic" Version="1.0.2025.706-beta0636" />
     <PackageReference Include="NewLife.PC" Version="1.0.2025.701" />
-    <PackageReference Include="NewLife.Schneider" Version="1.0.2024.218" />
+    <PackageReference Include="NewLife.Schneider" Version="1.0.2025.704-beta1814" />
     <PackageReference Include="NewLife.Siemens" Version="1.1.2025.701" />
+    <PackageReference Include="SmartA2" Version="1.1.2025.626-beta0037" />
+    <PackageReference Include="SmartA4" Version="1.0.2025.622-beta0314" />
   </ItemGroup>
 
   <ItemGroup>
