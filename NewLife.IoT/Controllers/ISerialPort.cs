@@ -15,6 +15,9 @@ public interface ISerialPort : IDisposable
     /// <summary>波特率</summary>
     Int32 Baudrate { get; set; }
 
+    /// <summary>超时时间。发起请求后等待响应的超时时间</summary>
+    Int32 Timeout { get; set; }
+
     /// <summary>收到数据事件</summary>
     event EventHandler<ReceivedEventArgs> Received;
 
