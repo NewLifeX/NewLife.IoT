@@ -100,7 +100,7 @@ public class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     public override IDictionary<String, Object?> Read(INode node, IPoint[] points)
     {
         var result = new Dictionary<String, Object?>();
-        if (points == null || points.Length == 0) return result;
+        if (points == null) return result;
 
         var client = (node as SocketNode)?.Client;
         if (client == null || node.Parameter is not SocketParameter parameter) return result;

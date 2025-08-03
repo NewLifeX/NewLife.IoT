@@ -29,4 +29,8 @@ public class HttpParameter : IDriverParameter
     /// <summary>提交数据。支持十六进制格式(以0x开头)和字符串格式</summary>
     [Description("提交数据。支持十六进制格式(以0x开头)和字符串格式")]
     public String PostData { get; set; } = "";
+
+    /// <summary>捕获所有字段。捕获所有字段作为返回，而不管指定哪些点位，默认false</summary>
+    [Description("捕获所有字段。捕获所有字段作为返回，而不管指定哪些点位，默认false")]
+    public Boolean CaptureAll { get; set; }
 }

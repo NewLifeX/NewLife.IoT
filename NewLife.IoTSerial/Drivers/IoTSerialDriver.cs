@@ -133,7 +133,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     public override IDictionary<String, Object?> Read(INode node, IPoint[] points)
     {
         var result = new Dictionary<String, Object?>();
-        if (points == null || points.Length == 0) return result;
+        //if (points == null) return result;
 
         var client = (node as SerialNode)?.SerialPort;
         if (client == null || node.Parameter is not IoTSerialParameter parameter) return result;
@@ -141,7 +141,33 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
         var request = Encode(parameter.RequestCommand);
         var response = client.Invoke(request, 1);
 
-        result["Data"] = Decode(response, parameter.ResponseEncoding);
+        var rs = Decode(response, parameter.ResponseEncoding);
+        if (rs is IDictionary<String, Object?> dic)
+        {
+            foreach (var item in dic)
+            {
+                var name = item.Key;
+                var value = item.Value;
+                var point = points?.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
+                if (point != null)
+                {
+                    // 如果点位有类型，转换类型
+                    var type = point.GetNetType();
+                    if (type != null) value = value.ChangeType(type);
+
+                    result[name] = value;
+                }
+                else if (parameter.CaptureAll)
+                {
+                    // 如果点位没有指定，且允许捕获所有字段，则直接返回
+                    result[name] = value;
+                }
+            }
+        }
+        else
+        {
+            result["Data"] = rs;
+        }
 
         return result;
     }
@@ -220,6 +246,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
             "HEX" => data?.ToHex(),
             "ASCII" => data?.ToStr(Encoding.ASCII),
             "UTF8" => data?.ToStr(Encoding.UTF8),
+            "Json" => data == null ? null : JsonParser.Decode(data.ToStr()),
             _ => data,
         };
     }

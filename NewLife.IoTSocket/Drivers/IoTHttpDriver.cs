@@ -84,7 +84,7 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
     public override async Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
     {
         var result = new Dictionary<String, Object?>();
-        if (points == null || points.Length == 0) return result;
+        //if (points == null) return result;
 
         var client = Client;
         if (client == null) return result;
@@ -134,13 +134,18 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
                 {
                     var name = item.Key;
                     var value = item.Value;
-                    var point = points.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
+                    var point = points?.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
                     if (point != null)
                     {
                         // 如果点位有类型，转换类型
                         var type = point.GetNetType();
                         if (type != null) value = value.ChangeType(type);
 
+                        result[name] = value;
+                    }
+                    else if (parameter.CaptureAll)
+                    {
+                        // 如果点位没有指定，且允许捕获所有字段，则直接返回
                         result[name] = value;
                     }
                 }

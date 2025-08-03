@@ -56,7 +56,7 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
     public override IDictionary<String, Object> Read(INode node, IPoint[] points)
     {
         var result = new Dictionary<String, Object>();
-        if (points == null || points.Length == 0) return result;
+        //if (points == null) return result;
 
         var client = (node as DatabseNode)?.Dal;
         if (client == null || node.Parameter is not DatabaseParameter parameter) return result;
@@ -74,14 +74,19 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
                 var value = row[i];
 
                 // 如果点位存在，赋值
-                var pt = points.FirstOrDefault(p => name.EqualIgnoreCase(p.Name, p.Address));
-                if (pt != null)
+                var point = points?.FirstOrDefault(p => name.EqualIgnoreCase(p.Name, p.Address));
+                if (point != null)
                 {
                     // 如果点位有类型，转换类型
-                    var type = pt.GetNetType();
+                    var type = point.GetNetType();
                     if (type != null) value = value.ChangeType(type);
 
-                    result[pt.Name] = value;
+                    result[point.Name] = value;
+                }
+                else if (parameter.CaptureAll)
+                {
+                    // 如果点位没有指定，且允许捕获所有字段，则直接返回
+                    result[name] = value;
                 }
             }
         }

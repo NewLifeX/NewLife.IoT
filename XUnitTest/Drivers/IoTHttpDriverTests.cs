@@ -148,4 +148,29 @@ public class IoTHttpDriverTests
         Assert.Equal(points.Length, rs.Count);
         Assert.Equal(state, rs["state"]);
     }
+
+    [Fact]
+    public async Task CaptureAll()
+    {
+        using var driver = new IoTHttpDriver();
+
+        // 验证参数
+        var state = Rand.NextString(16);
+        var hp = new HttpParameter
+        {
+            Address = "https://newlifex.com",
+            Method = "Post",
+            PathAndQuery = "/cube/info",
+            PostData = $"state={state}",
+            CaptureAll = true,
+        };
+        var parameter = driver.CreateParameter(hp.ToJson());
+
+        var node = await driver.OpenAsync(null, parameter);
+
+        // 读取数据
+        var rs = await driver.ReadAsync(node, null);
+        Assert.NotEmpty(rs);
+        Assert.Equal(state, rs["state"]);
+    }
 }
