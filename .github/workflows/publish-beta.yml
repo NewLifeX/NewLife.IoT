@@ -5,6 +5,9 @@ on:
     branches: [ master ]
     paths:
         - 'NewLife.IoT/**'
+        - 'NewLife.IoTSocket/**'
+        - 'NewLife.IoTSerial/**'
+        - 'NewLife.IoTDatabase/**'
   workflow_dispatch:
 
 jobs:
@@ -22,12 +25,12 @@ jobs:
           7.x
           8.x
           9.x
-    - name: Restore
-      run: |
-        dotnet restore NewLife.IoT/NewLife.IoT.csproj
     - name: Build
       run: |
-        dotnet pack --no-restore --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.IoT/NewLife.IoT.csproj
+        dotnet pack --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.IoT/NewLife.IoT.csproj
+        dotnet pack --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.IoTSocket/NewLife.IoTSocket.csproj
+        dotnet pack --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.IoTSerial/NewLife.IoTSerial.csproj
+        dotnet pack --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.IoTDatabase/NewLife.IoTDatabase.csproj
     - name: Publish
       run: |
         # dotnet nuget push ./out/*.nupkg --skip-duplicate --source https://nuget.pkg.github.com/NewLifeX/index.json --api-key ${{ github.token }}
