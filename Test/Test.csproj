@@ -29,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewLife.IoTSerial\NewLife.IoTSerial.csproj" />
+    <ProjectReference Include="..\NewLife.IoTSocket\NewLife.IoTSocket.csproj" />
     <ProjectReference Include="..\NewLife.IoT\NewLife.IoT.csproj" />
   </ItemGroup>
 
