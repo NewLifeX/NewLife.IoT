@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Text;
-using NewLife;
-using NewLife.Data;
 using NewLife.IoT;
 using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
+using NewLife.Reflection;
 using NewLife.Serialization;
+
 #if !NET40
 using TaskEx = System.Threading.Tasks.Task;
 #endif
@@ -18,8 +18,8 @@ namespace NewLife.IoTSocket.Drivers;
 /// IoT驱动，符合IoT标准的通用Http驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTHttp")]
-[DisplayName("通用网络驱动")]
-public class IoTHttpDriver : AsyncDriverBase
+[DisplayName("通用Http驱动")]
+public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
 {
     #region 属性
     /// <summary>客户端</summary>
@@ -34,12 +34,12 @@ public class IoTHttpDriver : AsyncDriverBase
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
+    public override async Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         if (parameter is not HttpParameter p) throw new ArgumentException("参数不能为空");
         if (p.Address.IsNullOrEmpty()) throw new ArgumentException("网络地址不能为空");
 
-        var node = base.Open(device, parameter);
+        var node = await base.OpenAsync(device, parameter);
 
         var client = new HttpClient
         {
@@ -52,7 +52,7 @@ public class IoTHttpDriver : AsyncDriverBase
 
         Client = client;
 
-        return Task.FromResult(node);
+        return node;
     }
 
     /// <summary>
@@ -93,18 +93,19 @@ public class IoTHttpDriver : AsyncDriverBase
         var path = parameter.PathAndQuery;
         if (path.IsNullOrEmpty()) path = "/";
 
+        // 根据不同场景请求数据
+        String? response = null;
         if (parameter.Method.EqualIgnoreCase("GET"))
         {
-            var rs = await client.GetStringAsync(path);
-            result["Data"] = rs;
+            response = await client.GetStringAsync(path);
         }
         else
         {
-            var str = parameter.RequestCommand;
+            var str = parameter.PostData;
             if (str.IsNullOrEmpty())
             {
                 var rs = await client.PostAsync(path, new StringContent(""), cancellationToken);
-                result["Data"] = await rs.Content.ReadAsStringAsync();
+                response = await rs.Content.ReadAsStringAsync();
             }
             else
             {
@@ -113,11 +114,55 @@ public class IoTHttpDriver : AsyncDriverBase
                     : (HttpContent)new StringContent(str, Encoding.UTF8, "application/json");
 
                 var rs = await client.PostAsync(path, content, cancellationToken);
-                result["Data"] = await rs.Content.ReadAsStringAsync();
+                response = await rs.Content.ReadAsStringAsync();
+            }
+        }
+
+        if (!response.IsNullOrEmpty())
+        {
+            // 尝试按照Json来解析数据，转为字典，然后逐个给点位赋值
+            var dic = Decode(response);
+            if (dic != null)
+            {
+                foreach (var item in dic)
+                {
+                    var name = item.Key;
+                    var value = item.Value;
+                    var point = points.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
+                    if (point != null)
+                    {
+                        // 如果点位有类型，转换类型
+                        var type = point.GetNetType();
+                        if (type != null) value = value.ChangeType(type);
+
+                        result[name] = value;
+                    }
+                }
+            }
+            else
+            {
+                // 如果没有解析出来，直接返回原始数据
+                result["data"] = response;
             }
         }
 
         return result;
+    }
+
+    /// <summary>解码字符串</summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    protected virtual IDictionary<String, Object?>? Decode(String value)
+    {
+        if (value.IsNullOrEmpty()) return null;
+
+        var dic = JsonParser.Decode(value) ?? XmlParser.Decode(value);
+        if (dic == null) return null;
+
+        // 内嵌data
+        if (dic.TryGetValue("data", out var data) && data is IDictionary<String, Object?> dic2) return dic2;
+
+        return dic;
     }
 
     /// <summary>批量写入数据</summary>

@@ -1,13 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Text;
-using NewLife;
-using NewLife.Data;
 using NewLife.IoT;
 using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
-using NewLife.Net;
 using NewLife.Reflection;
-using NewLife.Serialization;
 using XCode.DataAccessLayer;
 
 namespace NewLife.IoTDatabase.Drivers;
@@ -18,7 +13,7 @@ namespace NewLife.IoTDatabase.Drivers;
 /// </remarks>
 [Driver("IoTSocket")]
 [DisplayName("通用数据库驱动")]
-public class IoTDatabaseDriver : DriverBase<Node, DatabaseParameter>
+public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
 {
     #region 属性
     #endregion

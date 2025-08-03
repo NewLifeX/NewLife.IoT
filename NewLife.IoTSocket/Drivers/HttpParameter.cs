@@ -26,7 +26,7 @@ public class HttpParameter : IDriverParameter
     [Description("超时时间。发起请求后等待响应的超时时间，默认5000ms")]
     public Int32 Timeout { get; set; } = 5_000;
 
-    /// <summary>请求命令模板。支持十六进制格式(以0x开头)和字符串格式</summary>
-    [Description("请求命令模板。支持十六进制格式(以0x开头)和字符串格式")]
-    public String RequestCommand { get; set; } = "";
+    /// <summary>提交数据。支持十六进制格式(以0x开头)和字符串格式</summary>
+    [Description("提交数据。支持十六进制格式(以0x开头)和字符串格式")]
+    public String PostData { get; set; } = "";
 }
