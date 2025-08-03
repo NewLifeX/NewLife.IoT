@@ -109,9 +109,15 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
             }
             else
             {
-                var content = str.StartsWithIgnoreCase("0x")
-                    ? new ByteArrayContent(str[2..].ToHex())
-                    : (HttpContent)new StringContent(str, Encoding.UTF8, "application/json");
+                HttpContent? content;
+                if (str.StartsWithIgnoreCase("0x"))
+                    content = new ByteArrayContent(str[2..].ToHex());
+                else if (str[0] == '{' && str[^1] == '}')
+                    content = new StringContent(str, Encoding.UTF8, "application/json");
+                else if (str.Contains('='))
+                    content = new StringContent(str, Encoding.UTF8, "application/x-www-form-urlencoded");
+                else
+                    content = new StringContent(str, Encoding.UTF8, "text/plain");
 
                 var rs = await client.PostAsync(path, content, cancellationToken);
                 response = await rs.Content.ReadAsStringAsync();

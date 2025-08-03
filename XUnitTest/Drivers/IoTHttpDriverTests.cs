@@ -14,7 +14,7 @@ namespace XUnitTest.Drivers;
 public class IoTHttpDriverTests
 {
     [Fact]
-    public async Task FullTest()
+    public async Task GetTest()
     {
         var driver = new IoTHttpDriver();
 
@@ -90,5 +90,62 @@ public class IoTHttpDriverTests
 
         // 关闭设备
         await driver.CloseAsync(node);
+    }
+
+    [Fact]
+    public async Task PostTest()
+    {
+        using var driver = new IoTHttpDriver();
+
+        // 验证参数
+        var hp = new HttpParameter
+        {
+            Address = "https://newlifex.com",
+            Method = "Post",
+            PathAndQuery = "/cube/info",
+        };
+        var parameter = driver.CreateParameter(hp.ToJson());
+
+        var node = await driver.OpenAsync(null, parameter);
+
+        // 读取数据
+        var points = new IPoint[]
+        {
+            new PointModel { Name = "fileVersion", Type = "" },
+            new PointModel { Name = "compile", Type = "date" },
+            new PointModel { Address = "port", Type = "short" }
+        };
+        var rs = await driver.ReadAsync(node, points);
+        Assert.Equal(points.Length, rs.Count);
+    }
+
+    [Fact]
+    public async Task PostTest2()
+    {
+        using var driver = new IoTHttpDriver();
+
+        // 验证参数
+        var state = Rand.NextString(16);
+        var hp = new HttpParameter
+        {
+            Address = "https://newlifex.com",
+            Method = "Post",
+            PathAndQuery = "/cube/info",
+            PostData = $"state={state}",
+        };
+        var parameter = driver.CreateParameter(hp.ToJson());
+
+        var node = await driver.OpenAsync(null, parameter);
+
+        // 读取数据
+        var points = new IPoint[]
+        {
+            new PointModel { Name = "state", Type = "" },
+            new PointModel { Name = "compile", Type = "date" },
+            new PointModel { Address = "port", Type = "short" }
+        };
+        var rs = await driver.ReadAsync(node, points);
+        Assert.Equal(points.Length, rs.Count);
+        Assert.Equal(state, rs["state"]);
     }
 }
