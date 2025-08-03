@@ -11,7 +11,7 @@ namespace NewLife.IoTDatabase.Drivers;
 /// <remarks>
 /// IoT驱动，符合IoT标准的通用数据库驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
-[Driver("IoTSocket")]
+[Driver("IoTDatabase")]
 [DisplayName("通用数据库驱动")]
 public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
 {

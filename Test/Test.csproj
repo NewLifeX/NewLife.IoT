@@ -14,21 +14,22 @@
     <PackageReference Include="NewLife.Keyence" Version="1.0.2025.528-beta1321" />
     <PackageReference Include="NewLife.LoRa" Version="1.1.2025.704-beta1758" />
     <PackageReference Include="NewLife.Melsec" Version="1.2.2025.701" />
-    <PackageReference Include="NewLife.Modbus" Version="2.0.2025.701" />
-    <PackageReference Include="NewLife.ModbusRTU" Version="2.0.2025.701" />
+    <PackageReference Include="NewLife.Modbus" Version="2.0.2025.803-beta1524" />
+    <PackageReference Include="NewLife.ModbusRTU" Version="2.0.2025.803-beta1524" />
     <PackageReference Include="NewLife.NetPing" Version="1.1.2025.701" />
     <PackageReference Include="NewLife.Omron" Version="1.0.2025.704-beta1812" />
-    <PackageReference Include="NewLife.OpcDa" Version="1.0.2025.627-beta0844" />
-    <PackageReference Include="NewLife.OpcUa" Version="1.0.2025.627-beta0844" />
+    <PackageReference Include="NewLife.OpcDa" Version="1.0.2025.802-beta0030" />
+    <PackageReference Include="NewLife.OpcUa" Version="1.0.2025.802-beta0030" />
     <PackageReference Include="NewLife.Panasonic" Version="1.0.2025.706-beta0636" />
     <PackageReference Include="NewLife.PC" Version="1.0.2025.701" />
     <PackageReference Include="NewLife.Schneider" Version="1.0.2025.704-beta1814" />
     <PackageReference Include="NewLife.Siemens" Version="1.1.2025.701" />
-    <PackageReference Include="SmartA2" Version="1.1.2025.626-beta0037" />
-    <PackageReference Include="SmartA4" Version="1.0.2025.622-beta0314" />
+    <PackageReference Include="SmartA2" Version="1.1.2025.725-beta0633" />
+    <PackageReference Include="SmartA4" Version="1.0.2025.802-beta0034" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewLife.IoTDatabase\NewLife.IoTDatabase.csproj" />
     <ProjectReference Include="..\NewLife.IoTSerial\NewLife.IoTSerial.csproj" />
     <ProjectReference Include="..\NewLife.IoTSocket\NewLife.IoTSocket.csproj" />
     <ProjectReference Include="..\NewLife.IoT\NewLife.IoT.csproj" />
