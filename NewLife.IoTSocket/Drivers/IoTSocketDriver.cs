@@ -17,7 +17,7 @@ namespace NewLife.IoTSocket.Drivers;
 /// </remarks>
 [Driver("IoTSocket")]
 [DisplayName("通用网络驱动")]
-public class IoTSocketDriver : DriverBase<Node, SocketParameter>
+public class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 {
     #region 属性
     private Int32 _nodes;
