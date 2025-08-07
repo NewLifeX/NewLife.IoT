@@ -6,9 +6,13 @@ namespace NewLife.IoTSocket.Drivers;
 /// <summary>通用网络驱动参数</summary>
 public class SocketParameter : IDriverParameter, IDriverParameterKey
 {
-    /// <summary>地址。tcp地址如tcp://127.0.0.1:502</summary>
-    [Description("地址。tcp地址如tcp://127.0.0.1:502")]
-    public String Server { get; set; } = null!;
+    /// <summary>服务地址。IP地址或域名，例如：127.0.0.1</summary>
+    [Description("服务地址。IP地址或域名，例如：127.0.0.1")]
+    public String Server { get; set; } = "127.0.0.1";
+
+    /// <summary>端口。例如：5500</summary>
+    [Description("端口。例如：5500")]
+    public Int32 Port { get; set; } = 5500;
 
     /// <summary>超时时间。发起请求后等待响应的超时时间，默认3000ms</summary>
     [Description("超时时间。发起请求后等待响应的超时时间，默认3000ms")]
@@ -24,5 +28,5 @@ public class SocketParameter : IDriverParameter, IDriverParameterKey
 
     /// <summary>获取唯一标识</summary>
     /// <returns></returns>
-    public String GetKey() => Server;
+    public String GetKey() => $"{Server}:{Port}";
 }

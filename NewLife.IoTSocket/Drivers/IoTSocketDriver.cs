@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text;
+﻿using System.Text;
 using NewLife;
 using NewLife.Data;
 using NewLife.IoT;
@@ -11,13 +10,11 @@ using NewLife.Serialization;
 
 namespace NewLife.IoTSocket.Drivers;
 
-/// <summary>IoT标准通用网络驱动</summary>
+/// <summary>IoT标准通用T网络驱动</summary>
 /// <remarks>
 /// IoT驱动，符合IoT标准的通用网络驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
-[Driver("IoTSocket")]
-[DisplayName("通用网络驱动")]
-public class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
+public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 {
     #region 属性
     private Int32 _nodes;
@@ -75,7 +72,7 @@ public class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     /// <returns></returns>
     protected virtual ISocketClient CreateClient(SocketParameter parameter)
     {
-        var uri = new NetUri(parameter.Server);
+        var uri = new NetUri(NetType.Tcp, parameter.Server, parameter.Port);
         var client = uri.CreateRemote();
 
         client.Timeout = parameter.Timeout;

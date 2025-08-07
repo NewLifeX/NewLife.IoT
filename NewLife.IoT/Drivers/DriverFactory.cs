@@ -80,7 +80,7 @@ public class DriverFactory
             var name = att?.Name ?? type.Name.TrimEnd("Procotol", "Driver");
 
             var name2 = $"[{name}]";
-            XTrace.WriteLine("{0,16}\t{1,-16}\t{2}", name2, type.GetDisplayName(), type.FullName);
+            XTrace.WriteLine("{0,16}\t{1,-14}\t{2}", name2, type.GetDisplayName(), type.FullName);
 
             Register(name, type);
 
