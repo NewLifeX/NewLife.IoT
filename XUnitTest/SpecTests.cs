@@ -207,7 +207,7 @@ public class SpecTests
         Assert.Equal(txt, txt2);
 
         var sys = new SystemJson();
-        opt = sys.Options;
+        opt = sys.SerializerOptions;
         opt.Converters.Add(new JsonStringEnumConverter());
 
         var thing2 = sys.Read(txt, typeof(ThingSpec)) as ThingSpec;
