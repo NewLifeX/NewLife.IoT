@@ -425,7 +425,20 @@ public static class DataHelper
             else
             {
                 var rs = data.ToSingle(order);
-                if (constant != 0 || scaling != 1) rs = (Single)Math.Round(rs * scaling + constant);
+                if (constant != 0 || scaling != 1)
+                {
+                    // 计算小数精度
+                    var digits = 2;
+                    var step = propertySpec?.DataType?.Specs?.Step ?? 0;
+                    if (step > 0)
+                    {
+                        var str = step.ToString();
+                        var idx = str.IndexOf('.');
+                        if (idx >= 0) digits = str.Length - idx - 1;
+                    }
+
+                    rs = (Single)Math.Round(rs * scaling + constant, digits);
+                }
                 return rs;
             }
         }
@@ -440,7 +453,20 @@ public static class DataHelper
             else
             {
                 var rs = data.ToDouble(order);
-                if (constant != 0 || scaling != 1) rs = Math.Round(rs * scaling + constant);
+                if (constant != 0 || scaling != 1)
+                {
+                    // 计算小数精度
+                    var digits = 4;
+                    var step = propertySpec?.DataType?.Specs?.Step ?? 0;
+                    if (step > 0)
+                    {
+                        var str = step.ToString();
+                        var idx = str.IndexOf('.');
+                        if (idx >= 0) digits = str.Length - idx - 1;
+                    }
+
+                    rs = Math.Round(rs * scaling + constant, digits);
+                }
                 return rs;
             }
         }

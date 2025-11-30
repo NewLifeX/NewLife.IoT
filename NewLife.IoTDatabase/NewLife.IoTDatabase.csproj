@@ -41,7 +41,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NewLife.XCode" Version="11.21.2025.1001" />
+    <PackageReference Include="NewLife.XCode" Version="11.22.2025.1112" />
   </ItemGroup>
 
   <ItemGroup>
