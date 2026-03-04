@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net45</TargetFrameworks>
-    <AssemblyTitle>IoT标准通用串口驱动</AssemblyTitle>
-    <Description>IoT驱动，符合IoT标准的通用串口驱动，连接后向目标发送数据即可收到数据。</Description>
+    <AssemblyTitle>IoT通用数据库驱动</AssemblyTitle>
+    <Description>IoT数据库驱动，符合IoT标准的通用数据库驱动实现，支持通过SQL从各类数据库读写数据</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.0</VersionPrefix>
