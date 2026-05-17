@@ -19,6 +19,10 @@ public interface INode
     /// 参数。设备使用的专用参数
     /// </summary>
     IDriverParameter? Parameter { get; set; }
+
+    /// <summary>是否已连接。驱动维护的连接状态，无需触发一次采集才能感知连接健康</summary>
+    /// <remarks>轮询驱动默认返回 true；长连接驱动（TCP/串口等）在断线时应置为 false</remarks>
+    Boolean IsConnected { get; }
 }
 
 /// <summary>
@@ -40,4 +44,7 @@ public class Node : INode
     /// 参数。设备使用的专用参数
     /// </summary>
     public IDriverParameter? Parameter { get; set; }
+
+    /// <summary>是否已连接。默认 true，长连接驱动可在 OpenAsync/CloseAsync 中维护此状态</summary>
+    public Boolean IsConnected { get; set; } = true;
 }

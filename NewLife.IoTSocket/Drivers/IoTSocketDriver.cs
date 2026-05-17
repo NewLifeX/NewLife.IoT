@@ -7,6 +7,9 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Net;
 using NewLife.Serialization;
+#if NET45
+using TaskEx = System.Threading.Tasks.Task;
+#endif
 
 namespace NewLife.IoTSocket.Drivers;
 
@@ -38,8 +41,9 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     /// </summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override INode Open(IDevice device, IDriverParameter? parameter)
+    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         if (parameter is not SocketParameter p) throw new ArgumentException("参数不能为空");
         if (p.Server.IsNullOrEmpty()) throw new ArgumentException("网络地址不能为空");
@@ -64,7 +68,11 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 
         Interlocked.Increment(ref _nodes);
 
-        return node;
+#if NET45
+        return TaskEx.FromResult(node as INode)!;
+#else
+        return Task.FromResult(node as INode)!;
+#endif
     }
 
     /// <summary>创建网络</summary>
@@ -81,66 +89,100 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     }
 
     /// <summary>关闭设备节点</summary>
-    public override void Close(INode node)
+    public override Task CloseAsync(INode node, CancellationToken cancellationToken = default)
     {
         if (Interlocked.Decrement(ref _nodes) <= 0)
         {
             _client.TryDispose();
             _client = null;
         }
+
+#if NET45
+        return TaskEx.FromResult(0);
+#else
+        return Task.CompletedTask;
+#endif
     }
 
     /// <summary>读取数据</summary>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合，Address属性地址示例：D100、C100、W100、H100</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns></returns>
-    public override IDictionary<String, Object?> Read(INode node, IPoint[] points)
+    public override Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
     {
-        var result = new Dictionary<String, Object?>();
-        if (points == null) return result;
+        if (points == null) return Task.FromResult(ReadResult.Success([], []));
 
         var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter) return result;
+        if (client == null || node.Parameter is not SocketParameter parameter)
+            return Task.FromResult(ReadResult.Success(points, new Object?[points.Length]));
 
         var request = Encode(parameter.RequestCommand);
         if (request != null) client.Send(request);
         var response = client.Receive();
+        var decoded = Decode(response, parameter.ResponseEncoding);
 
-        result["Data"] = Decode(response, parameter.ResponseEncoding);
+        var values = new Object?[points.Length];
+        // 将解码结果分配到名为 Data 的点位，没有则第 0 项
+        var dataIdx = 0;
+        for (var i = 0; i < points.Length; i++)
+        {
+            if (points[i].Name.EqualIgnoreCase("Data")) { dataIdx = i; break; }
+        }
+        values[dataIdx] = decoded;
 
-        return result;
+        return Task.FromResult(ReadResult.Success(points, values));
     }
 
-    /// <summary>写入数据</summary>
-    public override Object? Write(INode node, IPoint point, Object? value)
+    /// <summary>写入数据。requests.Length==1 时单点写入并返回回显值；多点时逐项写入并返回成功计数</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="requests">写入请求数组</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>写入结果</returns>
+    public override Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
     {
         var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter) return null;
+        if (client == null || node.Parameter is not SocketParameter parameter)
+            return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        var request = Encode(value);
-        if (request != null) client.Send(request);
-        var response = client.Receive();
+        if (requests.Length == 1)
+        {
+            var encoded = Encode(requests[0].Value);
+            if (encoded != null) client.Send(encoded);
+            var response = client.Receive();
+            return Task.FromResult(WriteResult.Success(Decode(response, parameter.ResponseEncoding)));
+        }
 
-        return Decode(response, parameter.ResponseEncoding);
+        var count = 0;
+        foreach (var req in requests)
+        {
+            var encoded = Encode(req.Value);
+            if (encoded != null) client.Send(encoded);
+            client.Receive();
+            count++;
+        }
+        return Task.FromResult(WriteResult.SuccessBatch(count));
     }
 
     /// <summary>设备控制</summary>
-    /// <param name="node"></param>
-    /// <param name="parameters"></param>
-    public override Object? Control(INode node, IDictionary<String, Object?> parameters)
+    /// <param name="node">节点对象</param>
+    /// <param name="request">服务调用请求</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>服务调用结果</returns>
+    public override Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
     {
-        var service = JsonHelper.Convert<ServiceModel>(parameters);
-        if (service == null || service.Name.IsNullOrEmpty()) throw new NotImplementedException();
+        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
 
         var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter) return null;
+        if (client == null || node.Parameter is not SocketParameter parameter)
+            return Task.FromResult(ServiceResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
         // 批量操作
         var result = new Dictionary<String, Object?>();
-        foreach (var item in parameters)
+        foreach (var item in request.Parameters)
         {
-            var request = Encode(item.Value);
-            if (request != null) client.Send(request);
+            var encoded = Encode(item.Value);
+            if (encoded != null) client.Send(encoded);
             var response = client.Receive();
 
             // 转换编码
@@ -150,7 +192,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
                 result[item.Key] = response;
         }
 
-        return result;
+        return Task.FromResult(ServiceResult.Success(result));
     }
 
     /// <summary>编码请求数据</summary>

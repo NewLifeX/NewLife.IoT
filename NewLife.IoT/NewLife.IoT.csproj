@@ -5,7 +5,7 @@
     <Description>IoT标准库，定义物联网领域的各种通信协议标准规范，包括驱动接口、物模型、设备控制器等，不含具体实现。用于IoT平台建设及统一硬件驱动协议</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>2.7</VersionPrefix>
+    <VersionPrefix>3.0</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -40,23 +40,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Protocols\**" />
-    <EmbeddedResource Remove="Protocols\**" />
-    <None Remove="Protocols\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="ThingSpecification\PropertyExtend.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="11.15.2026.501" />
+    <PackageReference Include="NewLife.Core" Version="11.15.2026.517-beta0720" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
     <PackageReference Include="NewLife.Core" Version="10.10.2024.801-net40" />

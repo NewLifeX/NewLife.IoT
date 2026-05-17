@@ -69,23 +69,24 @@ public class IoTHttpDriverTests
         };
         var rs = await driver.ReadAsync(node, points);
         Assert.NotNull(rs);
-        Assert.NotEmpty(rs);
-        Assert.Equal(points.Length, rs.Count);
+        Assert.True(rs.IsSuccess);
+        Assert.NotEmpty(rs.Values);
+        Assert.Equal(points.Length, rs.Values.Length);
 
         {
-            Assert.True(rs.TryGetValue(points[0].Name, out var value));
+            var value = rs.Values[0];
             Assert.NotNull(value);
-            Assert.Equal(typeof(String), value.GetType());
+            Assert.Equal(typeof(String), value!.GetType());
         }
         {
-            Assert.True(rs.TryGetValue(points[1].Name, out var value));
+            var value = rs.Values[1];
             Assert.NotNull(value);
-            Assert.Equal(typeof(DateTime), value.GetType());
+            Assert.Equal(typeof(DateTime), value!.GetType());
         }
         {
-            Assert.True(rs.TryGetValue(points[2].Address, out var value));
+            var value = rs.Values[2];
             Assert.NotNull(value);
-            Assert.Equal(typeof(Int16), value.GetType());
+            Assert.Equal(typeof(Int16), value!.GetType());
         }
 
         // 关闭设备
@@ -116,7 +117,8 @@ public class IoTHttpDriverTests
             new PointModel { Address = "port", Type = "short" }
         };
         var rs = await driver.ReadAsync(node, points);
-        Assert.Equal(points.Length, rs.Count);
+        Assert.True(rs.IsSuccess);
+        Assert.Equal(points.Length, rs.Values.Length);
     }
 
     [Fact]
@@ -145,8 +147,9 @@ public class IoTHttpDriverTests
             new PointModel { Address = "port", Type = "short" }
         };
         var rs = await driver.ReadAsync(node, points);
-        Assert.Equal(points.Length, rs.Count);
-        Assert.Equal(state, rs["state"]);
+        Assert.True(rs.IsSuccess);
+        Assert.Equal(points.Length, rs.Values.Length);
+        Assert.Equal(state, rs.GetValue("state"));
     }
 
     [Fact]
@@ -170,7 +173,8 @@ public class IoTHttpDriverTests
 
         // 读取数据
         var rs = await driver.ReadAsync(node, null);
-        Assert.NotEmpty(rs);
-        Assert.Equal(state, rs["state"]);
+        Assert.True(rs.IsSuccess);
+        Assert.NotEmpty(rs.Values);
+        Assert.Equal(state, rs.GetValue("state"));
     }
 }

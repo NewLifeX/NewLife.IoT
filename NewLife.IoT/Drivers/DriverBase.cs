@@ -3,12 +3,15 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using NewLife.Serialization;
+#if NET45
+using TaskEx = System.Threading.Tasks.Task;
+#endif
 
 namespace NewLife.IoT.Drivers;
 
-/// <summary>协议驱动基类。抽象各种硬件设备的数据采集及远程控制</summary>
+/// <summary>协议驱动基类（泛型版）。提供泛型节点和参数类型支持</summary>
 /// <typeparam name="TNode">节点类型，可使用默认Node</typeparam>
-/// <typeparam name="TParameter"></typeparam>
+/// <typeparam name="TParameter">驱动参数类型</typeparam>
 public class DriverBase<TNode, TParameter> : DriverBase
     where TNode : INode, new()
     where TParameter : IDriverParameter, new()
@@ -20,13 +23,11 @@ public class DriverBase<TNode, TParameter> : DriverBase
     #endregion
 
     #region 核心方法
-    /// <summary>
-    /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
-    /// </summary>
+    /// <summary>打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分</summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override INode Open(IDevice device, IDriverParameter? parameter)
+    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         var node = new TNode
         {
@@ -35,12 +36,16 @@ public class DriverBase<TNode, TParameter> : DriverBase
             Parameter = parameter,
         };
 
-        return node;
+#if NET45
+        return TaskEx.FromResult(node as INode);
+#else
+        return Task.FromResult(node as INode);
+#endif
     }
     #endregion
 }
 
-/// <summary>协议驱动基类。抽象各种硬件设备的数据采集及远程控制</summary>
+/// <summary>协议驱动基类。实现IDriver异步接口，派生类直接重写OpenAsync/ReadAsync/WriteAsync等虚方法</summary>
 /// <remarks>
 /// 在Modbus协议上，一个通信链路（串口/ModbusTcp地址）即是IDriver，可能有多个物理设备共用，各自表示为INode。
 /// 即使是一个物理设备，也可能因为管理需要而划分为多个逻辑设备，例如变配电网关等Modbus汇集网关。
@@ -53,6 +58,22 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// 例如：Modbus驱动可以获取外部注入的IBoard服务对象，在A2工业计算机中，借助其中的Map方法把串口COM1映射到/dev/ttyAMA0。
     /// </remarks>
     public IServiceProvider? ServiceProvider { get; set; }
+
+    /// <summary>诊断模式开关。开启后 ReadResult/WriteResult 将填充 RequestBytes/ResponseBytes 原始帧数据</summary>
+    /// <remarks>默认关闭；仅在调试、问题排查阶段开启，生产环境关闭以避免额外内存分配</remarks>
+    public Boolean Diagnostics { get; set; }
+    #endregion
+
+    #region 事件
+    /// <summary>数据到达事件。推送型驱动（MQTT/WebSocket/OPC-UA等）在收到设备数据时触发</summary>
+    public event EventHandler<DriverDataEventArgs>? DataReceived;
+
+    /// <summary>触发数据到达事件</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="points">数据对应的点位集合</param>
+    /// <param name="result">读取结果</param>
+    protected void RaiseDataReceived(INode node, IPoint[] points, ReadResult result)
+        => DataReceived?.Invoke(this, new DriverDataEventArgs { Node = node, Points = points, Result = result });
     #endregion
 
     #region 元数据
@@ -82,7 +103,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
         return p;
     }
 
-    /// <summary>创建驱动参数对象，分析参数配置或创建默认参数</summary>
+    /// <summary>创建驱动参数对象（虚钩子，派生类重写以返回具体参数类型）</summary>
     /// <returns></returns>
     protected virtual IDriverParameter? OnCreateParameter() => null;
 
@@ -110,79 +131,67 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
         return OnGetSpecification(spec) ? spec : null;
     }
 
-    /// <summary>填充产品物模型</summary>
-    /// <param name="thingSpec"></param>
+    /// <summary>填充产品物模型（虚钩子，派生类重写以提供具体物模型内容）</summary>
+    /// <param name="thingSpec">待填充的物模型对象</param>
     /// <returns>是否填充成功</returns>
     protected virtual Boolean OnGetSpecification(ThingSpec thingSpec) => false;
     #endregion
 
     #region 核心方法
-    /// <summary>
-    /// 打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分
-    /// </summary>
+    /// <summary>打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分</summary>
     /// <param name="device">逻辑设备</param>
-    /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="parameter">驱动参数</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public virtual INode Open(IDevice device, IDriverParameter? parameter)
+    public virtual Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         var node = new Node
         {
             Driver = this,
             Device = device,
         };
-
-        return node;
+#if NET45
+        return TaskEx.FromResult(node as INode);
+#else
+        return Task.FromResult(node as INode);
+#endif
     }
 
-    /// <summary>
-    /// 关闭设备节点。多节点共用通信链路时，需等最后一个节点关闭才能断开
-    /// </summary>
-    /// <param name="node"></param>
-    public virtual void Close(INode node) { }
+    /// <summary>关闭设备节点</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    public virtual Task CloseAsync(INode node, CancellationToken cancellationToken = default)
+    {
+#if NET45
+        return TaskEx.FromResult(0);
+#else
+        return Task.CompletedTask;
+#endif
+    }
 
     /// <summary>读取数据</summary>
-    /// <remarks>
-    /// 驱动实现数据采集的核心方法，各驱动全力以赴实现好该接口。
-    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
-    /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
-    /// <returns></returns>
-    public virtual IDictionary<String, Object?> Read(INode node, IPoint[] points) => throw new NotImplementedException();
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>读取结果，包含点位数据、质量码和可选诊断帧</returns>
+    public virtual Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
 
-    /// <summary>写入数据</summary>
-    /// <remarks>
-    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
-    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
-    /// </remarks>
-    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
-    /// <param name="point">点位</param>
-    /// <param name="value">数值</param>
-    public virtual Object? Write(INode node, IPoint point, Object? value) => throw new NotImplementedException();
+    /// <summary>批量写入数据（IDriver 核心方法）。派生类重写时自行判断 requests.Length 以决定走单点或批量路径</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="requests">写入请求数组，长度为 1 时表示单点写入</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>批量写入结果，AffectedCount 为实际成功点数</returns>
+    public virtual Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
 
-    /// <summary>批量写入数据</summary>
-    /// <remarks>
-    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
-    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
-    /// </remarks>
-    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
-    /// <param name="values">点位数值</param>
-    public virtual void Write(INode node, IDictionary<IPoint, Object> values)
-    {
-        foreach (var item in values)
-        {
-            Write(node, item.Key, item.Value);
-        }
-    }
-
-    /// <summary>控制设备，特殊功能使用</summary>
-    /// <remarks>
-    /// 除了点位读写之外的其它控制功能。
-    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
-    /// </remarks>
-    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
-    /// <param name="parameters">参数</param>
-    public virtual Object? Control(INode node, IDictionary<String, Object?> parameters) => throw new NotImplementedException();
+    /// <summary>控制设备</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="request">服务调用请求，携带服务名和输入参数</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>服务调用结果，携带输出参数</returns>
+    public virtual Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
     #endregion
 
     #region 日志
@@ -193,8 +202,8 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     public ITracer? Tracer { get; set; }
 
     /// <summary>写日志</summary>
-    /// <param name="format"></param>
-    /// <param name="args"></param>
+    /// <param name="format">格式字符串</param>
+    /// <param name="args">参数列表</param>
     public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
     #endregion
 }

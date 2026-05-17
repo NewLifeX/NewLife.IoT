@@ -9,6 +9,9 @@ using NewLife.IoT.ThingSpecification;
 using NewLife.Model;
 using NewLife.Reflection;
 using NewLife.Serialization;
+#if NET45
+using TaskEx = System.Threading.Tasks.Task;
+#endif
 
 namespace NewLife.IoTSerial.Drivers;
 
@@ -42,8 +45,9 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     /// </summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override INode Open(IDevice device, IDriverParameter? parameter)
+    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         if (parameter is not IoTSerialParameter p) throw new ArgumentException("参数不能为空");
         if (p.PortName.IsNullOrEmpty()) throw new ArgumentException("串口名称不能为空");
@@ -70,7 +74,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
 
         Interlocked.Increment(ref _nodes);
 
-        return node;
+        return Task.FromResult(node as INode)!;
     }
 
     /// <summary>创建串口</summary>
@@ -117,90 +121,131 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     }
 
     /// <summary>关闭设备节点</summary>
-    public override void Close(INode node)
+    public override Task CloseAsync(INode node, CancellationToken cancellationToken = default)
     {
         if (Interlocked.Decrement(ref _nodes) <= 0)
         {
             _serialPort.TryDispose();
             _serialPort = null;
         }
+
+#if NET45
+        return TaskEx.FromResult(0);
+#else
+        return Task.CompletedTask;
+#endif
     }
 
     /// <summary>读取数据</summary>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合，Address属性地址示例：D100、C100、W100、H100</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns></returns>
-    public override IDictionary<String, Object?> Read(INode node, IPoint[] points)
+    public override Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
     {
-        var result = new Dictionary<String, Object?>();
-        //if (points == null) return result;
-
         var client = (node as SerialNode)?.SerialPort;
-        if (client == null || node.Parameter is not IoTSerialParameter parameter) return result;
+        if (client == null || node.Parameter is not IoTSerialParameter parameter)
+            return Task.FromResult(ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]));
 
         var request = Encode(parameter.RequestCommand);
         var response = client.Invoke(request, 1);
+        var decoded = Decode(response, parameter.ResponseEncoding);
 
-        var rs = Decode(response, parameter.ResponseEncoding);
-        if (rs is IDictionary<String, Object?> dic)
+        if (points != null && points.Length > 0)
         {
-            foreach (var item in dic)
+            var values = new Object?[points.Length];
+            if (decoded is IDictionary<String, Object?> dic)
             {
-                var name = item.Key;
-                var value = item.Value;
-                var point = points?.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
-                if (point != null)
+                for (var i = 0; i < points.Length; i++)
                 {
-                    // 如果点位有类型，转换类型
-                    var type = point.GetNetType();
-                    if (type != null) value = value.ChangeType(type);
+                    var pt = points[i];
+                    var kv = dic.FirstOrDefault(x => x.Key.EqualIgnoreCase(pt.Name, pt.Address));
+                    if (kv.Key != null)
+                    {
+                        var val = kv.Value;
+                        var type = pt.GetNetType();
+                        values[i] = type != null ? val.ChangeType(type) : val;
+                    }
+                }
+            }
+            else
+            {
+                // 单值响应：分配到名为 Data 的点位，没有则第 0 项
+                var dataIdx = 0;
+                for (var i = 0; i < points.Length; i++)
+                {
+                    if (points[i].Name.EqualIgnoreCase("Data")) { dataIdx = i; break; }
+                }
+                values[dataIdx] = decoded;
+            }
+            return Task.FromResult(ReadResult.Success(points, values));
+        }
 
-                    result[name] = value;
-                }
-                else if (parameter.CaptureAll)
-                {
-                    // 如果点位没有指定，且允许捕获所有字段，则直接返回
-                    result[name] = value;
-                }
+        // 无输入点位：动态捕获
+        var dynPoints = new List<IPoint>();
+        var dynValues = new List<Object?>();
+        if (decoded is IDictionary<String, Object?> allDic)
+        {
+            foreach (var item in allDic)
+            {
+                dynPoints.Add(new PointModel { Name = item.Key });
+                dynValues.Add(item.Value);
             }
         }
         else
         {
-            result["Data"] = rs;
+            dynPoints.Add(new PointModel { Name = "Data" });
+            dynValues.Add(decoded);
         }
-
-        return result;
+        return Task.FromResult(ReadResult.Success([.. dynPoints], [.. dynValues]));
     }
 
-    /// <summary>写入数据</summary>
-    public override Object? Write(INode node, IPoint point, Object? value)
+    /// <summary>写入数据。requests.Length==1 时单点写入并返回回显值；多点时逐项写入并返回成功计数</summary>
+    /// <param name="node">节点对象</param>
+    /// <param name="requests">写入请求数组</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>写入结果</returns>
+    public override Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
     {
         var client = (node as SerialNode)?.SerialPort;
-        if (client == null || node.Parameter is not IoTSerialParameter parameter) return null;
+        if (client == null || node.Parameter is not IoTSerialParameter parameter)
+            return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        var request = Encode(value);
-        var response = client.Invoke(request, 1);
+        if (requests.Length == 1)
+        {
+            var encoded = Encode(requests[0].Value);
+            var response = client.Invoke(encoded, 1);
+            return Task.FromResult(WriteResult.Success(Decode(response, parameter.ResponseEncoding)));
+        }
 
-        return Decode(response, parameter.ResponseEncoding);
+        var count = 0;
+        foreach (var req in requests)
+        {
+            var encoded = Encode(req.Value);
+            client.Invoke(encoded, 1);
+            count++;
+        }
+        return Task.FromResult(WriteResult.SuccessBatch(count));
     }
 
     /// <summary>设备控制</summary>
-    /// <param name="node"></param>
-    /// <param name="parameters"></param>
-    public override Object? Control(INode node, IDictionary<String, Object?> parameters)
+    /// <param name="node">节点对象</param>
+    /// <param name="request">服务调用请求</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>服务调用结果</returns>
+    public override Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
     {
-        var service = JsonHelper.Convert<ServiceModel>(parameters);
-        if (service == null || service.Name.IsNullOrEmpty()) throw new NotImplementedException();
+        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
 
         var client = (node as SerialNode)?.SerialPort;
-        if (client == null || node.Parameter is not IoTSerialParameter parameter) return null;
+        if (client == null || node.Parameter is not IoTSerialParameter parameter)
+            return Task.FromResult(ServiceResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        // 批量操作
         var result = new Dictionary<String, Object?>();
-        foreach (var item in parameters)
+        foreach (var item in request.Parameters)
         {
-            var request = Encode(item.Value);
-            var response = client.Invoke(request, 1);
+            var encoded = Encode(item.Value);
+            var response = client.Invoke(encoded, 1);
 
             // 转换编码
             if (!parameter.ResponseEncoding.IsNullOrEmpty())
@@ -209,7 +254,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
                 result[item.Key] = response;
         }
 
-        return result;
+        return Task.FromResult(ServiceResult.Success(result));
     }
 
     /// <summary>编码请求数据</summary>

@@ -6,8 +6,7 @@ using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
 using NewLife.Reflection;
 using NewLife.Serialization;
-
-#if !NET40
+#if NET45
 using TaskEx = System.Threading.Tasks.Task;
 #endif
 
@@ -19,7 +18,7 @@ namespace NewLife.IoTSocket.Drivers;
 /// </remarks>
 [Driver("IoTHttp")]
 [DisplayName("通用Http驱动")]
-public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
+public class IoTHttpDriver : DriverBase<Node, HttpParameter>
 {
     #region 属性
     /// <summary>客户端</summary>
@@ -65,30 +64,27 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
         Client.TryDispose();
         Client = null;
 
-#if NET40 || NET45
+#if NET45
         return TaskEx.FromResult(0);
 #else
-        return TaskEx.CompletedTask;
+        return Task.CompletedTask;
 #endif
     }
 
     /// <summary>读取数据</summary>
     /// <remarks>
-    /// 驱动实现数据采集的核心方法，各驱动全力以赴实现好该接口。
+    /// 驱动实现数据采集的核心方法。
     /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
     /// <param name="points">点位集合</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns></returns>
-    public override async Task<IDictionary<String, Object?>> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
+    public override async Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
     {
-        var result = new Dictionary<String, Object?>();
-        //if (points == null) return result;
-
         var client = Client;
-        if (client == null) return result;
-        if (node.Parameter is not HttpParameter parameter) return result;
+        if (client == null) return ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]);
+        if (node.Parameter is not HttpParameter parameter) return ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]);
 
         var path = parameter.PathAndQuery;
         if (path.IsNullOrEmpty()) path = "/";
@@ -124,40 +120,62 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
             }
         }
 
-        if (!response.IsNullOrEmpty())
-        {
-            // 尝试按照Json来解析数据，转为字典，然后逐个给点位赋值
-            var dic = Decode(response);
-            if (dic != null)
-            {
-                foreach (var item in dic)
-                {
-                    var name = item.Key;
-                    var value = item.Value;
-                    var point = points?.FirstOrDefault(e => name.EqualIgnoreCase(e.Name, e.Address));
-                    if (point != null)
-                    {
-                        // 如果点位有类型，转换类型
-                        var type = point.GetNetType();
-                        if (type != null) value = value.ChangeType(type);
+        if (response.IsNullOrEmpty())
+            return ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]);
 
-                        result[name] = value;
-                    }
-                    else if (parameter.CaptureAll)
+        // 尝试按照 Json 解析数据，转为字典，然后逐个给点位赋值
+        var dic = Decode(response);
+
+        if (dic != null)
+        {
+            if (points != null && points.Length > 0)
+            {
+                // 严格按下标填充
+                var values = new Object?[points.Length];
+                for (var i = 0; i < points.Length; i++)
+                {
+                    var pt = points[i];
+                    var kv = dic.FirstOrDefault(x => x.Key.EqualIgnoreCase(pt.Name, pt.Address));
+                    if (kv.Key != null)
                     {
-                        // 如果点位没有指定，且允许捕获所有字段，则直接返回
-                        result[name] = value;
+                        var val = kv.Value;
+                        var type = pt.GetNetType();
+                        values[i] = type != null ? val.ChangeType(type) : val;
                     }
                 }
+                return ReadResult.Success(points, values);
             }
-            else
+            else if (parameter.CaptureAll)
             {
-                // 如果没有解析出来，直接返回原始数据
-                result["data"] = response;
+                // 无点位且允许捕获所有：动态建立点位
+                var dynPoints = new IPoint[dic.Count];
+                var dynValues = new Object?[dic.Count];
+                var idx = 0;
+                foreach (var item in dic)
+                {
+                    dynPoints[idx] = new PointModel { Name = item.Key };
+                    dynValues[idx] = item.Value;
+                    idx++;
+                }
+                return ReadResult.Success(dynPoints, dynValues);
             }
         }
+        else
+        {
+            // 未解析出字典：将原始响应放入 data 点位
+            if (points != null && points.Length > 0)
+            {
+                var values = new Object?[points.Length];
+                var dataIdx = Array.FindIndex(points, p => p.Name.EqualIgnoreCase("data"));
+                if (dataIdx >= 0) values[dataIdx] = response;
+                return ReadResult.Success(points, values);
+            }
+            return ReadResult.Success(
+                [new PointModel { Name = "data" }],
+                [response]);
+        }
 
-        return result;
+        return ReadResult.Success([], []);
     }
 
     /// <summary>解码字符串</summary>
@@ -176,14 +194,5 @@ public class IoTHttpDriver : AsyncDriverBase<Node, HttpParameter>
         return dic;
     }
 
-    /// <summary>批量写入数据</summary>
-    /// <remarks>
-    /// 驱动实现远程控制的核心方法，各驱动全力以赴实现好该接口。
-    /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
-    /// </remarks>
-    /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
-    /// <param name="values">点位数值</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    public override TaskEx WriteAsync(INode node, IDictionary<IPoint, Object> values, CancellationToken cancellationToken = default) => base.WriteAsync(node, values, cancellationToken);
     #endregion
 }

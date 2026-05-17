@@ -1,4 +1,5 @@
-﻿using NewLife.PC.Drivers;
+﻿using NewLife.IoT.Drivers;
+using NewLife.PC.Drivers;
 using Xunit;
 
 namespace XUnitTest;
@@ -28,7 +29,7 @@ public class DriverTests
         var tsl = spec.ToJson();
         Assert.NotEmpty(tsl);
 
-        var node = driver.Open(null, null);
+        var node = driver.Open(null!, (IDriverParameter?)null);
         Assert.NotNull(node);
 
         var spec2 = driver.GetSpecification();
