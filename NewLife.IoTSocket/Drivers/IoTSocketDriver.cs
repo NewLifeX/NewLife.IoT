@@ -7,9 +7,6 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Net;
 using NewLife.Serialization;
-#if NET45
-using TaskEx = System.Threading.Tasks.Task;
-#endif
 
 namespace NewLife.IoTSocket.Drivers;
 
@@ -68,11 +65,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 
         Interlocked.Increment(ref _nodes);
 
-#if NET45
         return TaskEx.FromResult(node as INode)!;
-#else
-        return Task.FromResult(node as INode)!;
-#endif
     }
 
     /// <summary>创建网络</summary>
@@ -97,11 +90,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
             _client = null;
         }
 
-#if NET45
-        return TaskEx.FromResult(0);
-#else
-        return Task.CompletedTask;
-#endif
+        return TaskEx.CompletedTask;
     }
 
     /// <summary>读取数据</summary>
@@ -166,16 +155,16 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 
     /// <summary>设备控制</summary>
     /// <param name="node">节点对象</param>
-    /// <param name="request">服务调用请求</param>
+    /// <param name="request">控制请求</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>服务调用结果</returns>
-    public override Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
+    /// <returns>控制结果</returns>
+    public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
     {
         if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
 
         var client = (node as SocketNode)?.Client;
         if (client == null || node.Parameter is not SocketParameter parameter)
-            return Task.FromResult(ServiceResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
+            return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
         // 批量操作
         var result = new Dictionary<String, Object?>();
@@ -192,7 +181,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
                 result[item.Key] = response;
         }
 
-        return Task.FromResult(ServiceResult.Success(result));
+        return Task.FromResult(ControlResult.Success(result));
     }
 
     /// <summary>编码请求数据</summary>

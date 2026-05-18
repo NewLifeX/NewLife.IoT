@@ -2,12 +2,12 @@ using NewLife.Data;
 
 namespace NewLife.IoT.Drivers;
 
-/// <summary>服务调用结果。携带服务执行状态和输出参数</summary>
+/// <summary>控制结果。携带控制执行状态和输出参数</summary>
 /// <remarks>
 /// 成功时 <see cref="IsSuccess"/>=true，<see cref="OutputParameters"/> 携带服务输出；
 /// 失败时 <see cref="IsSuccess"/>=false，<see cref="Code"/>/<see cref="Message"/> 说明原因。
 /// </remarks>
-public class ServiceResult : IExtend, IDriverResult
+public class ControlResult : IExtend, IDriverResult
 {
     #region 属性
     /// <summary>操作是否成功</summary>
@@ -42,21 +42,21 @@ public class ServiceResult : IExtend, IDriverResult
     #region 工厂方法
     /// <summary>创建成功结果</summary>
     /// <param name="outputParameters">输出参数字典，可为空</param>
-    /// <returns>成功的服务调用结果</returns>
-    public static ServiceResult Success(IDictionary<String, Object?>? outputParameters = null)
+    /// <returns>成功的控制结果</returns>
+    public static ControlResult Success(IDictionary<String, Object?>? outputParameters = null)
         => new() { IsSuccess = true, OutputParameters = outputParameters ?? new Dictionary<String, Object?>() };
 
     /// <summary>创建失败结果</summary>
     /// <param name="code">错误码</param>
     /// <param name="message">错误消息</param>
-    /// <returns>失败的服务调用结果</returns>
-    public static ServiceResult Fail(IoTErrorCode code, String message)
+    /// <returns>失败的控制结果</returns>
+    public static ControlResult Fail(IoTErrorCode code, String message)
         => new() { Code = code, Message = message };
     #endregion
 
     /// <summary>以文本方式输出结果摘要</summary>
     public override String ToString()
         => IsSuccess
-            ? $"ServiceResult.Success({OutputParameters.Count} outputs)"
-            : $"ServiceResult.Fail({Code}: {Message})";
+            ? $"ControlResult.Success({OutputParameters.Count} outputs)"
+            : $"ControlResult.Fail({Code}: {Message})";
 }

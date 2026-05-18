@@ -89,10 +89,10 @@ public interface IDriver
     /// 其中点位表名称和地址，仅该驱动能够识别。类型和长度等信息，则由物联网平台统一规范。
     /// </remarks>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
-    /// <param name="request">服务调用请求，携带服务名和输入参数</param>
+    /// <param name="request">控制请求，携带服务名和输入参数</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>服务调用结果，携带输出参数</returns>
-    Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default);
+    /// <returns>控制结果，携带输出参数</returns>
+    Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default);
     #endregion
 }
 
@@ -177,9 +177,9 @@ public static class DriverExtensions
     /// <summary>控制设备（同步便利方法）</summary>
     /// <param name="driver">驱动对象</param>
     /// <param name="node">节点对象</param>
-    /// <param name="request">服务调用请求</param>
-    /// <returns>服务调用结果</returns>
-    public static ServiceResult Control(this IDriver driver, INode node, ServiceCall request)
+    /// <param name="request">控制请求</param>
+    /// <returns>控制结果</returns>
+    public static ControlResult Control(this IDriver driver, INode node, ControlRequest request)
         => driver.ControlAsync(node, request).ConfigureAwait(false).GetAwaiter().GetResult();
 
     /// <summary>控制设备（同步便利方法，按服务名+参数字典）</summary>
@@ -187,7 +187,7 @@ public static class DriverExtensions
     /// <param name="node">节点对象</param>
     /// <param name="serviceName">服务名称</param>
     /// <param name="parameters">输入参数字典，可为空</param>
-    /// <returns>服务调用结果</returns>
-    public static ServiceResult Control(this IDriver driver, INode node, String serviceName, IDictionary<String, Object?>? parameters = null)
-        => driver.ControlAsync(node, ServiceCall.Create(serviceName, parameters)).ConfigureAwait(false).GetAwaiter().GetResult();
+    /// <returns>控制结果</returns>
+    public static ControlResult Control(this IDriver driver, INode node, String serviceName, IDictionary<String, Object?>? parameters = null)
+        => driver.ControlAsync(node, ControlRequest.Create(serviceName, parameters)).ConfigureAwait(false).GetAwaiter().GetResult();
 }

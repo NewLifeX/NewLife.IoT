@@ -3,9 +3,6 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using NewLife.Serialization;
-#if NET45
-using TaskEx = System.Threading.Tasks.Task;
-#endif
 
 namespace NewLife.IoT.Drivers;
 
@@ -26,6 +23,7 @@ public class DriverBase<TNode, TParameter> : DriverBase
     /// <summary>打开设备驱动，传入参数。一个物理设备可能有多个逻辑设备共用，需要以节点来区分</summary>
     /// <param name="device">逻辑设备</param>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
     public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
@@ -36,11 +34,7 @@ public class DriverBase<TNode, TParameter> : DriverBase
             Parameter = parameter,
         };
 
-#if NET45
         return TaskEx.FromResult(node as INode);
-#else
-        return Task.FromResult(node as INode);
-#endif
     }
     #endregion
 }
@@ -124,7 +118,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
             Profile = new Profile
             {
                 Version = type.Assembly.GetName().Version + "",
-                ProductKey = type.GetCustomAttribute<DriverAttribute>()?.Name ?? type.Name.TrimEnd("Protocol", "Driver")
+                ProductKey = type.GetCustomAttribute<DriverAttribute>()?.Name ?? type.Name.TrimSuffix("Protocol", "Driver")
             }
         };
 
@@ -150,24 +144,13 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
             Driver = this,
             Device = device,
         };
-#if NET45
         return TaskEx.FromResult(node as INode);
-#else
-        return Task.FromResult(node as INode);
-#endif
     }
 
     /// <summary>关闭设备节点</summary>
     /// <param name="node">节点对象</param>
     /// <param name="cancellationToken">取消令牌</param>
-    public virtual Task CloseAsync(INode node, CancellationToken cancellationToken = default)
-    {
-#if NET45
-        return TaskEx.FromResult(0);
-#else
-        return Task.CompletedTask;
-#endif
-    }
+    public virtual Task CloseAsync(INode node, CancellationToken cancellationToken = default) => TaskEx.CompletedTask;
 
     /// <summary>读取数据</summary>
     /// <param name="node">节点对象，可存储站号等信息，仅驱动自己识别</param>
@@ -187,10 +170,10 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
 
     /// <summary>控制设备</summary>
     /// <param name="node">节点对象</param>
-    /// <param name="request">服务调用请求，携带服务名和输入参数</param>
+    /// <param name="request">控制请求，携带服务名和输入参数</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>服务调用结果，携带输出参数</returns>
-    public virtual Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
+    /// <returns>控制结果，携带输出参数</returns>
+    public virtual Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
         => throw new NotImplementedException();
     #endregion
 

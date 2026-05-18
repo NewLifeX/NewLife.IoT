@@ -6,9 +6,6 @@ using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
 using NewLife.Reflection;
 using NewLife.Serialization;
-#if NET45
-using TaskEx = System.Threading.Tasks.Task;
-#endif
 
 namespace NewLife.IoTSocket.Drivers;
 
@@ -64,11 +61,7 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
         Client.TryDispose();
         Client = null;
 
-#if NET45
-        return TaskEx.FromResult(0);
-#else
-        return Task.CompletedTask;
-#endif
+        return TaskEx.CompletedTask;
     }
 
     /// <summary>读取数据</summary>

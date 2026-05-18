@@ -119,10 +119,10 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
 
     /// <summary>设备控制</summary>
     /// <param name="node">节点对象</param>
-    /// <param name="request">服务调用请求</param>
+    /// <param name="request">控制请求</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>服务调用结果</returns>
-    public override Task<ServiceResult> ControlAsync(INode node, ServiceCall request, CancellationToken cancellationToken = default)
-        => Task.FromResult(ServiceResult.Fail(IoTErrorCode.NotSupported, "数据库驱动不支持服务控制操作"));
+    /// <returns>控制结果</returns>
+    public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
+        => Task.FromResult(ControlResult.Fail(IoTErrorCode.NotSupported, "数据库驱动不支持服务控制操作"));
     #endregion
 }
