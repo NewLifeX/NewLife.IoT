@@ -57,56 +57,55 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
     /// <returns></returns>
     public override Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
     {
-        var client = (node as DatabseNode)?.Dal;
-        if (client == null || node.Parameter is not DatabaseParameter parameter)
+        var dbNode = node as DatabseNode;
+        if (dbNode?.Dal == null || node.Parameter is not DatabaseParameter parameter)
             return Task.FromResult(ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]));
 
-        var sql = parameter.QuerySql;
-        var dt = client.Query(sql);
+        var dt = dbNode.Dal.Query(parameter.QuerySql);
 
         if (dt.Rows == null || dt.Rows.Count == 0)
             return Task.FromResult(ReadResult.Success(points ?? [], new Object?[points?.Length ?? 0]));
 
-        // 只要第一行数据
+        // 只要第一行，按列名建立查找字典
         var row = dt.Rows[0];
-
-        // 按列名建立查找字典
         var colDict = new Dictionary<String, Object?>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < dt.Columns.Length; i++)
             colDict[dt.Columns[i]] = row[i];
 
-        if (points != null && points.Length > 0)
-        {
-            var values = new Object?[points.Length];
-            for (var i = 0; i < points.Length; i++)
-            {
-                var pt = points[i];
-                var matched = colDict.TryGetValue(pt.Name, out var val);
-                if (!matched && !pt.Address.IsNullOrEmpty())
-                    matched = colDict.TryGetValue(pt.Address!, out val);
-                if (!matched) continue;
+        // 匹配指定点位
+        points ??= [];
+        var values = new Object?[points.Length];
+        var matchedCols = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
 
-                var type = pt.GetNetType();
-                values[i] = type != null ? val.ChangeType(type) : val;
-            }
-            return Task.FromResult(ReadResult.Success(points, values));
-        }
-        else if (parameter.CaptureAll)
+        for (var i = 0; i < points.Length; i++)
         {
-            // 无点位且允许捕获所有：动态建立点位
-            var dynPoints = new IPoint[colDict.Count];
-            var dynValues = new Object?[colDict.Count];
-            var idx = 0;
+            var pt = points[i];
+            String? matchedCol = null;
+            if (colDict.TryGetValue(pt.Name, out var val))
+                matchedCol = pt.Name;
+            else if (!pt.Address.IsNullOrEmpty() && colDict.TryGetValue(pt.Address!, out val))
+                matchedCol = pt.Address;
+
+            if (matchedCol == null) continue;
+
+            matchedCols.Add(matchedCol);
+            var type = pt.GetNetType();
+            values[i] = type != null ? val.ChangeType(type) : val;
+        }
+
+        var result = ReadResult.Success(points, values);
+
+        // CaptureAll：未匹配到任何点位的列，写入 IExtend
+        if (parameter.CaptureAll)
+        {
             foreach (var kv in colDict)
             {
-                dynPoints[idx] = new PointModel { Name = kv.Key };
-                dynValues[idx] = kv.Value;
-                idx++;
+                if (!matchedCols.Contains(kv.Key))
+                    result[kv.Key] = kv.Value;
             }
-            return Task.FromResult(ReadResult.Success(dynPoints, dynValues));
         }
 
-        return Task.FromResult(ReadResult.Success([], []));
+        return Task.FromResult(result);
     }
 
     /// <summary>写入数据。数据库驱动不支持写入，始终返回失败</summary>

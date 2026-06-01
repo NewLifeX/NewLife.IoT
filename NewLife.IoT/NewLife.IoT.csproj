@@ -30,7 +30,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>升级依赖包至最新版本；统一驱动描述规范，新增开发/性能/网络指令文档</PackageReleaseNotes>
+    <PackageReleaseNotes>IDriver接口全异步化重构，消除双路判断统一为Task返回；新增ReadResult/WriteResult/ControlResult结构化操作结果；引入ITransport统一传输层接口，IDataPort废弃；新增IoTException/IoTErrorCode结构化错误处理；DataQuality枚举支持多级质量标记；ServiceCall重命名为ControlRequest/ControlResult统一控制语义</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -46,7 +46,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="11.15.2026.517-beta0720" />
+    <PackageReference Include="NewLife.Core" Version="11.16.2026.601" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
     <PackageReference Include="NewLife.Core" Version="10.10.2024.801-net40" />

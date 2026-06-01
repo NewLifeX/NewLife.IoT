@@ -1,5 +1,29 @@
 # NewLife.IoT 变更日志
 
+## v3.0.2026.0601 (2026-06-01)
+
+### 驱动接口重构（重大变更）
+- **IDriver 全异步化**：消除 IAsyncDriver/IDriver 双路判断，所有 I/O 操作统一为 Task 返回，简化驱动开发模型
+- **结构化操作结果**：新增 ReadResult/WriteResult/ControlResult 结构，内置质量码、错误码、诊断帧，替代裸字典返回
+- **结构化错误处理**：引入 IoTException/IoTErrorCode，支持高频失败场景的结构化错误传递
+- **DataQuality 枚举**：采集结果支持多级质量标记（Good/Uncertain/Bad 等）
+- **DataReceived 事件**：IDriver 新增事件，支持推送型驱动主动上报数据
+
+### 传输层抽象
+- **ITransport 接口**：新增统一传输层接口，整合串口/TCP/UDP/HTTP 传输，IDataPort 标记废弃
+- **SerialTransport**：新增串口传输层实现（NewLife.IoTSerial）
+- **HttpTransport / SocketTransport**：新增 HTTP/Socket/TCP/UDP 传输层实现（NewLife.IoTSocket）
+
+### 控制接口规范化
+- **ControlRequest/ControlResult**：将 ServiceCall/ServiceResult 重命名为 ControlRequest/ControlResult，统一"控制"语义；删除废弃 ServiceRequest 类型
+- **WriteRequest**：新增结构化写入参数类型，提升扩展性
+
+### 兼容性
+- **DriverBase 异步桥接**：通过桥接机制兼容现有同步驱动
+- 兼容 net45 ~ net10.0
+
+---
+
 ## v2.7.2026.0501 (2026-05-01)
 
 ### 依赖升级
