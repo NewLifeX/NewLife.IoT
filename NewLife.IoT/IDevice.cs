@@ -29,10 +29,12 @@ public interface IDevice
 
     #region 方法
     /// <summary>开始工作</summary>
-    Task Start();
+    /// <param name="cancellationToken">取消令牌</param>
+    Task StartAsync(CancellationToken cancellationToken = default);
 
     /// <summary>停止工作</summary>
-    void Stop();
+    /// <param name="cancellationToken">取消令牌</param>
+    Task StopAsync(CancellationToken cancellationToken = default);
 
     /// <summary>设备上线。驱动打开后调用，子设备发现，或者上报主设备/子设备的默认参数模版</summary>
     /// <remarks>
@@ -41,16 +43,39 @@ public interface IDevice
     /// 根据需要，驱动内可能多次调用该方法。
     /// </remarks>
     /// <param name="devices">设备信息集合。可传递参数模版</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>返回上报信息对应的反馈，如果新增子设备，则返回子设备信息</returns>
-    IDeviceInfo[] SetOnline(IDeviceInfo[] devices);
+    Task<IDeviceInfo[]> SetOnlineAsync(IDeviceInfo[] devices, CancellationToken cancellationToken = default);
 
     /// <summary>设备下线。驱动内子设备变化后调用</summary>
     /// <remarks>
     /// 根据需要，驱动内可能多次调用该方法。
     /// </remarks>
     /// <param name="devices">设备编码集合。用于子设备离线</param>
+    /// <param name="cancellationToken">取消令牌</param>
     /// <returns>返回上报信息对应的反馈，如果新增子设备，则返回子设备信息</returns>
-    IDeviceInfo[] SetOffline(String[] devices);
+    Task<IDeviceInfo[]> SetOfflineAsync(String[] devices, CancellationToken cancellationToken = default);
+
+    /// <summary>异步上报属性</summary>
+    /// <param name="deviceCode">设备编码</param>
+    /// <param name="items">属性数据，字典或属性模型数组</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>上报结果</returns>
+    Task<Int32> PostPropertyAsync(String deviceCode, Object items, CancellationToken cancellationToken = default);
+
+    /// <summary>异步上报数据</summary>
+    /// <param name="deviceCode">设备编码</param>
+    /// <param name="items">数据集合</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>上报结果</returns>
+    Task<Int32> PostDataAsync(String deviceCode, DataModel[] items, CancellationToken cancellationToken = default);
+
+    /// <summary>异步上报事件</summary>
+    /// <param name="deviceCode">设备编码</param>
+    /// <param name="items">事件集合</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>上报结果</returns>
+    Task<Int32> PostEventAsync(String deviceCode, EventModel[] items, CancellationToken cancellationToken = default);
     #endregion
 
     #region 物模型方法
