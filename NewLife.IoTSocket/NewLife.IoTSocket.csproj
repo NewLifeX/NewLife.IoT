@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net45;net462</TargetFrameworks>
-    <AssemblyTitle>IoT通用网络驱动</AssemblyTitle>
-    <Description>IoT网络驱动，符合IoT标准的通用网络驱动实现，支持TCP、UDP、HTTP等协议，连接后向目标发送数据即可收到数据</Description>
+    <AssemblyTitle>IoT Generic Network Driver (IoT通用网络驱动)</AssemblyTitle>
+    <Description>IoT Generic Network Driver — standards-compliant TCP/UDP/HTTP driver implementing IDriver/DriverBase. Includes IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver for broadcast discovery), IoTHttpDriver. Built-in TcpTransport/UdpTransport/HttpTransport (ITransport).  |  IoT通用网络驱动，符合IoT标准的TCP/UDP/HTTP驱动实现，含IoTTcpDriver、IoTUdpDriver（支持广播发现）、IoTHttpDriver，内置TcpTransport/UdpTransport/HttpTransport传输层。</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -27,8 +27,8 @@
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;PLC;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>新增HttpTransport/SocketTransport/TcpTransport/UdpTransport传输层实现；适配IDriver全异步接口与新ITransport规范；支持ControlRequest/ControlResult控制接口</PackageReleaseNotes>
+    <PackageTags>IoT;TCP;UDP;HTTP;Network;Socket;TcpTransport;UdpTransport;HttpTransport;IDriver;DriverBase;ITransport;Edge Computing;Industrial Automation;NewLife;物联网;网络;边缘计算;工业自动化;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>New TcpTransport/UdpTransport/HttpTransport/SocketTransport implementing ITransport. Adapted to IDriver async interface and ITransport spec. IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver broadcast discovery), IoTHttpDriver.  新增TcpTransport/UdpTransport/HttpTransport/SocketTransport实现ITransport，适配IDriver全异步接口与ITransport规范。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net45</TargetFrameworks>
-    <AssemblyTitle>IoT通用数据库驱动</AssemblyTitle>
-    <Description>IoT数据库驱动，符合IoT标准的通用数据库驱动实现，支持通过SQL从各类数据库读写数据</Description>
+    <AssemblyTitle>IoT Generic Database Driver (IoT通用数据库驱动)</AssemblyTitle>
+    <Description>IoT Generic Database Driver — standards-compliant SQL-based driver implementing IDriver/DriverBase. Maps SQL query results to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng).  |  IoT通用数据库驱动，符合IoT标准的SQL驱动实现，通过IoTDatabaseDriver将查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -26,8 +26,8 @@
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;PLC;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>适配IDriver全异步接口与新ITransport规范；支持ControlRequest/ControlResult控制接口；升级依赖包</PackageReleaseNotes>
+    <PackageTags>IoT;Database;SQL;MySQL;SQLite;SqlServer;Oracle;PostgreSQL;DaMeng;XCode;DAL;IDriver;DriverBase;Edge Computing;NewLife;物联网;数据库;达梦;边缘计算;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>Adapted to IDriver async interface and ITransport spec. SQL query results mapped to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng). ControlRequest/ControlResult support.  适配IDriver全异步接口与ITransport规范，通过IoTDatabaseDriver将SQL查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

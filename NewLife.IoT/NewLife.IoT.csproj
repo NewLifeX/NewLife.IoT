@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net45;net461;net462;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT标准库</AssemblyTitle>
-    <Description>IoT标准库，定义物联网领域的各种通信协议标准规范，包括驱动接口、物模型、设备控制器等，不含具体实现。用于IoT平台建设及统一硬件驱动协议</Description>
+    <AssemblyTitle>IoT Standard Library (IoT标准库)</AssemblyTitle>
+    <Description>IoT Standard Library — defines unified communication protocol contracts for IoT platforms and hardware drivers. No concrete protocol implementations. Async-first IDriver with structured results: ReadResult (Quality/Timestamp), WriteResult (zero-allocation struct), ControlResult. ThingSpec thing model for properties/events/services. ITransport unifies serial/TCP/UDP/HTTP transport.  |  IoT标准库，为物联网平台与硬件驱动定义统一通信协议契约，不含具体协议实现。异步优先IDriver配合结构化结果。ThingSpec物模型。ITransport统一传输层。</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>3.0</VersionPrefix>
@@ -29,8 +29,8 @@
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>IDriver接口全异步化重构，消除双路判断统一为Task返回；新增ReadResult/WriteResult/ControlResult结构化操作结果；引入ITransport统一传输层接口，IDataPort废弃；新增IoTException/IoTErrorCode结构化错误处理；DataQuality枚举支持多级质量标记；ServiceCall重命名为ControlRequest/ControlResult统一控制语义</PackageReleaseNotes>
+    <PackageTags>IoT;Internet of Things;IDriver;DriverBase;ThingSpec;DataQuality;Modbus;Siemens;OPC-UA;Edge Computing;Industrial Automation;Protocol;Async;NewLife;物联网;物模型;边缘计算;工业自动化;协议;异步;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>v3.0 — Async-first IDriver redesign; ReadResult/WriteResult/ControlResult structured results (WriteResult is zero-allocation struct); ITransport unified transport layer (serial/TCP/UDP/HTTP); IoTException + IoTErrorCode 3-segment error codes; DataQuality (OPC UA style); ThingSpec thing model with PropertySpec/EventSpec/ServiceSpec.  v3.0 — IDriver全异步化重构；ReadResult/WriteResult/ControlResult结构化结果；ITransport统一传输层；IoTException+IoTErrorCode三段错误码；DataQuality质量码；ThingSpec物模型。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

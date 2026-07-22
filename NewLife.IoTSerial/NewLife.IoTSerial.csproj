@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net45;net461;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT通用串口驱动</AssemblyTitle>
-    <Description>IoT串口驱动，符合IoT标准的通用串口驱动实现，连接后向目标发送数据即可收到数据</Description>
+    <AssemblyTitle>IoT Generic Serial Driver (IoT通用串口驱动)</AssemblyTitle>
+    <Description>IoT Generic Serial Driver — standards-compliant serial port driver implementing IDriver/DriverBase. Supports multi-device sharing of a single COM port via INode. Built-in SerialTransport (ITransport) for Open/Close/Send/Receive/SendReceive operations.  |  IoT通用串口驱动，符合IoT标准的串口驱动实现，通过INode支持多设备共用同一COM口，内置SerialTransport传输层。</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -27,8 +27,8 @@
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>物联网;IoT;边缘计算;Edge;新生命团队;NewLife;PLC;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>新增SerialTransport统一串口传输层实现；适配IDriver全异步接口与新ITransport规范；支持ControlRequest/ControlResult控制接口</PackageReleaseNotes>
+    <PackageTags>IoT;Serial;COM Port;RS232;RS485;SerialTransport;IDriver;DriverBase;ITransport;Edge Computing;Industrial Automation;NewLife;物联网;串口;边缘计算;工业自动化;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>New SerialTransport implementing ITransport for unified serial communication (Open/Close/Send/Receive/SendReceive). Adapted to IDriver async interface and ITransport spec. ControlRequest/ControlResult support.  新增SerialTransport实现ITransport统一串口通信，适配IDriver全异步接口与ITransport规范，支持ControlRequest/ControlResult控制接口。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
