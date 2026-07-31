@@ -70,17 +70,23 @@ public abstract class SocketTransport : DisposeBase, IoTTransport
     /// <summary>关闭网络连接</summary>
     public void Close()
     {
-        _client.TryDispose();
-        _client = null;
+        lock (_lock)
+        {
+            _client.TryDispose();
+            _client = null;
+        }
     }
 
     /// <summary>发送数据</summary>
     /// <param name="data">待发送的字节数据</param>
     public void Send(ReadOnlySpan<Byte> data)
     {
-        if (_client == null) Open();
-        var pk = new ArrayPacket(data.ToArray());
-        _client!.Send(pk);
+        lock (_lock)
+        {
+            if (_client == null) Open();
+            var pk = new ArrayPacket(data.ToArray());
+            _client!.Send(pk);
+        }
     }
 
     /// <summary>接收数据</summary>
@@ -88,9 +94,23 @@ public abstract class SocketTransport : DisposeBase, IoTTransport
     /// <returns>接收到的数据，无数据时返回 null</returns>
     public Byte[]? Receive(Int32 timeout = -1)
     {
-        if (_client == null) return null;
-        var response = _client.Receive();
-        return response?.ToArray();
+        lock (_lock)
+        {
+            var client = _client;
+            if (client == null) return null;
+
+            var oldTimeout = client.Timeout;
+            if (timeout >= 0 && timeout != oldTimeout) client.Timeout = timeout;
+            try
+            {
+                var response = client.Receive();
+                return response?.ToArray();
+            }
+            finally
+            {
+                if (client.Timeout != oldTimeout) client.Timeout = oldTimeout;
+            }
+        }
     }
 
     /// <summary>发送数据并等待响应</summary>
@@ -99,11 +119,25 @@ public abstract class SocketTransport : DisposeBase, IoTTransport
     /// <returns>响应数据，超时或无响应返回 null</returns>
     public Byte[]? SendReceive(ReadOnlySpan<Byte> request, Int32 timeout = -1)
     {
-        if (_client == null) Open();
-        var pk = new ArrayPacket(request.ToArray());
-        _client!.Send(pk);
-        var response = _client.Receive();
-        return response?.ToArray();
+        lock (_lock)
+        {
+            if (_client == null) Open();
+            var client = _client!;
+
+            var oldTimeout = client.Timeout;
+            if (timeout >= 0 && timeout != oldTimeout) client.Timeout = timeout;
+            try
+            {
+                var pk = new ArrayPacket(request.ToArray());
+                client.Send(pk);
+                var response = client.Receive();
+                return response?.ToArray();
+            }
+            finally
+            {
+                if (client.Timeout != oldTimeout) client.Timeout = oldTimeout;
+            }
+        }
     }
 
     #endregion

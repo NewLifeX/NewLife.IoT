@@ -18,8 +18,12 @@ namespace NewLife.IoTSocket.Drivers;
 public class IoTHttpDriver : DriverBase<Node, HttpParameter>
 {
     #region 属性
+    private Int32 _nodes;
+    private HttpClient? _client;
+    private readonly Object _lock = new();
+
     /// <summary>客户端</summary>
-    public HttpClient? Client { get; set; }
+    public HttpClient? Client => _client;
     #endregion
 
     #region 方法
@@ -30,25 +34,40 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
     /// <param name="parameter">参数。不同驱动的参数设置相差较大，对象字典具有较好灵活性，其对应IDriverParameter</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
-    public override async Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
+    public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
         if (parameter is not HttpParameter p) throw new ArgumentException("参数不能为空");
         if (p.Address.IsNullOrEmpty()) throw new ArgumentException("网络地址不能为空");
 
-        var node = await base.OpenAsync(device, parameter);
+        // 多节点共用驱动时共享同一HttpClient，最后一个节点关闭才释放
+        if (_client == null)
+        {
+            lock (_lock)
+            {
+                _client ??= CreateClient(p);
+            }
+        }
 
+        Interlocked.Increment(ref _nodes);
+
+        return base.OpenAsync(device, parameter);
+    }
+
+    /// <summary>创建HTTP客户端。可重写以自定义HttpClientHandler等配置</summary>
+    /// <param name="parameter">驱动参数</param>
+    /// <returns>HttpClient 实例</returns>
+    protected virtual HttpClient CreateClient(HttpParameter parameter)
+    {
         var client = new HttpClient
         {
-            BaseAddress = new Uri(p.Address),
-            Timeout = TimeSpan.FromMilliseconds(p.Timeout),
+            BaseAddress = new Uri(parameter.Address),
+            Timeout = TimeSpan.FromMilliseconds(parameter.Timeout),
         };
 
-        if (!p.Token.IsNullOrEmpty())
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", p.Token);
+        if (!parameter.Token.IsNullOrEmpty())
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", parameter.Token);
 
-        Client = client;
-
-        return node;
+        return client;
     }
 
     /// <summary>
@@ -58,8 +77,17 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
     /// <param name="cancellationToken">取消令牌</param>
     public override Task CloseAsync(INode node, CancellationToken cancellationToken = default)
     {
-        Client.TryDispose();
-        Client = null;
+        if (Interlocked.Decrement(ref _nodes) <= 0)
+        {
+            lock (_lock)
+            {
+                if (_nodes <= 0)
+                {
+                    _client.TryDispose();
+                    _client = null;
+                }
+            }
+        }
 
         return TaskEx.CompletedTask;
     }

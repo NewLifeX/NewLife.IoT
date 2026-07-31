@@ -148,21 +148,24 @@ public static class PointHelper
             case TypeCode.Single:
                 {
                     var d = (Single)data.ToDouble();
-                    //var n = BitConverter.SingleToInt32Bits(d);
-                    var n = (UInt32)d;
+                    // 取IEEE754位模式，避免(UInt32)d截断浮点数值导致写寄存器数据错误
+                    // 低版本框架无SingleToUInt32Bits，改用GetBytes+ToUInt32跨平台取位模式
+                    var n = BitConverter.ToUInt32(BitConverter.GetBytes(d), 0);
                     return [(UInt16)(n >> 16), (UInt16)(n & 0xFFFF)];
                 }
             case TypeCode.Double:
                 {
                     var d = (Double)data.ToDouble();
-                    //var n = BitConverter.DoubleToInt64Bits(d);
-                    var n = (UInt64)d;
+                    // 取IEEE754位模式，避免(UInt64)d截断浮点数值导致写寄存器数据错误
+                    // 低版本框架无DoubleToUInt64Bits，改用GetBytes+ToUInt64跨平台取位模式
+                    var n = BitConverter.ToUInt64(BitConverter.GetBytes(d), 0);
                     return [(UInt16)(n >> 48), (UInt16)(n >> 32), (UInt16)(n >> 16), (UInt16)(n & 0xFFFF)];
                 }
             case TypeCode.Decimal:
                 {
-                    var d = data.ToDecimal();
-                    var n = (UInt64)d;
+                    // Decimal无寄存器位模式标准，96位尾数绝对值+scale+符号无法在寄存器中完整表达，
+                    // 按数值截断转Int64补码输出4个寄存器，正负号正确表达
+                    var n = (Int64)data.ToDecimal();
                     return [(UInt16)(n >> 48), (UInt16)(n >> 32), (UInt16)(n >> 16), (UInt16)(n & 0xFFFF)];
                 }
             //case TypeCode.String:

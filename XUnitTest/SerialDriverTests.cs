@@ -208,4 +208,62 @@ public class SerialDriverTests
 
         transport.Close();
     }
+
+    [Fact]
+    public void SerialTransport_SendReceive_TimeoutParameter_TakesEffect()
+    {
+        var mockSerial = new Mock<ISerialPort>();
+        var responseData = new NewLife.Data.ArrayPacket("Echo"u8.ToArray());
+        mockSerial.Setup(m => m.Invoke(It.IsAny<NewLife.Data.IPacket>(), It.IsAny<Int32>()))
+                  .Returns(responseData);
+
+        var timeout = 3000;
+        var setTimeouts = new List<Int32>();
+        mockSerial.Setup(m => m.Timeout).Returns(() => timeout);
+        mockSerial.SetupSet(m => m.Timeout = It.IsAny<Int32>())
+                  .Callback<Int32>(v => { setTimeouts.Add(v); timeout = v; });
+
+        var transport = new TestSerialTransport { MockSerialPort = mockSerial.Object };
+        transport.Timeout = 3000;
+        transport.Open();
+        Assert.True(transport.IsConnected);
+
+        var request = "Hello"u8;
+        var response = transport.SendReceive(request, 1500);
+        Assert.NotNull(response);
+
+        // 超时被临时设置为 1500，随后恢复为 3000
+        Assert.Contains(1500, setTimeouts);
+        Assert.Equal(3000, timeout);
+
+        transport.Close();
+    }
+
+    [Fact]
+    public void SerialTransport_Receive_TimeoutParameter_TakesEffect()
+    {
+        var mockSerial = new Mock<ISerialPort>();
+        mockSerial.Setup(m => m.Read(It.IsAny<Byte[]>(), It.IsAny<Int32>(), It.IsAny<Int32>()))
+                  .Returns(0);
+
+        var timeout = 3000;
+        var setTimeouts = new List<Int32>();
+        mockSerial.Setup(m => m.Timeout).Returns(() => timeout);
+        mockSerial.SetupSet(m => m.Timeout = It.IsAny<Int32>())
+                  .Callback<Int32>(v => { setTimeouts.Add(v); timeout = v; });
+
+        var transport = new TestSerialTransport { MockSerialPort = mockSerial.Object };
+        transport.Timeout = 3000;
+        transport.Open();
+        Assert.True(transport.IsConnected);
+
+        var data = transport.Receive(1200);
+        Assert.Null(data);
+
+        // 超时被临时设置为 1200，随后恢复为 3000
+        Assert.Contains(1200, setTimeouts);
+        Assert.Equal(3000, timeout);
+
+        transport.Close();
+    }
 }

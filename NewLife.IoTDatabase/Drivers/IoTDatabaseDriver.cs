@@ -16,6 +16,7 @@ namespace NewLife.IoTDatabase.Drivers;
 public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
 {
     #region 属性
+    private static readonly Object _lock = new();
     #endregion
 
     #region 方法
@@ -40,9 +41,13 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
         };
 
         var connName = p.ConnectionString.GetBytes().Crc().GetBytes().ToHex();
-        if (!DAL.ConnStrs.ContainsKey(connName))
+        // 并发打开同一连接串时，避免重复注册
+        lock (_lock)
         {
-            DAL.AddConnStr(connName, p.ConnectionString, null, p.DatabaseType + "");
+            if (!DAL.ConnStrs.ContainsKey(connName))
+            {
+                DAL.AddConnStr(connName, p.ConnectionString, null, p.DatabaseType + "");
+            }
         }
 
         node.Dal = DAL.Create(connName);

@@ -11,8 +11,10 @@ using NewLife.IoT.Drivers;
 using NewLife.IoT.Models;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
+using NewLife.Data;
 using NewLife.IoTSocket.Drivers;
 using NewLife.IoTSocket.Transport;
+using Moq;
 using NewLife.Net;
 using Xunit;
 
@@ -258,6 +260,42 @@ public class SocketDriverTests
         Assert.Null(spec);
     }
 
+    [Fact]
+    public async Task IoTHttpDriver_MultiNode_CloseOne_OthersWork()
+    {
+        var port = GetFreePort();
+        var listener = StartHttpResponder(port);
+        try
+        {
+            var driver = new IoTHttpDriver();
+            var param = new HttpParameter
+            {
+                Address = $"http://127.0.0.1:{port}",
+                Method = "GET",
+                Timeout = 5000,
+            };
+
+            // 两个节点共用同一驱动
+            var node1 = await driver.OpenAsync(new MiniDevice(), param);
+            var node2 = await driver.OpenAsync(new MiniDevice(), param);
+
+            // 关闭一个节点，另一个节点不受影响
+            await driver.CloseAsync(node1);
+            Assert.NotNull(driver.Client);
+
+            var result = await driver.ReadAsync(node2, []);
+            Assert.True(result.IsSuccess);
+
+            // 全部关闭后释放客户端
+            await driver.CloseAsync(node2);
+            Assert.Null(driver.Client);
+        }
+        finally
+        {
+            listener.Stop();
+        }
+    }
+
     // ================================================================
     // NET-4 IoTSocketDriver (abstract - tested via IoTTcpDriver)
     // ================================================================
@@ -413,5 +451,40 @@ public class SocketDriverTests
         var transport = new TcpTransport();
         transport.Dispose();
         Assert.True(true);
+    }
+
+    private class MockSocketTransport : SocketTransport
+    {
+        public ISocketClient MockClient { get; set; } = null!;
+
+        protected override ISocketClient CreateClient() => MockClient;
+    }
+
+    [Fact]
+    public void SocketTransport_SendReceive_TimeoutParameter_TakesEffect()
+    {
+        var mockClient = new Mock<ISocketClient>();
+
+        var timeout = 3000;
+        var setTimeouts = new List<Int32>();
+        mockClient.Setup(m => m.Timeout).Returns(() => timeout);
+        mockClient.SetupSet(m => m.Timeout = It.IsAny<Int32>())
+                  .Callback<Int32>(v => { setTimeouts.Add(v); timeout = v; });
+        mockClient.Setup(m => m.Receive()).Returns((IOwnerPacket?)null);
+
+        var transport = new MockSocketTransport { MockClient = mockClient.Object };
+        transport.Timeout = 3000;
+        transport.Open();
+        Assert.True(transport.IsConnected);
+
+        var request = "Hello"u8;
+        var response = transport.SendReceive(request, 1500);
+
+        // 超时被临时设置为 1500，随后恢复为 3000
+        Assert.Contains(1500, setTimeouts);
+        Assert.Equal(3000, timeout);
+        Assert.Null(response);
+
+        transport.Close();
     }
 }

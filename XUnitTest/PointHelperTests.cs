@@ -66,4 +66,72 @@ public class PointHelperTests
         var v = point.Convert(buf);
         Assert.Equal(data, v);
     }
+
+    // ===== ConvertToWord =====
+
+    private static UInt16[] ParseWords(String hex)
+    {
+        var buf = hex.ToHex();
+        var words = new UInt16[buf.Length / 2];
+        for (var i = 0; i < words.Length; i++)
+            words[i] = (UInt16)((buf[i * 2] << 8) | buf[i * 2 + 1]);
+        return words;
+    }
+
+    [Theory]
+    [InlineData(true, "0001")]
+    [InlineData(false, "0000")]
+    [InlineData((Byte)0x01, "0001")]
+    [InlineData((Int16)0x1234, "1234")]
+    [InlineData((UInt16)0x1234, "1234")]
+    [InlineData((Int32)0x12345678, "12345678")]
+    [InlineData((UInt32)0x12345678, "12345678")]
+    [InlineData((Int32)(-0x12345678), "EDCBA988")]
+    [InlineData((Int64)0x123456789ABCDEF0, "123456789ABCDEF0")]
+    [InlineData((Int64)(-0x123456789ABCDEF0), "EDCBA98765432110")]
+    public void ConvertToWord_IntegerTypes_BigEndianRegisters(Object data, String hex)
+    {
+        var point = new PointModel { Name = "test", Type = data.GetType().Name };
+        var words = point.ConvertToWord(data);
+
+        Assert.NotNull(words);
+        Assert.Equal(ParseWords(hex), words);
+    }
+
+    [Fact]
+    public void ConvertToWord_Single_OutputIeee754Bits()
+    {
+        var point = new PointModel { Name = "test", Type = "Single" };
+
+        // 12.34f = 0x414570A4，高字在前
+        Assert.Equal(ParseWords("414570A4"), point.ConvertToWord(12.34f));
+        // 负数符号位翻转
+        Assert.Equal(ParseWords("C14570A4"), point.ConvertToWord(-12.34f));
+        // 零
+        Assert.Equal(ParseWords("00000000"), point.ConvertToWord(0f));
+    }
+
+    [Fact]
+    public void ConvertToWord_Double_OutputIeee754Bits()
+    {
+        var point = new PointModel { Name = "test", Type = "Double" };
+
+        // 1234.5678 = 0x40934A456D5CFAAD，高字在前
+        Assert.Equal(ParseWords("40934A456D5CFAAD"), point.ConvertToWord(1234.5678));
+        // 负数符号位翻转
+        Assert.Equal(ParseWords("C0934A456D5CFAAD"), point.ConvertToWord(-1234.5678));
+        // 零
+        Assert.Equal(ParseWords("0000000000000000"), point.ConvertToWord(0d));
+    }
+
+    [Fact]
+    public void ConvertToWord_Decimal_OutputInt64Registers()
+    {
+        var point = new PointModel { Name = "test", Type = "Decimal" };
+
+        // 12.34 截断为 12，补码输出 4 个寄存器
+        Assert.Equal(ParseWords("000000000000000C"), point.ConvertToWord(12.34m));
+        // -12.34 截断为 -12，64位补码 0xFFFFFFFFFFFFFFF4
+        Assert.Equal(ParseWords("FFFFFFFFFFFFFFF4"), point.ConvertToWord(-12.34m));
+    }
 }

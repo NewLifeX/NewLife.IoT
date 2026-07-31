@@ -100,17 +100,23 @@ public class SerialTransport : DisposeBase, ITransport
     /// <summary>关闭串口</summary>
     public void Close()
     {
-        _serialPort?.Close();
-        IsConnected = false;
+        lock (_lock)
+        {
+            _serialPort?.Close();
+            IsConnected = false;
+        }
     }
 
     /// <summary>发送数据</summary>
     /// <param name="data">待发送的字节数据</param>
     public void Send(ReadOnlySpan<Byte> data)
     {
-        if (!IsConnected) Open();
-        var buf = data.ToArray();
-        _serialPort!.Write(buf, 0, buf.Length);
+        lock (_lock)
+        {
+            if (!IsConnected) Open();
+            var buf = data.ToArray();
+            _serialPort!.Write(buf, 0, buf.Length);
+        }
     }
 
     /// <summary>接收数据</summary>
@@ -118,13 +124,27 @@ public class SerialTransport : DisposeBase, ITransport
     /// <returns>接收到的数据，无数据时返回 null</returns>
     public Byte[]? Receive(Int32 timeout = -1)
     {
-        if (_serialPort == null || !IsConnected) return null;
-        var buf = new Byte[4096];
-        var count = _serialPort.Read(buf, 0, buf.Length);
-        if (count <= 0) return null;
-        var result = new Byte[count];
-        Array.Copy(buf, result, count);
-        return result;
+        lock (_lock)
+        {
+            var sp = _serialPort;
+            if (sp == null || !IsConnected) return null;
+
+            var oldTimeout = sp.Timeout;
+            if (timeout >= 0 && timeout != oldTimeout) sp.Timeout = timeout;
+            try
+            {
+                var buf = new Byte[4096];
+                var count = sp.Read(buf, 0, buf.Length);
+                if (count <= 0) return null;
+                var result = new Byte[count];
+                Array.Copy(buf, result, count);
+                return result;
+            }
+            finally
+            {
+                if (sp.Timeout != oldTimeout) sp.Timeout = oldTimeout;
+            }
+        }
     }
 
     /// <summary>发送数据并等待响应（原子化操作）</summary>
@@ -133,10 +153,24 @@ public class SerialTransport : DisposeBase, ITransport
     /// <returns>响应数据，超时或无响应返回 null</returns>
     public Byte[]? SendReceive(ReadOnlySpan<Byte> request, Int32 timeout = -1)
     {
-        if (!IsConnected) Open();
-        var pk = new ArrayPacket(request.ToArray());
-        var response = _serialPort!.Invoke(pk, 1);
-        return response?.ToArray();
+        lock (_lock)
+        {
+            if (!IsConnected) Open();
+            var sp = _serialPort!;
+
+            var oldTimeout = sp.Timeout;
+            if (timeout >= 0 && timeout != oldTimeout) sp.Timeout = timeout;
+            try
+            {
+                var pk = new ArrayPacket(request.ToArray());
+                var response = sp.Invoke(pk, 1);
+                return response?.ToArray();
+            }
+            finally
+            {
+                if (sp.Timeout != oldTimeout) sp.Timeout = oldTimeout;
+            }
+        }
     }
 
     #endregion

@@ -19,6 +19,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     #region 属性
     private Int32 _nodes;
     private ISocketClient? _client;
+    private readonly Object _lock = new();
     #endregion
 
     #region 方法
@@ -55,7 +56,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
 
         if (_client == null)
         {
-            lock (this)
+            lock (_lock)
             {
                 _client ??= CreateClient(p);
             }
@@ -86,9 +87,18 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     {
         if (Interlocked.Decrement(ref _nodes) <= 0)
         {
-            _client.TryDispose();
-            _client = null;
+            lock (_lock)
+            {
+                if (_nodes <= 0)
+                {
+                    _client.TryDispose();
+                    _client = null;
+                }
+            }
         }
+
+        // 清理节点引用，避免后续误用已释放客户端
+        if (node is SocketNode sn && sn.Client != null) sn.Client = null!;
 
         return TaskEx.CompletedTask;
     }
@@ -102,25 +112,32 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     {
         if (points == null) return Task.FromResult(ReadResult.Success([], []));
 
-        var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter)
+        if (node.Parameter is not SocketParameter parameter)
             return Task.FromResult(ReadResult.Success(points, new Object?[points.Length]));
 
-        var request = Encode(parameter.RequestCommand);
-        if (request != null) client.Send(request);
-        var response = client.Receive();
-        var decoded = Decode(response, parameter.ResponseEncoding);
-
-        var values = new Object?[points.Length];
-        // 将解码结果分配到名为 Data 的点位，没有则第 0 项
-        var dataIdx = 0;
-        for (var i = 0; i < points.Length; i++)
+        // 请求-响应必须原子化，多节点并发采集时串行执行
+        lock (_lock)
         {
-            if (points[i].Name.EqualIgnoreCase("Data")) { dataIdx = i; break; }
-        }
-        values[dataIdx] = decoded;
+            var client = _client;
+            if (client == null)
+                return Task.FromResult(ReadResult.Success(points, new Object?[points.Length]));
 
-        return Task.FromResult(ReadResult.Success(points, values));
+            var request = Encode(parameter.RequestCommand);
+            if (request != null) client.Send(request);
+            var response = client.Receive();
+            var decoded = Decode(response, parameter.ResponseEncoding);
+
+            var values = new Object?[points.Length];
+            // 将解码结果分配到名为 Data 的点位，没有则第 0 项
+            var dataIdx = 0;
+            for (var i = 0; i < points.Length; i++)
+            {
+                if (points[i].Name.EqualIgnoreCase("Data")) { dataIdx = i; break; }
+            }
+            values[dataIdx] = decoded;
+
+            return Task.FromResult(ReadResult.Success(points, values));
+        }
     }
 
     /// <summary>写入数据。requests.Length==1 时单点写入并返回回显值；多点时逐项写入并返回成功计数</summary>
@@ -130,27 +147,33 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     /// <returns>写入结果</returns>
     public override Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
     {
-        var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter)
+        if (node.Parameter is not SocketParameter parameter)
             return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        if (requests.Length == 1)
+        lock (_lock)
         {
-            var encoded = Encode(requests[0].Value);
-            if (encoded != null) client.Send(encoded);
-            var response = client.Receive();
-            return Task.FromResult(WriteResult.Success(Decode(response, parameter.ResponseEncoding)));
-        }
+            var client = _client;
+            if (client == null)
+                return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        var count = 0;
-        foreach (var req in requests)
-        {
-            var encoded = Encode(req.Value);
-            if (encoded != null) client.Send(encoded);
-            client.Receive();
-            count++;
+            if (requests.Length == 1)
+            {
+                var encoded = Encode(requests[0].Value);
+                if (encoded != null) client.Send(encoded);
+                var response = client.Receive();
+                return Task.FromResult(WriteResult.Success(Decode(response, parameter.ResponseEncoding)));
+            }
+
+            var count = 0;
+            foreach (var req in requests)
+            {
+                var encoded = Encode(req.Value);
+                if (encoded != null) client.Send(encoded);
+                client.Receive();
+                count++;
+            }
+            return Task.FromResult(WriteResult.SuccessBatch(count));
         }
-        return Task.FromResult(WriteResult.SuccessBatch(count));
     }
 
     /// <summary>设备控制</summary>
@@ -161,27 +184,34 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
     {
         if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
+        request.Parameters ??= new Dictionary<String, Object?>();
 
-        var client = (node as SocketNode)?.Client;
-        if (client == null || node.Parameter is not SocketParameter parameter)
+        if (node.Parameter is not SocketParameter parameter)
             return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-        // 批量操作
-        var result = new Dictionary<String, Object?>();
-        foreach (var item in request.Parameters)
+        lock (_lock)
         {
-            var encoded = Encode(item.Value);
-            if (encoded != null) client.Send(encoded);
-            var response = client.Receive();
+            var client = _client;
+            if (client == null)
+                return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
 
-            // 转换编码
-            if (!parameter.ResponseEncoding.IsNullOrEmpty())
-                result[item.Key] = Decode(response, parameter.ResponseEncoding);
-            else
-                result[item.Key] = response;
+            // 批量操作
+            var result = new Dictionary<String, Object?>();
+            foreach (var item in request.Parameters)
+            {
+                var encoded = Encode(item.Value);
+                if (encoded != null) client.Send(encoded);
+                var response = client.Receive();
+
+                // 转换编码
+                if (!parameter.ResponseEncoding.IsNullOrEmpty())
+                    result[item.Key] = Decode(response, parameter.ResponseEncoding);
+                else
+                    result[item.Key] = response;
+            }
+
+            return Task.FromResult(ControlResult.Success(result));
         }
-
-        return Task.FromResult(ControlResult.Success(result));
     }
 
     /// <summary>编码请求数据</summary>
