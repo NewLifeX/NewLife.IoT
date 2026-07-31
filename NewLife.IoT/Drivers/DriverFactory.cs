@@ -9,7 +9,7 @@ namespace NewLife.IoT.Drivers;
 public class DriverFactory
 {
     #region 工厂
-    private static readonly Dictionary<String, Type> _map = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<String, Type> _map = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>驱动表</summary>
     public static IDictionary<String, Type> Map => _map;
 

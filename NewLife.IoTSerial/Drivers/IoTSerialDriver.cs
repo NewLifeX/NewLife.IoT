@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Text;
 using NewLife.Data;
 using NewLife.IoT;
 using NewLife.IoT.Controllers;
@@ -8,10 +7,8 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Model;
 using NewLife.Reflection;
-using NewLife.Serialization;
 
 namespace NewLife.IoTSerial.Drivers;
-
 /// <summary>IoT标准通用串口驱动</summary>
 /// <remarks>
 /// IoT驱动，符合IoT标准的通用串口驱动，连接后向目标发送数据即可收到数据。
@@ -283,40 +280,12 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     /// <summary>编码请求数据</summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    protected virtual IPacket? Encode(Object? value)
-    {
-        if (value == null) return null;
-
-        switch (value)
-        {
-            case IPacket pk:
-                return pk;
-            case String str:
-                if (str.StartsWithIgnoreCase("0x"))
-                    return new ArrayPacket(str[2..].ToHex());
-                else
-                    return new ArrayPacket(str.GetBytes());
-            case Byte[] bytes:
-                return new ArrayPacket(bytes);
-            default:
-                throw new NotSupportedException($"不支持的数据类型 {value?.GetType().FullName}");
-        }
-    }
+    protected virtual IPacket? Encode(Object? value) => DriverCodec.Encode(value);
 
     /// <summary>解码响应数据</summary>
     /// <param name="data"></param>
     /// <param name="encoding"></param>
     /// <returns></returns>
-    protected virtual Object? Decode(IPacket? data, String encoding)
-    {
-        return encoding switch
-        {
-            "HEX" => data?.ToHex(),
-            "ASCII" => data?.ToStr(Encoding.ASCII),
-            "UTF8" => data?.ToStr(Encoding.UTF8),
-            "Json" => data == null ? null : JsonParser.Decode(data.ToStr()),
-            _ => data,
-        };
-    }
+    protected virtual Object? Decode(IPacket? data, String encoding) => DriverCodec.Decode(data, encoding);
     #endregion
 }
