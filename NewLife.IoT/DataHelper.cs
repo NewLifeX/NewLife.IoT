@@ -13,49 +13,49 @@ public static class DataHelper
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Int16 value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this Int16 value, EndianType endian) => GetBytes16((UInt16)value, (ByteOrder)endian);
 
     /// <summary>短整数转为指定字节序的字节数组，仅AB/BA两种</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Int16 value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this Int16 value, ByteOrder order) => GetBytes16((UInt16)value, order);
 
     /// <summary>短整数转为指定字节序的字节数组，仅大小端两种</summary>
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt16 value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this UInt16 value, EndianType endian) => GetBytes16(value, (ByteOrder)endian);
 
     /// <summary>短整数转为指定字节序的字节数组，仅AB/BA两种</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt16 value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this UInt16 value, ByteOrder order) => GetBytes16(value, order);
 
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Int32 value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this Int32 value, EndianType endian) => GetBytes32((UInt32)value, (ByteOrder)endian);
 
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Int32 value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this Int32 value, ByteOrder order) => GetBytes32((UInt32)value, order);
 
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt32 value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this UInt32 value, EndianType endian) => GetBytes32(value, (ByteOrder)endian);
 
     /// <summary>整数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this UInt32 value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this UInt32 value, ByteOrder order) => GetBytes32(value, order);
 
     /// <summary>单精度浮点数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
@@ -99,13 +99,13 @@ public static class DataHelper
     /// <param name="buffer"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static UInt32 ToUInt32(this Byte[] buffer, EndianType endian) => BitConverter.ToUInt32(buffer.Swap(ByteOrder.DCBA, (ByteOrder)endian), 0);
+    public static UInt32 ToUInt32(this Byte[] buffer, EndianType endian) => ReadUInt32(buffer, 0, (ByteOrder)endian);
 
     /// <summary>字节数组按指定字节序转为整数</summary>
     /// <param name="buffer"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static UInt32 ToUInt32(this Byte[] buffer, ByteOrder order) => BitConverter.ToUInt32(buffer.Swap(ByteOrder.DCBA, order), 0);
+    public static UInt32 ToUInt32(this Byte[] buffer, ByteOrder order) => ReadUInt32(buffer, 0, order);
 
     /// <summary>字节数组按照指定字节序转为单精度浮点数</summary>
     /// <param name="buffer"></param>
@@ -133,6 +133,70 @@ public static class DataHelper
     #endregion
 
     #region 字节序交换
+    /// <summary>短整数按字节序转为字节数组。位运算直接填充，零额外分配</summary>
+    private static Byte[] GetBytes16(UInt16 value, ByteOrder order)
+    {
+        var buf = new Byte[2];
+        switch (order)
+        {
+            case ByteOrder.ABCD:
+            case ByteOrder.CDAB:
+                buf[0] = (Byte)(value >> 8);
+                buf[1] = (Byte)value;
+                break;
+            case ByteOrder.DCBA:
+            case ByteOrder.BADC:
+                buf[0] = (Byte)value;
+                buf[1] = (Byte)(value >> 8);
+                break;
+            default:
+                return BitConverter.GetBytes(value);
+        }
+        return buf;
+    }
+
+    /// <summary>整数按字节序转为字节数组。位运算直接填充，零额外分配</summary>
+    private static Byte[] GetBytes32(UInt32 value, ByteOrder order)
+    {
+        var buf = new Byte[4];
+        switch (order)
+        {
+            case ByteOrder.ABCD:
+                buf[0] = (Byte)(value >> 24); buf[1] = (Byte)(value >> 16); buf[2] = (Byte)(value >> 8); buf[3] = (Byte)value;
+                break;
+            case ByteOrder.DCBA:
+                buf[0] = (Byte)value; buf[1] = (Byte)(value >> 8); buf[2] = (Byte)(value >> 16); buf[3] = (Byte)(value >> 24);
+                break;
+            case ByteOrder.BADC:
+                buf[0] = (Byte)(value >> 16); buf[1] = (Byte)(value >> 24); buf[2] = (Byte)value; buf[3] = (Byte)(value >> 8);
+                break;
+            case ByteOrder.CDAB:
+                buf[0] = (Byte)(value >> 8); buf[1] = (Byte)value; buf[2] = (Byte)(value >> 24); buf[3] = (Byte)(value >> 16);
+                break;
+            default:
+                return BitConverter.GetBytes(value);
+        }
+        return buf;
+    }
+
+    /// <summary>按字节序从字节数组直接读取整数。位运算直接读取，零分配</summary>
+    private static UInt32 ReadUInt32(Byte[] buffer, Int32 offset, ByteOrder order)
+    {
+        switch (order)
+        {
+            case ByteOrder.ABCD:
+                return (UInt32)buffer[offset] << 24 | (UInt32)buffer[offset + 1] << 16 | (UInt32)buffer[offset + 2] << 8 | buffer[offset + 3];
+            case ByteOrder.DCBA:
+                return (UInt32)buffer[offset + 3] << 24 | (UInt32)buffer[offset + 2] << 16 | (UInt32)buffer[offset + 1] << 8 | buffer[offset];
+            case ByteOrder.BADC:
+                return (UInt32)buffer[offset + 1] << 24 | (UInt32)buffer[offset] << 16 | (UInt32)buffer[offset + 3] << 8 | buffer[offset + 2];
+            case ByteOrder.CDAB:
+                return (UInt32)buffer[offset + 2] << 24 | (UInt32)buffer[offset + 3] << 16 | (UInt32)buffer[offset] << 8 | buffer[offset + 1];
+            default:
+                return BitConverter.ToUInt32(buffer, offset);
+        }
+    }
+
     /// <summary>按字节序交换字节数组</summary>
     /// <param name="buf">字节数组</param>
     /// <param name="oldOrder">原字节序</param>

@@ -8,6 +8,33 @@ namespace NewLife.IoT;
 /// </summary>
 public static class TypeHelper
 {
+    private static readonly IDictionary<String, Int32> _lengths = new Dictionary<String, Int32>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["bit"] = 1, ["bool"] = 1, ["boolean"] = 1, ["char"] = 1, ["byte"] = 1, ["sbyte"] = 1,
+        ["short"] = 2, ["ushort"] = 2, ["int16"] = 2, ["uint16"] = 2, ["number"] = 2,
+        ["int"] = 4, ["uint"] = 4, ["int32"] = 4, ["uint32"] = 4, ["float"] = 4, ["single"] = 4,
+        ["long"] = 8, ["ulong"] = 8, ["int64"] = 8, ["uint64"] = 8, ["double"] = 8, ["decimal"] = 8,
+    };
+
+    private static readonly IDictionary<String, Type> _netTypes = new Dictionary<String, Type>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["bit"] = typeof(Boolean), ["bool"] = typeof(Boolean), ["boolean"] = typeof(Boolean),
+        ["char"] = typeof(Char),
+        ["byte"] = typeof(Byte), ["sbyte"] = typeof(Byte),
+        ["short"] = typeof(Int16), ["int16"] = typeof(Int16), ["number"] = typeof(Int16),
+        ["ushort"] = typeof(UInt16), ["uint16"] = typeof(UInt16),
+        ["int"] = typeof(Int32), ["int32"] = typeof(Int32),
+        ["uint"] = typeof(UInt32), ["uint32"] = typeof(UInt32),
+        ["float"] = typeof(Single), ["single"] = typeof(Single),
+        ["long"] = typeof(Int64), ["int64"] = typeof(Int64),
+        ["ulong"] = typeof(UInt64), ["uint64"] = typeof(UInt64),
+        ["double"] = typeof(Double),
+        ["decimal"] = typeof(Decimal),
+        ["string"] = typeof(String), ["text"] = typeof(String),
+        ["date"] = typeof(DateTime), ["time"] = typeof(DateTime), ["datetime"] = typeof(DateTime),
+        ["byte[]"] = typeof(Byte[]), ["hex"] = typeof(Byte[]),
+    };
+
     /// <summary>
     /// 获取指定类型的数据长度
     /// </summary>
@@ -17,14 +44,7 @@ public static class TypeHelper
     {
         if (type.IsNullOrEmpty()) return 0;
 
-        return type.ToLower() switch
-        {
-            "bit" or "bool" or "boolean" or "char" or "byte" or "sbyte" => 1,
-            "short" or "ushort" or "int16" or "uint16" or "number" => 2,
-            "int" or "uint" or "int32" or "uint32" or "float" or "single" => 4,
-            "long" or "ulong" or "int64" or "uint64" or "double" or "decimal" => 8,
-            _ => 0,
-        };
+        return _lengths.TryGetValue(type, out var len) ? len : 0;
     }
 
     /// <summary>
@@ -52,42 +72,25 @@ public static class TypeHelper
     }
 
     /// <summary>
+    /// 获取指定IoT类型的本地类型。可用于格式化各种非标类型
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static Type? GetNetType(String? type)
+    {
+        if (type.IsNullOrEmpty()) return null;
+
+        return _netTypes.TryGetValue(type, out var netType) ? netType : null;
+    }
+
+    /// <summary>
     /// 获取点位数据长度，若未设置则根据类型自动计算
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
     public static Int32 GetLength(this IPoint point) => point.Length > 0 ? point.Length : GetLength(point.Type);
 
-    /// <summary>
-    /// 获取指定IoT类型的本地类型。可用于格式化各种非标类型
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public static Type? GetNetType(String? type)
-    {
-        if (type.IsNullOrEmpty()) return null;
 
-        return type.ToLower() switch
-        {
-            "bit" or "bool" or "boolean" => typeof(Boolean),
-            "char" => typeof(Char),
-            "byte" or "sbyte" => typeof(Byte),
-            "short" or "int16" or "number" => typeof(Int16),
-            "ushort" or "uint16" => typeof(UInt16),
-            "int" or "int32" => typeof(Int32),
-            "uint" or "uint32" => typeof(UInt32),
-            "float" or "single" => typeof(Single),
-            "long" or "int64" => typeof(Int64),
-            "ulong" or "uint64" => typeof(UInt64),
-            "double" => typeof(Double),
-            "decimal" => typeof(Decimal),
-            "string" or "text" => typeof(String),
-            "date" or "time" or "datetime" => typeof(DateTime),
-            "byte[]" or "hex" => typeof(Byte[]),
-            _ => null,
-        };
-    }
 
     /// <summary>
     /// 获取指定点位的本地类型，依赖于点位IoT类型和长度。可用于格式化各种非标类型
