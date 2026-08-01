@@ -28,7 +28,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>IoT;Serial;COM Port;RS232;RS485;SerialTransport;IDriver;DriverBase;ITransport;Edge Computing;Industrial Automation;NewLife;物联网;串口;边缘计算;工业自动化;新生命团队;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>New SerialTransport implementing ITransport for unified serial communication (Open/Close/Send/Receive/SendReceive). Adapted to IDriver async interface and ITransport spec. ControlRequest/ControlResult support.  新增SerialTransport实现ITransport统一串口通信，适配IDriver全异步接口与ITransport规范，支持ControlRequest/ControlResult控制接口。</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed serial driver &amp; transport defects: concurrency safety, timeout handling and resource cleanup in SerialTransport/IoTSerialDriver; adopt shared DriverCodec.  修复串口驱动与传输层缺陷：并发安全、超时处理与资源清理，使用共享DriverCodec编解码。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
