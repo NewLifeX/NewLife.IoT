@@ -103,7 +103,7 @@ foreach ($name in $tables.Keys) {
 # 孤儿键：词表键必须能在库源码中找到
 if (-not $SkipOrphan) {
     $code = @(Get-ChildItem -Path $SourceDir -Recurse -Filter *.cs |
-        Where-Object { $_.FullName -notmatch '\\(obj|bin|XUnitTest|Test|AotSmoke)\\' } |
+        Where-Object { $_.FullName -notmatch '[/\\](obj|bin|XUnitTest|Test|AotSmoke)[/\\]' } |
         ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 }) -join "`n"
 
     foreach ($key in $base.Keys) {

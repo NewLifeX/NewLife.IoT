@@ -21,10 +21,10 @@ New-Item -ItemType Directory -Path $packages -Force | Out-Null
 
 try {
     $projects = @(
-        "NewLife.IoT\NewLife.IoT.csproj",
-        "NewLife.IoTSerial\NewLife.IoTSerial.csproj",
-        "NewLife.IoTSocket\NewLife.IoTSocket.csproj",
-        "NewLife.IoTDatabase\NewLife.IoTDatabase.csproj"
+        "NewLife.IoT/NewLife.IoT.csproj",
+        "NewLife.IoTSerial/NewLife.IoTSerial.csproj",
+        "NewLife.IoTSocket/NewLife.IoTSocket.csproj",
+        "NewLife.IoTDatabase/NewLife.IoTDatabase.csproj"
     )
 
     foreach ($project in $projects) {

@@ -13,7 +13,7 @@ foreach ($d in $Dir) {
     if (-not (Test-Path $d)) { continue }
 
     $files = Get-ChildItem -Path $d -Recurse -Filter *.cs |
-        Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+        Where-Object { $_.FullName -notmatch '[/\\](obj|bin)[/\\]' }
 
     foreach ($file in $files) {
         $lineNo = 0
