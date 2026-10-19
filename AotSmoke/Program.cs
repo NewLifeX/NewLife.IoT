@@ -243,6 +243,21 @@ Run("AOT 插件扫描守卫", () =>
     ScanAllForAotGuard();
 });
 
+Run("串口实现加载", () =>
+{
+    var portName = OperatingSystem.IsWindows() ? "COM255" : "/dev/ttyNONEXISTENT";
+    using var port = new NewLife.IoT.Controllers.DefaultSerialPort { PortName = portName, Baudrate = 9600 };
+
+    try
+    {
+        port.Open();
+    }
+    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or PlatformNotSupportedException)
+    {
+        // 预期：测试环境不存在该串口
+    }
+});
+
 Run("数据库参数", () =>
 {
     using var driver = new IoTDatabaseDriver();

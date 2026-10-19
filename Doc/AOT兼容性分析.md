@@ -6,7 +6,7 @@
 
 ## 1. 现状摘要
 
-- **核心链路实测全通**：15 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec`/结果类型 JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、串口/网络/数据库参数绑定、驱动物模型、传输层前缀与 AOT 插件扫描守卫。
+- **核心链路实测全通**：16 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec`/结果类型 JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、串口/网络/数据库参数绑定、驱动物模型、传输层前缀、AOT 插件扫描守卫与串口原生库加载。
 - **支持方式**：`IsAotCompatible` 对 net8.0+ 常驻启用；JSON 成员访问由 NewLife.Core 源生成器生成静态表，元数据保留由 `JsonPreserve` 的 `[DynamicDependency]` 声明；驱动工厂提供泛型注册入口，避免运行期反射构造。
 - **告警面**：库自身编译 **0** 条 IL 告警，AOT 发布 **0** 条 ILC 告警。
 - **已知边界**：插件扫描（`DriverFactory.ScanAll`）属于动态发现能力，AOT 下不支持；`DriverFactory.Register(name, Type)` 依赖运行期反射构造，AOT 下应改用 `Register<T>` 或 `Register(name, type, factory)`。
@@ -31,7 +31,8 @@
 | 12 | 网络驱动参数 | `SocketParameter`/`HttpParameter` JSON 绑定 |
 | 13 | 结果类型 JSON | `WriteResult` 序列化与反序列化 |
 | 14 | AOT 插件扫描守卫 | AOT 下 `ScanAll` 直接返回，不执行反射扫描 |
-| 15 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
+| 15 | 串口实现加载 | `DefaultSerialPort` 在 AOT 下加载 `System.IO.Ports` 原生库并处理不存在的端口 |
+| 16 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
 
 > AOT 判真：原生发布件入口 `Assembly.Location` 为空，`RuntimeFeature.IsDynamicCodeSupported=false`。
 
