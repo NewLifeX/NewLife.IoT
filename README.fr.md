@@ -31,7 +31,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [Exigences](Doc/需求文档.md) · [Fonctionnalités](Doc/功能清单.md) · [Architecture](Doc/架构设计.md) |
 
-**Capacités d'exécution** : localisation en 31 langues (alignée sur NewLife.Core) · journalisation avec préfixe d'instance · NativeAOT vérifié (19 scénarios, Windows/Linux/macOS) · 8 frameworks cibles (net45 → net10.0).
+**Capacités d'exécution** : localisation en 31 langues (alignée sur NewLife.Core) · journalisation avec préfixe d'instance · NativeAOT vérifié (20 scénarios, Windows/Linux/macOS) · 8 frameworks cibles (net45 → net10.0).
 
 ---
 

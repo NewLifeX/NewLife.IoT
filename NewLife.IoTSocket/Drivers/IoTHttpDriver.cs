@@ -1,4 +1,3 @@
-﻿using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Text;
 using NewLife.IoT;
@@ -14,7 +13,7 @@ namespace NewLife.IoTSocket.Drivers;
 /// IoT驱动，符合IoT标准的通用Http驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTHttp")]
-[DisplayName("通用Http驱动")]
+[LocalizedDisplayName("HTTP driver")]
 public class IoTHttpDriver : DriverBase<Node, HttpParameter>
 {
     #region 属性

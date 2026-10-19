@@ -22,8 +22,8 @@ foreach ($d in $Dir) {
             $text = $line.Trim()
             if ($text.StartsWith("//") -or $text.StartsWith("///") -or $text.StartsWith("*")) { continue }
             if ($line -notmatch '[\u4e00-\u9fff]') { continue }
-            # [Description]/[DisplayName] 等元数据特性按约定保留源码语言
-            if ($text.StartsWith("[")) { continue }
+            # 普通元数据特性按约定保留源码语言；本地化特性参数必须使用英文键
+            if ($text -match '^\s*\[\s*[A-Za-z_]' -and $text -notmatch '^\s*\[\s*Localized(Description|DisplayName)\s*\(') { continue }
             # 仅检查字符串字面量，中文注释与中文标识符不在本门禁范围
             $literal = [regex]::Match($line, '"(?:[^"\\]|\\.)*"')
             if (-not $literal.Success) { continue }

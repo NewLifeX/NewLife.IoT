@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using NewLife.Data;
 using NewLife.IoT;
 using NewLife.IoT.Controllers;
@@ -15,7 +14,7 @@ namespace NewLife.IoTSerial.Drivers;
 /// IoT驱动，符合IoT标准的通用串口驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTSerial")]
-[DisplayName("通用串口驱动")]
+[LocalizedDisplayName("Serial driver")]
 public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
 {
     #region 属性
@@ -249,7 +248,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     /// <returns>控制结果</returns>
     public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
+        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException(L.T("Service name cannot be null."));
         request.Parameters ??= new Dictionary<String, Object?>();
 
         if (node.Parameter is not IoTSerialParameter parameter)

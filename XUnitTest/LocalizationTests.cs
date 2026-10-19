@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using NewLife;
 using NewLife.IoT;
 using NewLife.IoT.Drivers;
+using NewLife.IoT.Models;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
@@ -20,37 +21,6 @@ public class LocalizationCollection { }
 [Collection("Localization")]
 public class LocalizationTests
 {
-    private static readonly String[] _allKeys =
-    [
-        "Cannot find service [{0}]!",
-        "Unsupported data type {0}!",
-        "================Start scanning driver plugins================",
-        "================End scanning driver plugins================",
-        "Parameter cannot be null.",
-        "Serial port name cannot be null.",
-        "Network address cannot be null.",
-        "Node or parameter is invalid.",
-        "Port number is required in parameters.",
-        "UDP broadcast to {0}:{1}, payload: {2}",
-        "Received response from {0}:{1}, length: {2}",
-        "Error receiving UDP response: {0}",
-        "Error during UDP discovery on subnet {0}: {1}",
-        "UDP device {0}:{1}",
-        "Database connection string cannot be null.",
-        "Database driver does not support write operations.",
-        "Database driver does not support control operations.",
-        "Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.",
-        "Short integer",
-        "Integer",
-        "Decimal number",
-        "Boolean",
-        "Byte",
-        "Long integer",
-        "Double precision",
-        "Text",
-        "Time",
-        "Response data",
-    ];
     private static String GetRepositoryRoot()
     {
         for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
@@ -215,7 +185,9 @@ public class LocalizationTests
             Localization.Culture = new CultureInfo(culture);
 
             var table = ReadLocale(culture);
-            foreach (var key in _allKeys)
+            var keys = ReadLocale("zh-Hans").Keys;
+            Assert.NotEmpty(keys);
+            foreach (var key in keys)
             {
                 Assert.True(table.ContainsKey(key), $"{culture} 缺少词表键：{key}");
                 Assert.Equal(table[key], Localization.Translate(key));
@@ -278,6 +250,40 @@ public class LocalizationTests
     }
 
     [Fact]
+    [DisplayName("不支持的类型与服务名异常消息按语言翻译")]
+    public void UnsupportedOperationMessagesAreTranslated()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = new CultureInfo("zh-CN");
+
+            var point = new PointModel { Type = "unknown" };
+            Assert.Equal("不支持的数据类型 unknown！", Assert.Throws<NotSupportedException>(() => point.Convert([1])).Message);
+            Assert.Equal("不支持的数据类型 unknown！", Assert.Throws<NotSupportedException>(() => point.GetBytes(1)).Message);
+
+            var ps = new PropertySpec { DataType = new TypeSpec { Type = "long" } };
+            Assert.Equal("不支持的数据类型 Int64！", Assert.Throws<NotImplementedException>(() => ps.Decode(new Byte[8])).Message);
+
+            var driver = new TestDriver();
+            Assert.Equal("不支持该操作。", Assert.Throws<NotImplementedException>(() =>
+            {
+                _ = driver.ReadAsync(null!, []);
+            }).Message);
+
+            using var serial = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
+            Assert.Equal("服务名称不能为空。", Assert.Throws<NotImplementedException>(() =>
+            {
+                _ = serial.ControlAsync(null!, new ControlRequest());
+            }).Message);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
     [DisplayName("IoT类型显示名随语言切换，不使用跨语言缓存")]
     public void TypeHelperDisplayNamesFollowCulture()
     {
@@ -322,6 +328,32 @@ public class LocalizationTests
 
             Localization.Culture = new CultureInfo("en-US");
             Assert.Equal("Response data", driver.GetSpecification()!.Properties![0].Name);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("驱动显示名与枚举描述随语言切换")]
+    public void DriverMetadataFollowsCulture()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = new CultureInfo("zh-CN");
+            Assert.Equal("通用串口驱动", typeof(NewLife.IoTSerial.Drivers.IoTSerialDriver).GetDisplayName());
+            Assert.Equal("变更上报", PostKinds.Changed.GetDescription());
+            Assert.Equal("就绪", ServiceStatus.就绪.GetDescription());
+
+            Localization.Culture = new CultureInfo("en-US");
+            Assert.Equal("Serial driver", typeof(NewLife.IoTSerial.Drivers.IoTSerialDriver).GetDisplayName());
+            Assert.Equal("Report on change", PostKinds.Changed.GetDescription());
+            Assert.Equal("Ready", ServiceStatus.就绪.GetDescription());
+
+            var xml = new NewLife.IoTSerial.Drivers.IoTSerialParameter { PortName = "COM1" }.EncodeParameter();
+            Assert.Contains("Serial port", xml);
         }
         finally
         {

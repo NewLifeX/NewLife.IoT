@@ -158,7 +158,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>读取结果，包含点位数据、质量码和可选诊断帧</returns>
     public virtual Task<ReadResult> ReadAsync(INode node, IPoint[] points, CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
+        => throw new NotImplementedException(L.T("Operation is not supported."));
 
     /// <summary>批量写入数据（IDriver 核心方法）。派生类重写时自行判断 requests.Length 以决定走单点或批量路径</summary>
     /// <param name="node">节点对象</param>
@@ -166,7 +166,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>批量写入结果，AffectedCount 为实际成功点数</returns>
     public virtual Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
+        => throw new NotImplementedException(L.T("Operation is not supported."));
 
     /// <summary>控制设备</summary>
     /// <param name="node">节点对象</param>
@@ -174,7 +174,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>控制结果，携带输出参数</returns>
     public virtual Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
+        => throw new NotImplementedException(L.T("Operation is not supported."));
     #endregion
 
     #region 日志

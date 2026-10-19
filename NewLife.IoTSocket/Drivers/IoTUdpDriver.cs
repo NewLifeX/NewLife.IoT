@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using NewLife.Data;
+using NewLife.IoT;
 using NewLife.IoT.Drivers;
 using NewLife.IoT.Models;
 using NewLife.Net;
@@ -15,7 +15,7 @@ namespace NewLife.IoTSocket.Drivers;
 /// IoT驱动，符合IoT标准的通用网络驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTUdp")]
-[DisplayName("通用UDP网络驱动")]
+[LocalizedDisplayName("UDP network driver")]
 public class IoTUdpDriver : IoTSocketDriver, IDiscoverableDriver
 {
     #region 方法

@@ -1,4 +1,3 @@
-﻿using System.ComponentModel;
 using NewLife.IoT;
 using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
@@ -12,7 +11,7 @@ namespace NewLife.IoTDatabase.Drivers;
 /// IoT驱动，符合IoT标准的通用数据库驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTDatabase")]
-[DisplayName("通用数据库驱动")]
+[LocalizedDisplayName("Database driver")]
 public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
 {
     #region 属性

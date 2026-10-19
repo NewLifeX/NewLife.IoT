@@ -1,5 +1,3 @@
-﻿using System.ComponentModel;
-
 namespace NewLife.IoT.Models;
 
 /// <summary>
@@ -10,18 +8,18 @@ public enum PostKinds
     /// <summary>
     /// 变更上报
     /// </summary>
-    [Description("变更上报")]
+    [LocalizedDescription("Report on change")]
     Changed = 0,
 
     /// <summary>
     /// 总是上报
     /// </summary>
-    [Description("总是上报")]
+    [LocalizedDescription("Always report")]
     Always = 1,
 
     /// <summary>
     /// 绝不上报
     /// </summary>
-    [Description("绝不上报")]
+    [LocalizedDescription("Never report")]
     Never = 2,
 }

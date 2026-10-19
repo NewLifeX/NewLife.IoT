@@ -6,7 +6,7 @@
 
 ## 1. 现状摘要
 
-- **核心链路实测全通**：19 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec`/结果类型/上报模型 JSON 往返、XML/JSON 参数绑定、结果类型与异常翻译、驱动工厂注册与参数创建、串口/网络/数据库参数绑定、驱动物模型、传输层前缀、板卡串口/Modbus 工厂注入、AOT 插件扫描守卫与串口原生库加载。
+- **核心链路实测全通**：20 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、驱动元数据与参数描述本地化、字节序编解码、`DriverCodec`、`ThingSpec`/结果类型/上报模型 JSON 往返、XML/JSON 参数绑定、结果类型与异常翻译、驱动工厂注册与参数创建、串口/网络/数据库参数绑定、驱动物模型、传输层前缀、板卡串口/Modbus 工厂注入、AOT 插件扫描守卫与串口原生库加载。
 - **支持方式**：`IsAotCompatible` 对 net8.0+ 常驻启用；JSON 成员访问由 NewLife.Core 源生成器生成静态表，元数据保留由 `JsonPreserve` 的 `[DynamicDependency]` 声明；驱动工厂提供泛型注册与带 `DynamicallyAccessedMembers` 注解的 Type 注册入口，板卡串口/Modbus 提供工厂委托，AOT 下均可正常构造。
 - **告警面**：库自身编译 **0** 条 IL 告警，AOT 发布 **0** 条 ILC 告警。
 - **已知边界**：插件扫描（`DriverFactory.ScanAll`）属于动态发现能力，AOT 下不支持；直接向 `DriverFactory.Map` 塞入类型会绕过 Type 注册的裁剪注解，应使用 `Register<T>`/`Register(name, type)`/`Register(name, type, factory)`。
@@ -18,7 +18,7 @@
 | # | 场景 | 说明 |
 |---|------|------|
 | 1 | Localization 多语言词表 | `zh-CN` → `zh-Hans` 翻译；未提供语言回退英文 |
-| 2 | 全语言词表（31 种） | 逐语言校验关键运行时词条；单元测试按词表文件校验全部 28 个词条（含与英文同形的术语） |
+| 2 | 全语言词表（31 种） | 逐语言校验关键运行时词条；单元测试按词表文件校验全部 64 个词条（含与英文同形的术语） |
 | 3 | 带前缀日志与本地化 | `[IoTSerial]` 前缀 + 翻译后的消息，含 `LogCulture` 覆盖 |
 | 4 | TypeHelper 类型映射 | `Int16` ⇄ `short`/`int`，点位类型解析 |
 | 5 | DataHelper 字节序编解码 | BigEndian `UInt16` 往返 |
@@ -36,6 +36,7 @@
 | 17 | 串口实现加载 | `DefaultSerialPort` 在 AOT 下加载 `System.IO.Ports` 原生库并处理不存在的端口 |
 | 18 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
 | 19 | 板卡工厂注入 | `SerialPortFactory`/`ModbusFactory` 覆盖 `Board.CreateSerial`/`CreateModbus`，IoTSerial 模块初始化自动注册串口工厂 |
+| 20 | 驱动元数据本地化 | `LocalizedDisplayName`/`LocalizedDescription` 在 AOT 下可反射读取；驱动显示名、枚举描述与参数 Xml 注释随语言切换 |
 
 > AOT 判真：原生发布件入口 `Assembly.Location` 为空，`RuntimeFeature.IsDynamicCodeSupported=false`。
 

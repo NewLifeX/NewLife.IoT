@@ -7,6 +7,7 @@ using NewLife;
 using NewLife.IoT;
 using NewLife.IoT.Controllers;
 using NewLife.IoT.Drivers;
+using NewLife.IoT.Models;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.IoTDatabase.Drivers;
@@ -97,6 +98,14 @@ Run("全语言词表（31 种）", () =>
         "Long integer",
         "Double precision",
         "Response data",
+        "Operation is not supported.",
+        "Service name cannot be null.",
+        "Serial driver",
+        "Report on change",
+        "Serial port",
+        "Timeout. Time to wait for a response after sending a request. Default 3000 ms.",
+        "Capture all fields. Return all fields regardless of the specified points. Default false.",
+        "Ready",
     };
 
     var saved = Localization.Culture;
@@ -164,6 +173,28 @@ Run("TypeHelper 类型映射", () =>
 
         Localization.Culture = new CultureInfo("en-US");
         if (TypeHelper.GetIoTTypes(true)["int"] != "Integer") throw new Exception("类型显示名未随语言切换");
+    }
+    finally
+    {
+        Localization.Culture = saved;
+    }
+});
+
+Run("驱动元数据本地化", () =>
+{
+    var saved = Localization.Culture;
+    try
+    {
+        Localization.Culture = new CultureInfo("zh-CN");
+        if (typeof(IoTSerialDriver).GetDisplayName() != "通用串口驱动") throw new Exception("驱动显示名未翻译");
+        if (PostKinds.Changed.GetDescription() != "变更上报") throw new Exception("枚举描述未翻译");
+        if (ServiceStatus.就绪.GetDescription() != "就绪") throw new Exception("服务状态描述未翻译");
+
+        Localization.Culture = new CultureInfo("en-US");
+        if (typeof(IoTSerialDriver).GetDisplayName() != "Serial driver") throw new Exception("驱动显示名未回退英文");
+        if (ServiceStatus.就绪.GetDescription() != "Ready") throw new Exception("服务状态描述未回退英文");
+        var xml = new NewLife.IoTSerial.Drivers.IoTSerialParameter { PortName = "COM1" }.EncodeParameter();
+        if (!xml.Contains("Serial port")) throw new Exception("参数 Xml 注释未翻译");
     }
     finally
     {

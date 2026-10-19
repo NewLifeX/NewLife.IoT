@@ -34,7 +34,7 @@ public static class PointHelper
     /// <returns></returns>
     public static Object Convert(this IPoint point, Byte[] data)
     {
-        var type = point.GetNetType() ?? throw new NotSupportedException();
+        var type = point.GetNetType() ?? throw new NotSupportedException(L.T("Unsupported data type {0}!", point.Type));
         if (type == typeof(Byte[])) return data;
 
         return type.GetTypeCode() switch
@@ -50,7 +50,7 @@ public static class PointHelper
             TypeCode.UInt16 => BitConverter.ToUInt16(data.Swap(ByteOrder.DCBA, HostOrder), 0),
             TypeCode.UInt32 => BitConverter.ToUInt32(data.Swap(ByteOrder.DCBA, HostOrder), 0),
             TypeCode.UInt64 => BitConverter.ToUInt64(data.Swap(ByteOrder.DCBA, HostOrder), 0),
-            _ => throw new NotSupportedException(),
+            _ => throw new NotSupportedException(L.T("Unsupported data type {0}!", point.Type)),
         };
     }
 
@@ -62,7 +62,7 @@ public static class PointHelper
     /// <returns></returns>
     public static Byte[]? GetBytes(this IPoint point, Object value)
     {
-        var type = point.GetNetType() ?? throw new NotSupportedException();
+        var type = point.GetNetType() ?? throw new NotSupportedException(L.T("Unsupported data type {0}!", point.Type));
         if (type == typeof(Byte[]) && value is Byte[] data) return data;
 
         var val = value.ChangeType(type);

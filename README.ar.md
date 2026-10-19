@@ -31,7 +31,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [المتطلبات](Doc/需求文档.md) · [الميزات](Doc/功能清单.md) · [المعمارية](Doc/架构设计.md) |
 
-**قدرات وقت التشغيل**: توطين بـ 31 لغة (متوافق مع قاموس NewLife.Core) · تسجيل بالبادئة لكل نسخة · التحقق من NativeAOT (19 سيناريو، Windows/Linux/macOS) · 8 أطر مستهدفة (net45 → net10.0).
+**قدرات وقت التشغيل**: توطين بـ 31 لغة (متوافق مع قاموس NewLife.Core) · تسجيل بالبادئة لكل نسخة · التحقق من NativeAOT (20 سيناريو، Windows/Linux/macOS) · 8 أطر مستهدفة (net45 → net10.0).
 
 ---
 

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using NewLife.IoT;
 using NewLife.IoT.Drivers;
 using NewLife.Net;
 
@@ -9,7 +9,7 @@ namespace NewLife.IoTSocket.Drivers;
 /// IoT驱动，符合IoT标准的通用网络驱动，连接后向目标发送数据即可收到数据。
 /// </remarks>
 [Driver("IoTTcp")]
-[DisplayName("通用TCP网络驱动")]
+[LocalizedDisplayName("TCP network driver")]
 public class IoTTcpDriver : IoTSocketDriver
 {
     #region 方法

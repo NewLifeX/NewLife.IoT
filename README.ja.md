@@ -31,7 +31,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [要件](Doc/需求文档.md) · [機能](Doc/功能清单.md) · [アーキテクチャ](Doc/架构设计.md) |
 
-**ランタイム機能**：31 言語のローカライズ（NewLife.Core 語彙セットに準拠）· インスタンスプレフィックス付きログ · NativeAOT 実測通過（19 シナリオ、Windows/Linux/macOS）· 8 ターゲットフレームワーク（net45 → net10.0）。
+**ランタイム機能**：31 言語のローカライズ（NewLife.Core 語彙セットに準拠）· インスタンスプレフィックス付きログ · NativeAOT 実測通過（20 シナリオ、Windows/Linux/macOS）· 8 ターゲットフレームワーク（net45 → net10.0）。
 
 ---
 

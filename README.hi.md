@@ -31,7 +31,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [आवश्यकताएँ](Doc/需求文档.md) · [सुविधाएँ](Doc/功能清单.md) · [आर्किटेक्चर](Doc/架构设计.md) |
 
-**रनटाइम क्षमताएँ**: 31 भाषाओं में स्थानीयकरण (NewLife.Core शब्दावली से संरेखित) · इंस्टेंस-प्रीफ़िक्स लॉगिंग · NativeAOT परीक्षण पारित (19 परिदृश्य, Windows/Linux/macOS) · 8 लक्ष्य फ्रेमवर्क (net45 → net10.0)।
+**रनटाइम क्षमताएँ**: 31 भाषाओं में स्थानीयकरण (NewLife.Core शब्दावली से संरेखित) · इंस्टेंस-प्रीफ़िक्स लॉगिंग · NativeAOT परीक्षण पारित (20 परिदृश्य, Windows/Linux/macOS) · 8 लक्ष्य फ्रेमवर्क (net45 → net10.0)।
 
 ---
 

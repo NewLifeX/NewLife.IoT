@@ -86,7 +86,7 @@ public class Board : IBoard
         }
 #endif
 
-        throw new NotImplementedException();
+        throw new NotImplementedException(L.T("Operation is not supported."));
     }
 
     /// <summary>创建Modbus</summary>
@@ -111,6 +111,6 @@ public class Board : IBoard
             }
         }
 
-        throw new NotImplementedException();
+        throw new NotImplementedException(L.T("Operation is not supported."));
     }
 }

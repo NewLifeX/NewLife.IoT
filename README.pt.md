@@ -31,7 +31,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [Requisitos](Doc/需求文档.md) · [Funcionalidades](Doc/功能清单.md) · [Arquitetura](Doc/架构设计.md) |
 
-**Recursos de tempo de execução**: localização em 31 idiomas (alinhada ao NewLife.Core) · registro com prefixo de instância · NativeAOT verificado (19 cenários, Windows/Linux/macOS) · 8 frameworks de destino (net45 → net10.0).
+**Recursos de tempo de execução**: localização em 31 idiomas (alinhada ao NewLife.Core) · registro com prefixo de instância · NativeAOT verificado (20 cenários, Windows/Linux/macOS) · 8 frameworks de destino (net45 → net10.0).
 
 ---
 

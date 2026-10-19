@@ -24,7 +24,7 @@ foreach ($line in Get-Content -LiteralPath $baselinePath -Encoding UTF8) {
 }
 
 # 运行时消息入口：异常、结果失败、翻译快捷入口与日志方法
-$callPattern = '(?s)\b(?:throw\s+new|\.Fail|WriteLog|WritePrefixed|InfoPrefixed|ErrorPrefixed|WarnPrefixed|DebugPrefixed|Log\??\.(?:Info|Warn|Error|Debug|Fatal)|XTrace\.Write(?:Line)?|L\.T|Localization\.Translate(?:ForLog)?)\b[^;]{0,400}'
+$callPattern = '(?s)\b(?:throw\s+new|\.Fail|WriteLog|WritePrefixed|InfoPrefixed|ErrorPrefixed|WarnPrefixed|DebugPrefixed|Log\??\.(?:Info|Warn|Error|Debug|Fatal)|XTrace\.Write(?:Line)?|L\.T|Localization\.Translate(?:ForLog)?|LocalizedDisplayName|LocalizedDescription)\b[^;]{0,400}'
 $literalPattern = '(?<prefix>\$@?|@\$?)?"(?<lit>(?:[^"\\]|\\.)*)"'
 
 $hits = @()

@@ -363,7 +363,7 @@ public static class DataHelper
                 TypeCode.Byte or TypeCode.SByte => [(Byte)v],
                 TypeCode.Int16 or TypeCode.UInt16 => ((UInt16)v).GetBytes(order),
                 TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(order),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(L.T("Unsupported data type {0}!", type.Name)),
             };
             span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={scaling}");
 
@@ -474,7 +474,7 @@ public static class DataHelper
             {
                 TypeCode.Int16 or TypeCode.UInt16 => data.ToUInt16(order),
                 TypeCode.Int32 or TypeCode.UInt32 => data.ToUInt32(order),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(L.T("Unsupported data type {0}!", type.Name)),
             };
             if (constant != 0 || scaling != 1) rs = (UInt32)Math.Round(rs * scaling + constant);
             span?.AppendTag($"result={rs} type={type.Name}");

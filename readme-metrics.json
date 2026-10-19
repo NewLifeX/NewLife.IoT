@@ -1,6 +1,5 @@
 {
-  "note": "README 静态徽章与运行时能力指标。locales 为运行时词表语言数，tfm 为目标框架数，aot 为 AOT 冒烟场景数；由 sync-readme-metrics.ps1 同步到各语言 README，CI 以 -Check 校验",
   "locales": 31,
   "tfm": 8,
-  "aot": 19
+  "aot": 20
 }

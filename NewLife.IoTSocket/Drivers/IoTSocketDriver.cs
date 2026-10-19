@@ -181,7 +181,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     /// <returns>控制结果</returns>
     public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException();
+        if (request.ServiceName.IsNullOrEmpty()) throw new NotImplementedException(L.T("Service name cannot be null."));
         request.Parameters ??= new Dictionary<String, Object?>();
 
         if (node.Parameter is not SocketParameter parameter)

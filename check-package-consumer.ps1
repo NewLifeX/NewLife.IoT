@@ -87,6 +87,17 @@ try
         Console.WriteLine("TYPE NAME LOCALIZATION FAILED");
         return 1;
     }
+    if (typeof(IoTSerialDriver).GetDisplayName() != `"通用串口驱动`")
+    {
+        Console.WriteLine("DRIVER METADATA LOCALIZATION FAILED");
+        return 1;
+    }
+    var parameterXml = new IoTSerialParameter { PortName = `"COM1`" }.EncodeParameter();
+    if (!parameterXml.Contains(`"串口`"))
+    {
+        Console.WriteLine("PARAMETER DESCRIPTION LOCALIZATION FAILED");
+        return 1;
+    }
     using var specDriver = new IoTSerialDriver();
     if (specDriver.GetSpecification()?.Properties?[0].Name != `"响应数据`")
     {
