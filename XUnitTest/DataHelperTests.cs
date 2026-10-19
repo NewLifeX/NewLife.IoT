@@ -151,18 +151,19 @@ public class DataHelperTests(ITestOutputHelper output)
     [Fact]
     public void Swap2()
     {
+        // 使用显式小端转换构造缓冲区，避免依赖主机字节序
         var f = 12.34f;
-        var buf = BitConverter.GetBytes(f);
+        var buf = f.GetBytes(ByteOrder.DCBA);
         Assert.Equal("A4704541", buf.ToHex());
 
         f = 0.1234f;
-        buf = BitConverter.GetBytes(f);
+        buf = f.GetBytes(ByteOrder.DCBA);
         Assert.Equal("24B9FC3D", buf.ToHex());
         buf = buf.Swap(ByteOrder.BADC);
         Assert.Equal("B9243DFC", buf.ToHex());
 
         var d = 1234.5678d;
-        buf = BitConverter.GetBytes(d);
+        buf = d.GetBytes(ByteOrder.DCBA);
         Assert.Equal("ADFA5C6D454A9340", buf.ToHex());
     }
 
