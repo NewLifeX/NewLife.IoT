@@ -74,6 +74,7 @@ DriverFactory.Register("IoTSerial", typeof(IoTSerialDriver));
 | 运行时 Type 注册 | `DriverFactory.Register(String?, Type)` | 反射构造依赖裁剪器保留无参构造；AOT 场景改用泛型或工厂重载 |
 | 运行时特性读取 | `DriverBase.GetSpecification` / `DriverFactory.ScanAll` | 特性已通过 `GetCustomAttribute<DriverAttribute>()` 静态类型访问，主链可用；任意特性枚举不在支持范围 |
 | 反射式 JSON 未标记类型 | `ThingSpec.FromJson` / `DriverBase.CreateParameter` | 未标记 `[JsonSerializable]` 的派生类型会回退反射路径，AOT 下成员可能被裁剪；自定义模型请自行标记并声明保留 |
+| 数据库驱动查询链路 | `IoTDatabaseDriver.ReadAsync` → XCode DAL | 实际查询能力取决于 NewLife.XCode 与具体数据库提供程序的 AOT 支持；本仓库冒烟覆盖驱动创建与参数绑定，不覆盖数据库提供程序原生依赖 |
 
 ---
 
