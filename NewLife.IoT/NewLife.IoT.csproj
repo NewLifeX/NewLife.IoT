@@ -57,7 +57,7 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="$(TargetFramework.StartsWith('net4'))" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1019-beta0659" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1019-beta1413" />
   </ItemGroup>
 
   <!-- 多语言词表：编译期由 NewLife.Core 源生成器打包进程序集，运行时自动注册 -->
