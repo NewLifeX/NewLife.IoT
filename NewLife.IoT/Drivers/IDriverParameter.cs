@@ -70,7 +70,7 @@ public static class DriverParameterExtensions
     public static IDictionary<String, Object?>? DecodeParameter(this String parameter)
     {
         parameter = parameter.Trim((Char)0xFEFF);
-        if (parameter.IsNullOrEmpty()) throw new ArgumentNullException(nameof(parameter));
+        if (parameter.IsNullOrEmpty()) throw new ArgumentNullException(nameof(parameter), L.T("Parameter cannot be null."));
 
         // 按Xml或Json解析参数成为字典
         var ps = parameter.StartsWith("<", StringComparison.Ordinal) && parameter.EndsWith(">", StringComparison.Ordinal) ?

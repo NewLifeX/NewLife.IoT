@@ -23,7 +23,7 @@ public class DriverFactory
     /// <param name="type">驱动类型。裁剪器保留公开无参构造，供 Activator 创建实例</param>
     public static void Register(String? name, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
     {
-        if (type == null) throw new ArgumentNullException(nameof(type));
+        if (type == null) throw new ArgumentNullException(nameof(type), L.T("Parameter cannot be null."));
         if (name.IsNullOrEmpty()) name = type.Name;
 
         _map[name] = type;
@@ -36,8 +36,8 @@ public class DriverFactory
     /// <param name="factory">驱动工厂。NativeAOT 下推荐此重载，避免依赖运行期反射创建实例</param>
     public static void Register(String? name, Type type, Func<IDriver> factory)
     {
-        if (type == null) throw new ArgumentNullException(nameof(type));
-        if (factory == null) throw new ArgumentNullException(nameof(factory));
+        if (type == null) throw new ArgumentNullException(nameof(type), L.T("Parameter cannot be null."));
+        if (factory == null) throw new ArgumentNullException(nameof(factory), L.T("Parameter cannot be null."));
         if (name.IsNullOrEmpty()) name = type.Name;
 
         _map[name] = type;

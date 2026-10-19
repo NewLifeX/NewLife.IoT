@@ -58,7 +58,7 @@ public class DefaultSerialPort : DisposeBase, ISerialPort
     {
         if (_port != null && _port.IsOpen) return;
 
-        if (PortName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(PortName));
+        if (PortName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(PortName), L.T("Serial port name cannot be null."));
         if (Baudrate == 0) Baudrate = 9600;
 
         if (_port == null)

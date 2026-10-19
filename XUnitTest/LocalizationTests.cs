@@ -258,6 +258,8 @@ public class LocalizationTests
         {
             Localization.Culture = new CultureInfo("zh-CN");
 
+            Assert.Contains("参数不能为空。", Assert.Throws<ArgumentNullException>(() => DriverFactory.Register("null-type", (Type)null!)).Message);
+
             var point = new PointModel { Type = "unknown" };
             Assert.Equal("不支持的数据类型 unknown！", Assert.Throws<NotSupportedException>(() => point.Convert([1])).Message);
             Assert.Equal("不支持的数据类型 unknown！", Assert.Throws<NotSupportedException>(() => point.GetBytes(1)).Message);

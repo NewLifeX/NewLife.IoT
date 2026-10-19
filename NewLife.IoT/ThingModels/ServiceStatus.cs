@@ -20,6 +20,6 @@ public enum ServiceStatus
     取消 = 3,
 
     /// <summary>错误</summary>
-    [LocalizedDescription("Error")]
+    [LocalizedDescription("Error status")]
     错误 = 4,
 }
