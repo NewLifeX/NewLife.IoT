@@ -55,7 +55,10 @@ jobs:
       shell: pwsh
       run: ./sync-readme-metrics.ps1 -Check
     - name: Build
-      run: dotnet build -c Release
+      run: dotnet build XUnitTest/XUnitTest.csproj -c Release
+    - name: Build sample
+      if: matrix.os == 'windows-latest'
+      run: dotnet build Test/Test.csproj -c Release
     - name: Test
       run: dotnet test XUnitTest/XUnitTest.csproj -c Release
     - name: Test (scalar instruction set)
