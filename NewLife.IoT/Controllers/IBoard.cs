@@ -62,14 +62,17 @@ public class Board : IBoard
     /// <returns></returns>
     public virtual ISerialPort CreateSerial(String portName, Int32 baudrate = 9600)
     {
+        // AOT/裁剪环境优先使用注册工厂，避免运行期类型查找
+        if (SerialPortFactory.Factory is { } factory) return factory(portName, baudrate);
+
 #if NETFRAMEWORK
-        var sp = new DefaultSerialPort
+        return new DefaultSerialPort
         {
             PortName = portName,
             Baudrate = baudrate,
         };
-        return sp;
 #else
+        // 兼容未引用 NewLife.IoTSerial 的旧应用
         var type = "DefaultSerialPort".GetTypeEx();
         if (type != null)
         {
@@ -92,6 +95,10 @@ public class Board : IBoard
     /// <returns></returns>
     public virtual IModbus CreateModbus(String portName, Int32 baudrate = 9600)
     {
+        // AOT/裁剪环境优先使用注册工厂，避免运行期类型查找
+        if (ModbusFactory.Factory is { } factory) return factory(portName, baudrate);
+
+        // 兼容未注册工厂的旧应用
         var type = "ModbusRtu".GetTypeEx();
         if (type != null)
         {

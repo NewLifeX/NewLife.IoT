@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text;
 using NewLife;
 using NewLife.IoT;
+using NewLife.IoT.Controllers;
 using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
@@ -142,7 +143,10 @@ Run("ThingSpec JSON 往返", () =>
     {
         Profile = new Profile { ProductKey = "demo", Version = "1.0" },
     };
-    spec.AddProperty("temp", "Temperature", "float");
+    var ps = spec.AddProperty("temp", "Temperature", "float");
+    ps.DataType!.Specs = new DataSpecs { Unit = "C", UnitName = "Celsius", Min = -40, Max = 125, Step = 0.1 };
+    spec.Events = [new EventSpec { Id = "alarm", Name = "Alarm", Type = "alert", Method = "alarm" }];
+    spec.Services = [new ServiceSpec { Id = "reboot", Name = "Reboot", Type = "async", Method = "reboot" }];
 
     var json = spec.ToJson();
     var spec2 = new ThingSpec();
@@ -151,6 +155,9 @@ Run("ThingSpec JSON 往返", () =>
     var pi = spec2.GetProperty("temp");
     if (pi == null) throw new Exception("属性丢失");
     if (pi.Name != "Temperature") throw new Exception("属性名称不匹配: " + pi.Name);
+    if (pi.DataType?.Specs?.Unit != "C" || pi.DataType.Specs.Max != 125) throw new Exception("数据类型规范丢失");
+    if (spec2.Events?[0].Method != "alarm") throw new Exception("事件丢失");
+    if (spec2.Services?[0].Type != "async") throw new Exception("服务丢失");
 });
 
 Run("结果类型与异常翻译", () =>
@@ -191,6 +198,14 @@ Run("驱动注册与参数创建", () =>
     if (p.PortName != "COM1" || p.Baudrate != 9600) throw new Exception("参数值不匹配");
 });
 
+Run("驱动参数 Xml 解析", () =>
+{
+    using var driver = new IoTSerialDriver();
+    var parameter = driver.CreateParameter("<Parameter><PortName>COM9</PortName><Baudrate>19200</Baudrate></Parameter>");
+    if (parameter is not IoTSerialParameter p) throw new Exception("XML 参数创建失败");
+    if (p.PortName != "COM9" || p.Baudrate != 19200) throw new Exception("XML 参数值不匹配");
+});
+
 Run("驱动物模型", () =>
 {
     using var driver = new IoTSerialDriver();
@@ -214,7 +229,8 @@ Run("传输层前缀", () =>
 
 Run("网络驱动参数", () =>
 {
-    DriverFactory.Register<IoTTcpDriver>("IoTTcp");
+    // Type 重载依赖 DynamicallyAccessedMembers 保留构造，AOT 下验证该路径
+    DriverFactory.Register("IoTTcp", typeof(IoTTcpDriver));
     var socket = DriverFactory.CreateParameter("IoTTcp", """{"Server":"192.168.1.10","Port":502,"Timeout":1500}""");
     if (socket is not SocketParameter sp) throw new Exception("TCP 参数创建失败");
     if (sp.Server != "192.168.1.10" || sp.Port != 502 || sp.Timeout != 1500) throw new Exception("TCP 参数值不匹配");
@@ -233,6 +249,42 @@ Run("结果类型 JSON", () =>
     var back = JsonHelper.Default.Convert(raw, typeof(WriteResult));
     if (back is not WriteResult wr2) throw new Exception("WriteResult 反序列化失败");
     if (wr2.Code != IoTErrorCode.Timeout) throw new Exception("WriteResult 错误码不匹配: " + wr2.Code);
+});
+
+Run("上报模型 JSON", () =>
+{
+    var models = new PropertyModels
+    {
+        DeviceCode = "dev01",
+        Items = [new PropertyModel { Name = "temp", Value = 25.5 }],
+    };
+    var raw1 = JsonHelper.Default.Parse(models.ToJson()) ?? throw new Exception("属性上报模型解析失败");
+    var back = JsonHelper.Default.Convert(raw1, typeof(PropertyModels)) as PropertyModels;
+    if (back?.DeviceCode != "dev01" || back.Items?[0].Name != "temp") throw new Exception("属性上报模型往返失败");
+
+    var events = new EventModels
+    {
+        DeviceCode = "dev01",
+        Items = [new EventModel { Time = 1234567890, Type = "alert", Name = "alarm" }],
+    };
+    var raw2 = JsonHelper.Default.Parse(events.ToJson()) ?? throw new Exception("事件上报模型解析失败");
+    var back2 = JsonHelper.Default.Convert(raw2, typeof(EventModels)) as EventModels;
+    if (back2?.Items?[0].Name != "alarm") throw new Exception("事件上报模型往返失败");
+
+    var data = new DataModels
+    {
+        Id = 1,
+        DeviceCode = "dev01",
+        Items = [new DataModel { Time = 1234567890, Name = "temp", Value = "25.5" }],
+    };
+    var raw3 = JsonHelper.Default.Parse(data.ToJson()) ?? throw new Exception("数据上报模型解析失败");
+    var back3 = JsonHelper.Default.Convert(raw3, typeof(DataModels)) as DataModels;
+    if (back3?.Items?[0].Value != "25.5") throw new Exception("数据上报模型往返失败");
+
+    var shadow = new ShadowModel { DeviceCode = "dev01", Shadow = new Dictionary<String, Object?> { ["online"] = true } };
+    var raw4 = JsonHelper.Default.Parse(shadow.ToJson()) ?? throw new Exception("影子模型解析失败");
+    var back4 = JsonHelper.Default.Convert(raw4, typeof(ShadowModel)) as ShadowModel;
+    if (back4?.DeviceCode != "dev01") throw new Exception("影子模型往返失败");
 });
 
 Run("AOT 插件扫描守卫", () =>
@@ -255,6 +307,47 @@ Run("串口实现加载", () =>
     catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or PlatformNotSupportedException)
     {
         // 预期：测试环境不存在该串口
+    }
+});
+
+Run("板卡工厂注入", () =>
+{
+    // IoTSerial 通过模块初始化器注册默认串口工厂
+    if (SerialPortFactory.Factory == null) throw new Exception("IoTSerial 未注册串口工厂");
+
+    var saved = SerialPortFactory.Factory;
+    try
+    {
+        SerialPortFactory.Factory = (portName, baudrate) => new DefaultSerialPort
+        {
+            PortName = portName,
+            Baudrate = baudrate,
+        };
+
+        var sp = new Board().CreateSerial("COM42", 115200);
+        if (sp is not DefaultSerialPort dsp) throw new Exception("板卡串口工厂未生效");
+        if (dsp.PortName != "COM42" || dsp.Baudrate != 115200) throw new Exception("板卡串口参数不匹配");
+    }
+    finally
+    {
+        SerialPortFactory.Factory = saved;
+    }
+
+    var savedModbus = ModbusFactory.Factory;
+    try
+    {
+        // 用哨兵异常验证工厂被调用，避免在冒烟工程实现完整 IModbus
+        ModbusFactory.Factory = (portName, baudrate) => throw new InvalidOperationException($"{portName}:{baudrate}");
+        try
+        {
+            new Board().CreateModbus("COM8", 19200);
+            throw new Exception("板卡 Modbus 工厂未生效");
+        }
+        catch (InvalidOperationException ex) when (ex.Message == "COM8:19200") { }
+    }
+    finally
+    {
+        ModbusFactory.Factory = savedModbus;
     }
 });
 

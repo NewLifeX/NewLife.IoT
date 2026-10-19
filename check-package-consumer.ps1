@@ -67,6 +67,7 @@ try {
     $program = @"
 using System.Globalization;
 using NewLife;
+using NewLife.IoT.Controllers;
 using NewLife.IoT.Drivers;
 using NewLife.IoTSerial.Drivers;
 
@@ -106,6 +107,19 @@ try
 finally
 {
     driver.Dispose();
+}
+
+if (SerialPortFactory.Factory == null)
+{
+    Console.WriteLine("SERIAL FACTORY FAILED");
+    return 4;
+}
+
+var serial = new Board().CreateSerial("COM1", 9600);
+if (serial.PortName != "COM1" || serial.Baudrate != 9600)
+{
+    Console.WriteLine("BOARD SERIAL FAILED");
+    return 5;
 }
 
 Console.WriteLine("PACKAGE SMOKE PASS");
