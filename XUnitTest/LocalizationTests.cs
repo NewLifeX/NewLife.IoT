@@ -14,6 +14,27 @@ public class LocalizationCollection { }
 [Collection("Localization")]
 public class LocalizationTests
 {
+    private static readonly String[] _allKeys =
+    [
+        "Cannot find service [{0}]!",
+        "Unsupported data type {0}!",
+        "================Start scanning driver plugins================",
+        "================End scanning driver plugins================",
+        "Parameter cannot be null.",
+        "Serial port name cannot be null.",
+        "Network address cannot be null.",
+        "Node or parameter is invalid.",
+        "Port number is required in parameters.",
+        "UDP broadcast to {0}:{1}, payload: {2}",
+        "Received response from {0}:{1}, length: {2}",
+        "Error receiving UDP response: {0}",
+        "Error during UDP discovery on subnet {0}: {1}",
+        "UDP device {0}:{1}",
+        "Database connection string cannot be null.",
+        "Database driver does not support write operations.",
+        "Database driver does not support control operations.",
+        "Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.",
+    ];
     private sealed class MemoryLog : Logger
     {
         public List<String> Messages { get; } = [];
@@ -142,15 +163,18 @@ public class LocalizationTests
     [InlineData("vi")]
     [InlineData("zh-Hans")]
     [InlineData("zh-Hant")]
-    public void AllLocalesAreRegistered(String culture)
+    public void AllLocalesTranslateAllKeys(String culture)
     {
         var old = Localization.Culture;
         try
         {
             Localization.Culture = new CultureInfo(culture);
 
-            var text = Localization.Translate("Parameter cannot be null.");
-            Assert.NotEqual("Parameter cannot be null.", text);
+            foreach (var key in _allKeys)
+            {
+                var text = Localization.Translate(key);
+                Assert.NotEqual(key, text);
+            }
         }
         finally
         {

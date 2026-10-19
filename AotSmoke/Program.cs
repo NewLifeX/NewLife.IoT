@@ -71,18 +71,39 @@ Run("全语言词表（31 种）", () =>
         "ar", "bn", "cs", "da", "de", "el", "es", "fa", "fi", "fr", "he", "hi", "hu", "id", "it",
         "ja", "ko", "ms", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant",
     };
+    var keys = new[]
+    {
+        "Cannot find service [{0}]!",
+        "Unsupported data type {0}!",
+        "================Start scanning driver plugins================",
+        "================End scanning driver plugins================",
+        "Parameter cannot be null.",
+        "Serial port name cannot be null.",
+        "Network address cannot be null.",
+        "Node or parameter is invalid.",
+        "Port number is required in parameters.",
+        "UDP broadcast to {0}:{1}, payload: {2}",
+        "Received response from {0}:{1}, length: {2}",
+        "Error receiving UDP response: {0}",
+        "Error during UDP discovery on subnet {0}: {1}",
+        "UDP device {0}:{1}",
+        "Database connection string cannot be null.",
+        "Database driver does not support write operations.",
+        "Database driver does not support control operations.",
+        "Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.",
+    };
 
     var saved = Localization.Culture;
     try
     {
-        Localization.Culture = new CultureInfo("en-US");
-        var english = Localization.Translate("Parameter cannot be null.");
-
         foreach (var code in cultures)
         {
             Localization.Culture = new CultureInfo(code);
-            var text = Localization.Translate("Parameter cannot be null.");
-            if (text == english) throw new Exception($"{code} 未命中译文");
+            foreach (var key in keys)
+            {
+                var text = Localization.Translate(key);
+                if (text == key) throw new Exception($"{code} 未命中译文: {key}");
+            }
         }
     }
     finally
@@ -94,6 +115,7 @@ Run("全语言词表（31 种）", () =>
 Run("带前缀日志与本地化", () =>
 {
     var saved = Localization.Culture;
+    var savedLog = Localization.LogCulture;
     try
     {
         Localization.Culture = new CultureInfo("zh-CN");
@@ -104,10 +126,18 @@ Run("带前缀日志与本地化", () =>
 
         if (log.Messages.Count != 1) throw new Exception("日志数量不匹配");
         if (log.Messages[0] != "[IoTSerial]参数不能为空。") throw new Exception("前缀或译文不匹配: " + log.Messages[0]);
+
+        Localization.LogCulture = new CultureInfo("ja");
+        driver.WriteLog("Parameter cannot be null.");
+
+        if (log.Messages.Count != 2) throw new Exception("日志数量不匹配");
+        const String japanese = "[IoTSerial]パラメーターを null にすることはできません。";
+        if (log.Messages[1] != japanese) throw new Exception("LogCulture 前缀或译文不匹配: " + log.Messages[1]);
     }
     finally
     {
         Localization.Culture = saved;
+        Localization.LogCulture = savedLog;
     }
 });
 
