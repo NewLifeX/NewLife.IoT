@@ -9,8 +9,8 @@
 [![NativeAOT](https://github.com/NewLifeX/NewLife.IoT/actions/workflows/aot.yml/badge.svg?branch=master)](https://github.com/NewLifeX/NewLife.IoT/blob/master/Doc/AOT%E5%85%BC%E5%AE%B9%E6%80%A7%E5%88%86%E6%9E%90.md)
 ![TFM](https://img.shields.io/badge/TFM-8%20%28net45%20%E2%86%92%20net10.0%29-512BD4?logo=dotnet)
 ![locales](https://img.shields.io/badge/locales-31-2ea44f?logo=dotnet)
-![platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android%20%7C%20iOS-blue)
-![arch](https://img.shields.io/badge/arch-x64%20%7C%20x86%20%7C%20arm64%20%7C%20arm%20%7C%20loongarch64%20%7C%20riscv64%20%7C%20s390x-orange)
+[![platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android%20%7C%20iOS-blue)](Doc/架构设计.md#14-平台与指令集支持矩阵)
+[![arch](https://img.shields.io/badge/arch-x64%20%7C%20x86%20%7C%20arm64%20%7C%20arm%20%7C%20loongarch64%20%7C%20riscv64%20%7C%20s390x-orange)](Doc/架构设计.md#14-平台与指令集支持矩阵)
 [![contributors](https://img.shields.io/github/contributors/newlifex/newlife.iot?logo=github)](https://github.com/NewLifeX/NewLife.IoT/graphs/contributors)
 
 🌐 **[English](Readme.MD) · [中文](Readme.zh-CN.md) · [हिन्दी](Readme.hi.md) · [Español](Readme.es.md) · [Français](Readme.fr.md) · [العربية](Readme.ar.md) · [বাংলা](Readme.bn.md) · [Português](Readme.pt.md) · [Русский](Readme.ru.md) · [日本語](Readme.ja.md)**
@@ -28,6 +28,8 @@
 | المصدر | NuGet | المستندات |
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [المتطلبات](Doc/需求文档.md) · [الميزات](Doc/功能清单.md) · [المعمارية](Doc/架构设计.md) |
+
+**قدرات وقت التشغيل**: توطين بـ 31 لغة (متوافق مع قاموس NewLife.Core) · تسجيل بالبادئة لكل نسخة · التحقق من NativeAOT (19 سيناريو، Windows/Linux/macOS) · 8 أطر مستهدفة (net45 → net10.0).
 
 ---
 
