@@ -23,6 +23,9 @@ public interface IPoint
 /// <summary>点位扩展</summary>
 public static class PointHelper
 {
+    /// <summary>主机字节序。大端主机为 ABCD，小端主机为 DCBA</summary>
+    private static ByteOrder HostOrder => BitConverter.IsLittleEndian ? ByteOrder.DCBA : ByteOrder.ABCD;
+
     /// <summary>
     /// 根据点位类型长度，解析字节数组为目标类型。默认小端字节序，大端需要用Swap提前处理
     /// </summary>
@@ -38,15 +41,15 @@ public static class PointHelper
         {
             TypeCode.Boolean => BitConverter.ToBoolean(data, 0),
             TypeCode.Byte => data[0],
-            TypeCode.Char => BitConverter.ToChar(data, 0),
-            TypeCode.Double => BitConverter.ToDouble(data, 0),
-            TypeCode.Int16 => BitConverter.ToInt16(data, 0),
-            TypeCode.Int32 => BitConverter.ToInt32(data, 0),
-            TypeCode.Int64 => BitConverter.ToInt64(data, 0),
-            TypeCode.Single => BitConverter.ToSingle(data, 0),
-            TypeCode.UInt16 => BitConverter.ToUInt16(data, 0),
-            TypeCode.UInt32 => BitConverter.ToUInt32(data, 0),
-            TypeCode.UInt64 => BitConverter.ToUInt64(data, 0),
+            TypeCode.Char => BitConverter.ToChar(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.Double => BitConverter.ToDouble(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.Int16 => BitConverter.ToInt16(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.Int32 => BitConverter.ToInt32(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.Int64 => BitConverter.ToInt64(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.Single => BitConverter.ToSingle(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.UInt16 => BitConverter.ToUInt16(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.UInt32 => BitConverter.ToUInt32(data.Swap(ByteOrder.DCBA, HostOrder), 0),
+            TypeCode.UInt64 => BitConverter.ToUInt64(data.Swap(ByteOrder.DCBA, HostOrder), 0),
             _ => throw new NotSupportedException(),
         };
     }
@@ -68,15 +71,15 @@ public static class PointHelper
         {
             TypeCode.Boolean => BitConverter.GetBytes((Boolean)(val ?? false)),
             TypeCode.Byte => [(Byte)(val ?? 0)],
-            TypeCode.Char => BitConverter.GetBytes((Char)(val ?? 0)),
-            TypeCode.Double => BitConverter.GetBytes((Double)(val ?? 0)),
-            TypeCode.Int16 => BitConverter.GetBytes((Int16)(val ?? 0)),
-            TypeCode.Int32 => BitConverter.GetBytes((Int32)(val ?? 0)),
-            TypeCode.Int64 => BitConverter.GetBytes((Int64)(val ?? 0)),
-            TypeCode.Single => BitConverter.GetBytes((Single)(val ?? 0)),
-            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)(val ?? 0)),
-            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)(val ?? 0)),
-            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)(val ?? 0)),
+            TypeCode.Char => BitConverter.GetBytes((Char)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.Double => BitConverter.GetBytes((Double)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.Int16 => BitConverter.GetBytes((Int16)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.Int32 => BitConverter.GetBytes((Int32)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.Int64 => BitConverter.GetBytes((Int64)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.Single => BitConverter.GetBytes((Single)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.UInt16 => BitConverter.GetBytes((UInt16)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.UInt32 => BitConverter.GetBytes((UInt32)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
+            TypeCode.UInt64 => BitConverter.GetBytes((UInt64)(val ?? 0)).Swap(HostOrder, ByteOrder.DCBA),
             _ => null,
         };
     }

@@ -8,6 +8,9 @@ namespace NewLife.IoT;
 /// <summary>数据处理助手</summary>
 public static class DataHelper
 {
+    /// <summary>主机字节序。大端主机为 ABCD，小端主机为 DCBA</summary>
+    private static ByteOrder HostOrder => BitConverter.IsLittleEndian ? ByteOrder.DCBA : ByteOrder.ABCD;
+
     #region 数字转字节数组
     /// <summary>短整数转为指定字节序的字节数组，仅大小端两种</summary>
     /// <param name="value"></param>
@@ -61,25 +64,25 @@ public static class DataHelper
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Single value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this Single value, EndianType endian) => BitConverter.GetBytes(value).Swap(HostOrder, (ByteOrder)endian);
 
     /// <summary>单精度浮点数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Single value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this Single value, ByteOrder order) => BitConverter.GetBytes(value).Swap(HostOrder, order);
 
     /// <summary>双精度浮点数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Double value, EndianType endian) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, (ByteOrder)endian);
+    public static Byte[] GetBytes(this Double value, EndianType endian) => BitConverter.GetBytes(value).Swap(HostOrder, (ByteOrder)endian);
 
     /// <summary>双精度浮点数转为指定字节序的字节数组</summary>
     /// <param name="value"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Byte[] GetBytes(this Double value, ByteOrder order) => BitConverter.GetBytes(value).Swap(ByteOrder.DCBA, order);
+    public static Byte[] GetBytes(this Double value, ByteOrder order) => BitConverter.GetBytes(value).Swap(HostOrder, order);
     #endregion
 
     #region 字节数组转数字
@@ -111,25 +114,25 @@ public static class DataHelper
     /// <param name="buffer"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Single ToSingle(this Byte[] buffer, EndianType endian) => BitConverter.ToSingle(buffer.Swap(ByteOrder.DCBA, (ByteOrder)endian), 0);
+    public static Single ToSingle(this Byte[] buffer, EndianType endian) => BitConverter.ToSingle(buffer.Swap((ByteOrder)endian, HostOrder), 0);
 
     /// <summary>字节数组按指定字节序转为单精度浮点数</summary>
     /// <param name="buffer"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Single ToSingle(this Byte[] buffer, ByteOrder order) => BitConverter.ToSingle(buffer.Swap(ByteOrder.DCBA, order), 0);
+    public static Single ToSingle(this Byte[] buffer, ByteOrder order) => BitConverter.ToSingle(buffer.Swap(order, HostOrder), 0);
 
     /// <summary>字节数组按照指定字节序转为双精度浮点数</summary>
     /// <param name="buffer"></param>
     /// <param name="endian"></param>
     /// <returns></returns>
-    public static Double ToDouble(this Byte[] buffer, EndianType endian) => BitConverter.ToDouble(buffer.Swap(ByteOrder.DCBA, (ByteOrder)endian), 0);
+    public static Double ToDouble(this Byte[] buffer, EndianType endian) => BitConverter.ToDouble(buffer.Swap((ByteOrder)endian, HostOrder), 0);
 
     /// <summary>字节数组按指定字节序转为双精度浮点数</summary>
     /// <param name="buffer"></param>
     /// <param name="order"></param>
     /// <returns></returns>
-    public static Double ToDouble(this Byte[] buffer, ByteOrder order) => BitConverter.ToDouble(buffer.Swap(ByteOrder.DCBA, order), 0);
+    public static Double ToDouble(this Byte[] buffer, ByteOrder order) => BitConverter.ToDouble(buffer.Swap(order, HostOrder), 0);
     #endregion
 
     #region 字节序交换
