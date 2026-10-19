@@ -181,8 +181,8 @@ public class SocketDriverTests
     [Fact]
     public async Task IoTUdpDriver_OpenClose_RealUdp()
     {
-        var port = GetFreePort();
-        var server = StartUdpResponder(port, "OK"u8.ToArray());
+        var server = StartUdpResponder(0, "OK"u8.ToArray());
+        var port = ((IPEndPoint)server.Client.LocalEndPoint!).Port;
         try
         {
             var driver = new IoTUdpDriver();
