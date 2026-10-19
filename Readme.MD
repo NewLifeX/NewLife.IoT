@@ -29,7 +29,7 @@
 |--------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [Requirements](Doc/需求文档.md) · [Features](Doc/功能清单.md) · [Architecture](Doc/架构设计.md) |
 
-**Runtime**: 31-language localization (aligned with NewLife.Core) · instance-prefixed logging · NativeAOT verified (14 scenarios, Windows/Linux/macOS) · 8 target frameworks (net45 → net10.0).
+**Runtime**: 31-language localization (aligned with NewLife.Core) · instance-prefixed logging · NativeAOT verified (15 scenarios, Windows/Linux/macOS) · 8 target frameworks (net45 → net10.0).
 
 ---
 

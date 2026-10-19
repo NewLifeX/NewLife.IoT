@@ -1,5 +1,6 @@
 // NewLife.IoT NativeAOT 兼容性冒烟测试。
 // 同一份二进制分别以 JIT（dotnet run）与 NativeAOT（dotnet publish -r <rid>）运行，逐场景输出 PASS/FAIL，非零退出码即失败。
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using NewLife;
@@ -234,6 +235,14 @@ Run("结果类型 JSON", () =>
     if (wr2.Code != IoTErrorCode.Timeout) throw new Exception("WriteResult 错误码不匹配: " + wr2.Code);
 });
 
+Run("AOT 插件扫描守卫", () =>
+{
+    // JIT 下跳过真实扫描，避免加载全部程序集；AOT 下 ScanAll 应直接返回
+    if (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported) return;
+
+    ScanAllForAotGuard();
+});
+
 Run("数据库参数", () =>
 {
     using var driver = new IoTDatabaseDriver();
@@ -244,6 +253,10 @@ Run("数据库参数", () =>
 
 Console.WriteLine(failed == 0 ? "ALL PASS" : $"FAILED {failed}");
 return failed == 0 ? 0 : 1;
+
+[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "冒烟件显式验证 AOT 守卫，调用前已判断 IsDynamicCodeSupported")]
+[UnconditionalSuppressMessage("Aot", "IL3050", Justification = "冒烟件显式验证 AOT 守卫，调用前已判断 IsDynamicCodeSupported")]
+static void ScanAllForAotGuard() => DriverFactory.ScanAll();
 
 /// <summary>内存日志器。用于验证带前缀日志</summary>
 sealed class MemoryLog : Logger
