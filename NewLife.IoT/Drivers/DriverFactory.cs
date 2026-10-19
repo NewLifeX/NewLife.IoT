@@ -68,7 +68,7 @@ public class DriverFactory
     /// </summary>
     public static void ScanAll()
     {
-        XTrace.WriteLine("================开始扫描驱动插件================");
+        XTrace.WriteLine("================Start scanning driver plugins================");
 
         var iot = Assembly.GetExecutingAssembly();
         var iotVersion = iot.GetName().Version + "";
@@ -113,7 +113,7 @@ public class DriverFactory
 
         Drivers = list;
 
-        XTrace.WriteLine("================结束扫描驱动插件================");
+        XTrace.WriteLine("================End scanning driver plugins================");
     }
     #endregion
 }

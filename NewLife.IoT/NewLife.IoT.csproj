@@ -57,6 +57,12 @@
     <PackageReference Include="NewLife.Core" Version="12.0.2026.1019-beta0659" />
   </ItemGroup>
 
+  <!-- 多语言词表：编译期由 NewLife.Core 源生成器打包进程序集，运行时自动注册 -->
+  <ItemGroup>
+    <AdditionalFiles Include="..\Locales\*.yml" Link="Locales\%(Filename)%(Extension)" />
+    <Compile Include="..\Common\ModuleInitializerAttribute.cs" Link="Common\ModuleInitializerAttribute.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="..\Doc\leaf.png" Link="leaf.png" PackagePath="\" />
   </ItemGroup>

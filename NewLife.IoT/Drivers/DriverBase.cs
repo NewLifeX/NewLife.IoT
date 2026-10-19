@@ -181,12 +181,20 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
     /// <summary>日志</summary>
     public ILog Log { get; set; } = Logger.Null;
 
+    private String? _logPrefix;
+    /// <summary>日志前缀。用于标识驱动实例，默认为驱动名称，例如 [IoTSerial]</summary>
+    public String? LogPrefix
+    {
+        get => _logPrefix ??= $"[{GetType().GetCustomAttribute<DriverAttribute>()?.Name ?? GetType().Name.TrimSuffix("Driver")}]";
+        set => _logPrefix = value;
+    }
+
     /// <summary>性能追踪器</summary>
     public ITracer? Tracer { get; set; }
 
-    /// <summary>写日志</summary>
+    /// <summary>写日志。前缀不参与本地化</summary>
     /// <param name="format">格式字符串</param>
     /// <param name="args">参数列表</param>
-    public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
+    public void WriteLog(String format, params Object[] args) => Log?.InfoPrefixed(LogPrefix, format, args);
     #endregion
 }

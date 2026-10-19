@@ -1,4 +1,4 @@
-﻿using NewLife;
+using NewLife;
 using NewLife.Data;
 using NewLife.IoT;
 using NewLife.IoT.Drivers;
@@ -41,8 +41,8 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
     public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
-        if (parameter is not SocketParameter p) throw new ArgumentException("参数不能为空");
-        if (p.Server.IsNullOrEmpty()) throw new ArgumentException("网络地址不能为空");
+        if (parameter is not SocketParameter p) throw new ArgumentException(L.T("Parameter cannot be null."));
+        if (p.Server.IsNullOrEmpty()) throw new ArgumentException(L.T("Network address cannot be null."));
 
         var node = new SocketNode
         {
@@ -146,13 +146,13 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     public override Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
     {
         if (node.Parameter is not SocketParameter parameter)
-            return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
+            return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "Node or parameter is invalid."));
 
         lock (_lock)
         {
             var client = _client;
             if (client == null)
-                return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
+                return Task.FromResult(WriteResult.Fail(IoTErrorCode.InvalidParameter, "Node or parameter is invalid."));
 
             if (requests.Length == 1)
             {
@@ -185,13 +185,13 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
         request.Parameters ??= new Dictionary<String, Object?>();
 
         if (node.Parameter is not SocketParameter parameter)
-            return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
+            return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "Node or parameter is invalid."));
 
         lock (_lock)
         {
             var client = _client;
             if (client == null)
-                return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "节点或参数无效"));
+                return Task.FromResult(ControlResult.Fail(IoTErrorCode.InvalidParameter, "Node or parameter is invalid."));
 
             // 批量操作
             var result = new Dictionary<String, Object?>();

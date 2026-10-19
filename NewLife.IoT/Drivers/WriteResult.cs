@@ -29,7 +29,6 @@ public readonly struct WriteResult : IDriverResult
     /// <summary>原始响应帧字节。仅 IDriver.Diagnostics=true 时填充</summary>
     public Byte[]? ResponseBytes { get; init; }
     #endregion
-
     #region 工厂方法
     /// <summary>创建单点写入成功结果</summary>
     /// <param name="echoValue">设备回显值</param>
@@ -50,7 +49,7 @@ public readonly struct WriteResult : IDriverResult
     /// <param name="message">错误消息</param>
     /// <returns>失败结果</returns>
     public static WriteResult Fail(IoTErrorCode code, String message)
-        => new() { Code = code, Message = message };
+        => new() { Code = code, Message = Localization.Translate(message) };
     #endregion
 
     /// <summary>以文本方式输出结果摘要</summary>

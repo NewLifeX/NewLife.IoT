@@ -134,7 +134,7 @@ public static class ServiceHandlerHelper
         {
             // 通用方法
             if (!client.Services.TryGetValue("*", out d))
-                throw new ApiException(400, $"找不到服务[{model.Name}]");
+                throw new ApiException(400, L.T("Cannot find service [{0}]!", model.Name));
         }
 
         if (d is Func<String?, String?> func) return func(model.InputData);

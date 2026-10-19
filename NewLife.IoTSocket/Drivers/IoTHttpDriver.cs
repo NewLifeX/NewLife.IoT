@@ -36,8 +36,8 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
     public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
-        if (parameter is not HttpParameter p) throw new ArgumentException("参数不能为空");
-        if (p.Address.IsNullOrEmpty()) throw new ArgumentException("网络地址不能为空");
+        if (parameter is not HttpParameter p) throw new ArgumentException(L.T("Parameter cannot be null."));
+        if (p.Address.IsNullOrEmpty()) throw new ArgumentException(L.T("Network address cannot be null."));
 
         // 多节点共用驱动时共享同一HttpClient，最后一个节点关闭才释放
         if (_client == null)

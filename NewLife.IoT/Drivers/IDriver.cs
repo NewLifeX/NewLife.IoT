@@ -1,4 +1,5 @@
-﻿using NewLife.IoT.ThingModels;
+﻿using System.Diagnostics.CodeAnalysis;
+using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Serialization;
 
@@ -120,6 +121,7 @@ public static class DriverExtensions
     /// <param name="device">逻辑设备</param>
     /// <param name="parameters">参数字典，将自动转换为驱动参数对象</param>
     /// <returns>节点对象</returns>
+    [UnconditionalSuppressMessage("Aot", "IL2072", Justification = "按驱动参数运行时类型转换字典，属于动态成员访问；AOT 场景请使用强类型参数重载。")]
     public static INode Open(this IDriver driver, IDevice device, IDictionary<String, Object?> parameters)
     {
         var type = (driver.CreateParameter()?.GetType()) ?? throw new InvalidOperationException();

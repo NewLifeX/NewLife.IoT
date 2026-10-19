@@ -29,8 +29,8 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
     /// <returns>节点对象，可存储站号等信息，仅驱动自己识别</returns>
     public override Task<INode> OpenAsync(IDevice device, IDriverParameter? parameter, CancellationToken cancellationToken = default)
     {
-        if (parameter is not DatabaseParameter p) throw new ArgumentException("参数不能为空");
-        if (p.ConnectionString.IsNullOrEmpty()) throw new ArgumentException("数据库地址不能为空");
+        if (parameter is not DatabaseParameter p) throw new ArgumentException(L.T("Parameter cannot be null."));
+        if (p.ConnectionString.IsNullOrEmpty()) throw new ArgumentException(L.T("Database connection string cannot be null."));
 
         var node = new DatabseNode
         {
@@ -119,7 +119,7 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>写入结果</returns>
     public override Task<WriteResult> WriteAsync(INode node, WriteRequest[] requests, CancellationToken cancellationToken = default)
-        => Task.FromResult(WriteResult.Fail(IoTErrorCode.NotSupported, "数据库驱动不支持写入操作"));
+        => Task.FromResult(WriteResult.Fail(IoTErrorCode.NotSupported, "Database driver does not support write operations."));
 
     /// <summary>设备控制</summary>
     /// <param name="node">节点对象</param>
@@ -127,6 +127,6 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>控制结果</returns>
     public override Task<ControlResult> ControlAsync(INode node, ControlRequest request, CancellationToken cancellationToken = default)
-        => Task.FromResult(ControlResult.Fail(IoTErrorCode.NotSupported, "数据库驱动不支持服务控制操作"));
+        => Task.FromResult(ControlResult.Fail(IoTErrorCode.NotSupported, "Database driver does not support control operations."));
     #endregion
 }

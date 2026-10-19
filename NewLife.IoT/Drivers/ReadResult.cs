@@ -118,7 +118,7 @@ public class ReadResult : IExtend, IDriverResult
         => new()
         {
             Code = code,
-            Message = message,
+            Message = Localization.Translate(message),
             Quality = quality,
         };
     #endregion

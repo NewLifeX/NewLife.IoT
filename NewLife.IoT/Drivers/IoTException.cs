@@ -69,13 +69,13 @@ public class IoTException : Exception
     /// <summary>使用错误码和消息构造IoTException</summary>
     /// <param name="code">错误码</param>
     /// <param name="message">错误消息</param>
-    public IoTException(IoTErrorCode code, String message) : base(message)
+    public IoTException(IoTErrorCode code, String message) : base(Localization.Translate(message))
         => Code = code;
 
     /// <summary>使用错误码、消息和内部异常构造IoTException</summary>
     /// <param name="code">错误码</param>
     /// <param name="message">错误消息</param>
     /// <param name="innerException">内部异常</param>
-    public IoTException(IoTErrorCode code, String message, Exception innerException) : base(message, innerException)
+    public IoTException(IoTErrorCode code, String message, Exception innerException) : base(Localization.Translate(message), innerException)
         => Code = code;
 }

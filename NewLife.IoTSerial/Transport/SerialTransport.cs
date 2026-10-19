@@ -46,6 +46,14 @@ public class SerialTransport : DisposeBase, ITransport
     /// <summary>日志</summary>
     public ILog Log { get; set; } = Logger.Null;
 
+    private String? _logPrefix;
+    /// <summary>日志前缀。默认为 [Serial:COM1]，前缀不参与本地化</summary>
+    public String LogPrefix
+    {
+        get => _logPrefix ??= $"[{GetType().Name.TrimSuffix("Transport")}:{PortName}]";
+        set => _logPrefix = value;
+    }
+
     #endregion
 
     #region 私有字段
@@ -180,7 +188,7 @@ public class SerialTransport : DisposeBase, ITransport
     /// <summary>输出日志</summary>
     /// <param name="format">格式</param>
     /// <param name="args">参数</param>
-    public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
+    public void WriteLog(String format, params Object[] args) => Log?.InfoPrefixed(LogPrefix, format, args);
 
     #endregion
 }

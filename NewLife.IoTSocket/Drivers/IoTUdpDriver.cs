@@ -40,10 +40,10 @@ public class IoTUdpDriver : IoTSocketDriver, IDiscoverableDriver
     public virtual async Task<IEnumerable<IDeviceInfo>> DiscoverAsync(Dictionary<String, Object> parameters, CancellationToken cancellationToken = default)
     {
         if (parameters == null || parameters.Count == 0)
-            throw new ArgumentNullException(nameof(parameters), "参数不能为空");
+            throw new ArgumentNullException(nameof(parameters), L.T("Parameter cannot be null."));
 
         if (!parameters.TryGetValue("Port", out var portObj) || portObj is not Int32 port)
-            throw new ArgumentException("参数中必须包含端口号", nameof(parameters));
+            throw new ArgumentException(L.T("Port number is required in parameters."), nameof(parameters));
 
         var body = "hello";
         if (parameters.TryGetValue("body", out var obj)) body = obj + "";
@@ -105,7 +105,7 @@ public class IoTUdpDriver : IoTSocketDriver, IDiscoverableDriver
             var broadcastEndPoint = new IPEndPoint(broadcastAddress, port);
             await udpClient.SendAsync(data, data.Length, broadcastEndPoint).ConfigureAwait(false);
 
-            WriteLog("UDP广播发送到 {0}:{1}, 内容: {2}", broadcastAddress, port, body);
+            WriteLog("UDP broadcast to {0}:{1}, payload: {2}", broadcastAddress, port, body);
 
             // 监听响应
             var endTime = DateTime.Now.AddMilliseconds(timeout);
@@ -123,13 +123,13 @@ public class IoTUdpDriver : IoTSocketDriver, IDiscoverableDriver
                     var responsePort = result.RemoteEndPoint.Port;
                     var responseData = result.Buffer;
 
-                    WriteLog("收到来自 {0}:{1} 的响应, 长度: {2}", responseIP, responsePort, responseData.Length);
+                    WriteLog("Received response from {0}:{1}, length: {2}", responseIP, responsePort, responseData.Length);
 
                     // 构造设备信息
                     var deviceInfo = new DeviceInfo
                     {
                         Code = $"UDP_{responseIP}_{responsePort}",
-                        Name = $"UDP设备 {responseIP}:{responsePort}",
+                        Name = L.T("UDP device {0}:{1}", responseIP, responsePort),
                         ProductCode = "IoTUdp",
                         Protocol = "IoTUdp"
                     };
@@ -163,14 +163,14 @@ public class IoTUdpDriver : IoTSocketDriver, IDiscoverableDriver
                 }
                 catch (Exception ex)
                 {
-                    WriteLog("接收UDP响应时出错: {0}", ex.Message);
+                    WriteLog("Error receiving UDP response: {0}", ex.Message);
                     break;
                 }
             }
         }
         catch (Exception ex)
         {
-            WriteLog("在子网 {0} 上进行UDP发现时出错: {1}", localIP, ex.Message);
+            WriteLog("Error during UDP discovery on subnet {0}: {1}", localIP, ex.Message);
         }
     }
     #endregion

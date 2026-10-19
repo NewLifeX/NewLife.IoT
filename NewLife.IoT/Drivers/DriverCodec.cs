@@ -37,7 +37,7 @@ public static class DriverCodec
             case Byte[] bytes:
                 return new ArrayPacket(bytes);
             default:
-                throw new NotSupportedException($"不支持的数据类型 {value?.GetType().FullName}");
+                throw new NotSupportedException(L.T("Unsupported data type {0}!", value?.GetType().FullName));
         }
     }
 

@@ -51,7 +51,7 @@ public class ControlResult : IExtend, IDriverResult
     /// <param name="message">错误消息</param>
     /// <returns>失败的控制结果</returns>
     public static ControlResult Fail(IoTErrorCode code, String message)
-        => new() { Code = code, Message = message };
+        => new() { Code = code, Message = Localization.Translate(message) };
     #endregion
 
     /// <summary>以文本方式输出结果摘要</summary>
