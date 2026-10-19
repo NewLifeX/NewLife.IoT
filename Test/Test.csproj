@@ -5,6 +5,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <OutputPath>..\Bin\Test</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- OPC DA 依赖仅提供 .NET Framework 资产，示例工程在 net10.0 上按兼容模式还原 -->
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +22,8 @@
     <PackageReference Include="NewLife.Omron" Version="1.1.2026.901" />
     <PackageReference Include="NewLife.OpcDa" Version="1.0.2025.1206-beta1835" />
     <PackageReference Include="NewLife.OpcUa" Version="1.0.2025.1206-beta1835" />
+    <!-- 覆盖 NewLife.OpcUa 传递引用的旧版 OPC UA 栈，规避 GHSA-4q2p-hwmr-qcxc 等安全公告 -->
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.374.158" />
     <PackageReference Include="NewLife.Panasonic" Version="1.0.2026.302-beta0619" />
     <PackageReference Include="NewLife.PC" Version="1.0.2026.609" />
     <PackageReference Include="NewLife.Schneider" Version="1.0.2026.722-beta1216" />
