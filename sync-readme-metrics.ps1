@@ -16,7 +16,7 @@ $metrics = Get-Content -LiteralPath $metricsPath -Raw -Encoding UTF8 | ConvertFr
 $failed = 0
 $updated = 0
 
-foreach ($file in Get-ChildItem -Path . -File | Where-Object { $_.Name -like "Readme*.md" }) {
+foreach ($file in Get-ChildItem -Path . -File | Where-Object { $_.Name -like "README*.md" -and $_.Name -notlike "*.nuget.md" }) {
     $text = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
     $new = $text `
         -replace 'locales-\d+-2ea44f', "locales-$($metrics.locales)-2ea44f" `
