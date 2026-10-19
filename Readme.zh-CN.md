@@ -29,6 +29,8 @@
 |------|-------|------|
 | [GitHub](https://github.com/NewLifeX/NewLife.IoT) | [NewLife.IoT](https://www.nuget.org/packages/NewLife.IoT) | [需求文档](Doc/需求文档.md) · [功能清单](Doc/功能清单.md) · [架构设计](Doc/架构设计.md) |
 
+**运行时能力**：31 种语言本地化（与 NewLife.Core 词表集对齐）· 带实例前缀日志 · NativeAOT 实测通过（11 场景，Windows/Linux/macOS）· 8 个目标框架（net45 → net10.0）。
+
 ---
 
 ## 新生命项目矩阵 / Project Matrix
