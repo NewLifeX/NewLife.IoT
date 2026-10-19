@@ -5,6 +5,9 @@
     <File Path=".github/workflows/publish-beta.yml" />
     <File Path=".github/workflows/publish.yml" />
     <File Path=".github/workflows/test.yml" />
+    <File Path="check-english-exceptions.ps1" />
+    <File Path="check-locales.ps1" />
+    <File Path="locales.json" />
     <File Path="Readme.MD" />
   </Folder>
   <Project Path="AotSmoke/AotSmoke.csproj" />

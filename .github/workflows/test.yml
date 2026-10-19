@@ -26,6 +26,12 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.x
+    - name: Check English runtime messages
+      shell: pwsh
+      run: ./check-english-exceptions.ps1
+    - name: Check locales
+      shell: pwsh
+      run: ./check-locales.ps1
     - name: Build
       run: dotnet build -c Release
     - name: Test

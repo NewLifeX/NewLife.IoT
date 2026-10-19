@@ -110,6 +110,54 @@ public class LocalizationTests
         Assert.Equal("[Tcp:10.0.0.1:502]", tcp.LogPrefix);
     }
 
+    [Theory]
+    [InlineData("ar")]
+    [InlineData("bn")]
+    [InlineData("cs")]
+    [InlineData("da")]
+    [InlineData("de")]
+    [InlineData("el")]
+    [InlineData("es")]
+    [InlineData("fa")]
+    [InlineData("fi")]
+    [InlineData("fr")]
+    [InlineData("he")]
+    [InlineData("hi")]
+    [InlineData("hu")]
+    [InlineData("id")]
+    [InlineData("it")]
+    [InlineData("ja")]
+    [InlineData("ko")]
+    [InlineData("ms")]
+    [InlineData("nb")]
+    [InlineData("nl")]
+    [InlineData("pl")]
+    [InlineData("pt")]
+    [InlineData("ro")]
+    [InlineData("ru")]
+    [InlineData("sv")]
+    [InlineData("th")]
+    [InlineData("tr")]
+    [InlineData("uk")]
+    [InlineData("vi")]
+    [InlineData("zh-Hans")]
+    [InlineData("zh-Hant")]
+    public void AllLocalesAreRegistered(String culture)
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = new CultureInfo(culture);
+
+            var text = Localization.Translate("Parameter cannot be null.");
+            Assert.NotEqual("Parameter cannot be null.", text);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
     [Fact]
     public void LogCultureOverridesCultureForPrefixedLog()
     {
