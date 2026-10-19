@@ -1,4 +1,5 @@
-﻿using NewLife.IoT.ThingModels;
+using System.Globalization;
+using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using NewLife.Reflection;
@@ -312,7 +313,7 @@ public static class DataHelper
             if (type == null) return data;
         }
 
-        using var span = DefaultTracer.Instance?.NewSpan(nameof(Encode), $"name={point.Name} data={data} type={type.Name} rawType={point.Type}");
+        using var span = DefaultTracer.Instance?.NewSpan(nameof(Encode), String.Format(CultureInfo.InvariantCulture, "name={0} data={1} type={2} rawType={3}", point.Name, data, type.Name, point.Type));
         try
         {
             // 找到物属性定义
@@ -365,14 +366,15 @@ public static class DataHelper
                 TypeCode.Int32 or TypeCode.UInt32 => ((UInt32)v).GetBytes(order),
                 _ => throw new NotImplementedException(L.T("Unsupported data type {0}!", type.Name)),
             };
-            span?.AppendTag($"result={(rs is Byte[] bts ? bts.ToHex() : rs)} v={v} type={type.Name} scaling={scaling}");
+            var tagValue = rs is Byte[] bts ? bts.ToHex() : (Object)rs;
+            span?.AppendTag(String.Format(CultureInfo.InvariantCulture, "result={0} v={1} type={2} scaling={3}", tagValue, v, type.Name, scaling));
 
             return rs;
         }
         else if (type == typeof(Boolean))
         {
             var rs = data.ToBoolean();
-            span?.AppendTag($"result={rs}");
+            span?.AppendTag(String.Format(CultureInfo.InvariantCulture, "result={0}", rs));
 
             return rs ? [0] : [1];
         }
@@ -382,7 +384,7 @@ public static class DataHelper
             if (constant > 0) v -= constant;
             if (scaling != 0 && scaling != 1) v /= scaling;
 
-            span?.AppendTag($"result={v} type={type.Name} scaling={scaling} constant={constant}");
+            span?.AppendTag(String.Format(CultureInfo.InvariantCulture, "result={0} type={1} scaling={2} constant={3}", v, type.Name, scaling, constant));
 
             // 按照小端读取出来，如果不是小端，则需要交换字节序
             return v.GetBytes(order);
@@ -393,7 +395,7 @@ public static class DataHelper
             if (constant > 0) v -= constant;
             if (scaling != 0 && scaling != 1) v /= scaling;
 
-            span?.AppendTag($"result={v} type={type.Name} scaling={scaling} constant={constant}");
+            span?.AppendTag(String.Format(CultureInfo.InvariantCulture, "result={0} type={1} scaling={2} constant={3}", v, type.Name, scaling, constant));
 
             // 按照小端读取出来，如果不是小端，则需要交换字节序
             return v.GetBytes(order);
@@ -477,7 +479,7 @@ public static class DataHelper
                 _ => throw new NotImplementedException(L.T("Unsupported data type {0}!", type.Name)),
             };
             if (constant != 0 || scaling != 1) rs = (UInt32)Math.Round(rs * scaling + constant);
-            span?.AppendTag($"result={rs} type={type.Name}");
+            span?.AppendTag(String.Format(CultureInfo.InvariantCulture, "result={0} type={1}", rs, type.Name));
 
             return rs.ChangeType(type);
         }

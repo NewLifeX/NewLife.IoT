@@ -11,6 +11,7 @@ using NewLife.IoT.Models;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
+using NewLife.Serialization;
 using Xunit;
 
 namespace XUnitTest;
@@ -373,6 +374,33 @@ public class LocalizationTests
             CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
 
             Assert.Equal("intptr", TypeHelper.GetIoTType(typeof(IntPtr), true));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("JSON 往返不受当前区域性小数点符号影响")]
+    public void JsonRoundTripUsesInvariantNumbers()
+    {
+        var old = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+
+            var spec = new ThingSpec { Profile = new Profile { ProductKey = "demo", Version = "1.0" } };
+            var ps = spec.AddProperty("temp", "Temperature", "float");
+            ps.DataType!.Specs = new DataSpecs { Step = 0.1, Min = -40.5, Max = 125.5 };
+
+            var json = spec.ToJson();
+            Assert.Contains("0.1", json);
+            Assert.DoesNotContain("0,1", json);
+
+            var spec2 = new ThingSpec();
+            spec2.FromJson(json);
+            Assert.Equal(0.1, spec2.GetProperty("temp")!.DataType!.Specs!.Step);
         }
         finally
         {
