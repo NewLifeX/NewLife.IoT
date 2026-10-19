@@ -1,4 +1,5 @@
 #if !NET6_0_OR_GREATER
+using System;
 
 // System.Text.Json 的 JsonSerializableAttribute 随 .NET6 提供的源生成器一同引入，低版本目标无法引用。
 // 这里提供最小垫片，让模型类型可以无条件打上 [JsonSerializable] 标记；

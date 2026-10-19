@@ -5,6 +5,12 @@
 ![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.iot?logo=nuget)
 ![Nuget](https://img.shields.io/nuget/v/newlife.iot?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.iot?label=dev%20nuget&logo=nuget)
+[![test](https://github.com/NewLifeX/NewLife.IoT/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/NewLifeX/NewLife.IoT/actions/workflows/test.yml)
+[![NativeAOT](https://github.com/NewLifeX/NewLife.IoT/actions/workflows/aot.yml/badge.svg?branch=master)](https://github.com/NewLifeX/NewLife.IoT/blob/master/Doc/AOT%E5%85%BC%E5%AE%B9%E6%80%A7%E5%88%86%E6%9E%90.md)
+![TFM](https://img.shields.io/badge/TFM-8%20%28net45%20%E2%86%92%20net10.0%29-512BD4?logo=dotnet)
+![locales](https://img.shields.io/badge/locales-11-2ea44f?logo=dotnet)
+![platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
+![arch](https://img.shields.io/badge/arch-x64%20%7C%20x86%20%7C%20arm64%20%7C%20arm-orange)
 
 🌐 **[English](Readme.MD) · [中文](Readme.zh-CN.md) · [हिन्दी](Readme.hi.md) · [Español](Readme.es.md) · [Français](Readme.fr.md) · [العربية](Readme.ar.md) · [বাংলা](Readme.bn.md) · [Português](Readme.pt.md) · [Русский](Readme.ru.md) · [日本語](Readme.ja.md)**
 
@@ -26,7 +32,7 @@
 
 ## 新生命项目矩阵 / Project Matrix
 
-Targets: `net10.0` / `net9.0` / `netstandard2.1` / `netstandard2.0` / `net462` / `net45`
+Targets: `net10.0` / `net8.0` / `net6.0` / `netstandard2.1` / `netstandard2.0` / `net462` / `net461` / `net45`
 
 | Project | Year | Description |
 |:--------|:----:|:------------|
