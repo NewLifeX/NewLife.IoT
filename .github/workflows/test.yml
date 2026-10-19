@@ -8,6 +8,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  package:
+    name: package smoke
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
+    - name: Package consumer smoke
+      shell: pwsh
+      run: ./check-package-consumer.ps1
+
   build-test:
     name: test (${{ matrix.os }})
     strategy:
