@@ -56,6 +56,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- 非 Windows 构建 net45/net461/net462 需要引用程序集包，Windows 已安装目标包时可忽略 -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="NewLife.Core" Version="12.0.2026.1019-beta0659" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45' or '$(TargetFramework)'=='net461' or '$(TargetFramework)'=='net462'">
