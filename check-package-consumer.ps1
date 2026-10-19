@@ -2,6 +2,7 @@
 # NuGet 包消费验证：打包四个项目，用本地源创建临时消费者，验证多语言、驱动工厂与参数绑定
 param(
     [String]$Version = "",
+    [Switch]$Aot,
     [Switch]$Keep
 )
 
@@ -116,6 +117,18 @@ return 0;
     try {
         dotnet run --project $app -c Release -v q
         if ($LASTEXITCODE -ne 0) { throw "消费者运行失败，退出码 $LASTEXITCODE" }
+
+        if ($Aot) {
+            $rid = if ($IsWindows) { "win-x64" } elseif ($IsLinux) { "linux-x64" } else { "osx-arm64" }
+            $aotOut = Join-Path $work "aot"
+            Write-Host "NativeAOT 发布 $rid ..."
+            dotnet publish $app -c Release -r $rid -p:PublishAot=true -o $aotOut -v q
+            if ($LASTEXITCODE -ne 0) { throw "NativeAOT 发布失败" }
+
+            $exe = if ($IsWindows) { Join-Path $aotOut "PackageSmoke.exe" } else { Join-Path $aotOut "PackageSmoke" }
+            & $exe
+            if ($LASTEXITCODE -ne 0) { throw "NativeAOT 消费者运行失败，退出码 $LASTEXITCODE" }
+        }
     }
     finally {
         Pop-Location
