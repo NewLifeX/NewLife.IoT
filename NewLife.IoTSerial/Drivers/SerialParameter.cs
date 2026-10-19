@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.IO.Ports;
 using NewLife.IoT.Drivers;
 
 namespace NewLife.IoTSerial.Drivers;
 
 /// <summary>串口参数</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(SerialParameter))]
 public class SerialParameter : IDriverParameter, IDriverParameterKey
 {
     /// <summary>串口</summary>

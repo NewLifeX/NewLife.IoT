@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.Models;
+namespace NewLife.IoT.Models;
 
 /// <summary>设备模型。完整版，主要用于服务端下发或者接收</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DeviceModel))]
 public class DeviceModel : IDeviceInfo
 {
     /// <summary>编码</summary>

@@ -10,6 +10,7 @@ public class DriverFactory
 {
     #region 工厂
     private static readonly ConcurrentDictionary<String, Type> _map = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<String, Func<IDriver>> _factories = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>驱动表</summary>
     public static IDictionary<String, Type> Map => _map;
 
@@ -28,9 +29,24 @@ public class DriverFactory
     }
 
     /// <summary>注册协议实现</summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="name"></param>
-    public static void Register<T>(String? name = null) where T : IDriver => Register(name, typeof(T));
+    /// <param name="name">驱动名称。为空时使用类型名</param>
+    /// <param name="type">驱动类型</param>
+    /// <param name="factory">驱动工厂。NativeAOT 下推荐此重载，避免依赖运行期反射创建实例</param>
+    public static void Register(String? name, Type type, Func<IDriver> factory)
+    {
+        if (type == null) throw new ArgumentNullException(nameof(type));
+        if (factory == null) throw new ArgumentNullException(nameof(factory));
+        if (name.IsNullOrEmpty()) name = type.Name;
+
+        _map[name] = type;
+        _factories[name] = factory;
+    }
+
+    /// <summary>注册协议实现。使用泛型约束生成直接构造调用，NativeAOT 下可正常创建实例</summary>
+    /// <typeparam name="T">驱动类型</typeparam>
+    /// <param name="name">驱动名称。为空时使用类型名</param>
+    public static void Register<T>(String? name = null) where T : IDriver, new()
+        => Register(name, typeof(T), () => new T());
 
     private static readonly ConcurrentDictionary<String, IDriver?> _cache = new();
     /// <summary>创建协议实例，根据地址确保唯一，多设备共用同一个串口</summary>
@@ -41,11 +57,14 @@ public class DriverFactory
     {
         if (!_map.TryGetValue(name, out var type) || type == null) return null;
 
+        var factory = _factories.TryGetValue(name, out var f) ? f : null;
+        IDriver? NewInstance() => factory != null ? factory() : type.CreateInstance() as IDriver;
+
         // 没有传递标识时，每次返回新实例
-        if (identifier.IsNullOrEmpty()) return type.CreateInstance() as IDriver;
+        if (identifier.IsNullOrEmpty()) return NewInstance();
 
         var key = $"{name}-{identifier}";
-        return _cache.GetOrAdd(key, k => type.CreateInstance() as IDriver);
+        return _cache.GetOrAdd(key, k => NewInstance());
     }
 
     private static readonly ConcurrentDictionary<String, IDriver?> _defaults = new();
@@ -57,7 +76,7 @@ public class DriverFactory
     {
         if (!_map.TryGetValue(name, out var type) || type == null) return null;
 
-        var driver = _defaults.GetOrAdd(name, k => type.CreateInstance() as IDriver);
+        var driver = _defaults.GetOrAdd(name, k => _factories.TryGetValue(k, out var f) ? f() : type.CreateInstance() as IDriver);
         return driver?.CreateParameter(parameter);
     }
     #endregion

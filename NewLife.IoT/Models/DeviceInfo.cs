@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.Models;
+namespace NewLife.IoT.Models;
 
 /// <summary>设备信息。简化版，主要用于上报</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DeviceInfo))]
 public class DeviceInfo : IDeviceInfo
 {
     /// <summary>编码</summary>

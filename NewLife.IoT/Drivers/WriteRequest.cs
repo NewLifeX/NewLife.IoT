@@ -18,6 +18,7 @@ namespace NewLife.IoT.Drivers;
 /// </code>
 /// </example>
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(WriteRequest))]
 public class WriteRequest : IExtend
 {
     #region 属性

@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.Models;
+namespace NewLife.IoT.Models;
 
 /// <summary>服务请求。应用系统之前发送服务调用请求</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ServiceRequest))]
 public class ServiceRequest
 {
     /// <summary>设备编号。目标设备</summary>

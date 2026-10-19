@@ -21,7 +21,7 @@
     <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
     <AnalysisLevel>latest</AnalysisLevel>
     <WarningsAsErrors>CA2007</WarningsAsErrors>
-    <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035</NoWarn>
+    <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035;SYSLIB1224</NoWarn>
   </PropertyGroup>
 
   <!-- net8.0+ 常驻启用 AOT 兼容性分析（对齐 NewLife.Core v12） -->
@@ -71,6 +71,7 @@
   <ItemGroup>
     <AdditionalFiles Include="..\Locales\*.yml" Link="Locales\%(Filename)%(Extension)" />
     <Compile Include="..\Common\ModuleInitializerAttribute.cs" Link="Common\ModuleInitializerAttribute.cs" />
+    <Compile Include="..\Common\JsonSerializableStub.cs" Link="Common\JsonSerializableStub.cs" />
   </ItemGroup>
 
   <ItemGroup>

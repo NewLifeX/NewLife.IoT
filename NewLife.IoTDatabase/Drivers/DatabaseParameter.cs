@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using NewLife.IoT.Drivers;
 using XCode.DataAccessLayer;
 
 namespace NewLife.IoTDatabase.Drivers;
 
 /// <summary>通用数据库驱动参数</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DatabaseParameter))]
 public class DatabaseParameter : IDriverParameter, IDriverParameterKey
 {
     /// <summary>数据库连接字符串。例如：server=.;database=iot;user=iot;password=iot</summary>

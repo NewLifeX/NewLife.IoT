@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>数据模型</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DataModel))]
 public class DataModel
 {
     /// <summary>时间。数据采集时间，UTC毫秒</summary>

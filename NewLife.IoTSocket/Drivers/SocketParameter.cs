@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using NewLife.IoT.Drivers;
 
 namespace NewLife.IoTSocket.Drivers;
 
 /// <summary>通用网络驱动参数</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(SocketParameter))]
 public class SocketParameter : IDriverParameter, IDriverParameterKey
 {
     /// <summary>服务地址。IP地址或域名，例如：127.0.0.1</summary>

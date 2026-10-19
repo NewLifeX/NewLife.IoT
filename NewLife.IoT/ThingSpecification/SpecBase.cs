@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 #if NETCOREAPP
 using System.Text.Json.Serialization;
 #endif
@@ -8,6 +8,7 @@ namespace NewLife.IoT.ThingSpecification;
 /// <summary>
 /// 物模型基础属性
 /// </summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(SpecBase))]
 public abstract class SpecBase
 {
     #region 属性

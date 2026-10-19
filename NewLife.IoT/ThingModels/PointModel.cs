@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>点位模型</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(PointModel))]
 public class PointModel : IPoint
 {
     /// <summary>名称</summary>

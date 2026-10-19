@@ -1,4 +1,4 @@
-﻿using NewLife.Serialization;
+using NewLife.Serialization;
 using System.Linq;
 
 namespace NewLife.IoT.ThingSpecification;
@@ -7,6 +7,7 @@ namespace NewLife.IoT.ThingSpecification;
 /// <remarks>
 /// 物联网平台通过定义一种物的描述语言来描述物模型模块和功能，称为TSL（Thing Specification Language）
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ThingSpec))]
 public class ThingSpec
 {
     #region 属性

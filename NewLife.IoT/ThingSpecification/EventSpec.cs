@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 #if NETCOREAPP
 using System.Text.Json.Serialization;
 #endif
@@ -11,6 +11,7 @@ namespace NewLife.IoT.ThingSpecification;
 /// 例如，某项任务完成后的通知信息；设备发生故障时的温度、时间信息；设备告警时的运行状态等。
 /// 事件可以被订阅和推送。
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(EventSpec))]
 public class EventSpec : SpecBase
 {
     #region 属性

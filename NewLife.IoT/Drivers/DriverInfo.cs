@@ -1,8 +1,9 @@
-﻿using NewLife.IoT.ThingSpecification;
+using NewLife.IoT.ThingSpecification;
 
 namespace NewLife.IoT.Drivers;
 
 /// <summary>驱动信息</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DriverInfo))]
 public class DriverInfo
 {
     #region 属性

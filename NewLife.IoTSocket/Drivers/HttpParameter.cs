@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using NewLife.IoT.Drivers;
 
 namespace NewLife.IoTSocket.Drivers;
 
 /// <summary>通用Http驱动参数</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(HttpParameter))]
 public class HttpParameter : IDriverParameter
 {
     /// <summary>服务端地址。如http://star.newlifex.com:6600</summary>

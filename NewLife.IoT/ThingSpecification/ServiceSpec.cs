@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.Serialization;
 #if NETCOREAPP
 using System.Text.Json.Serialization;
@@ -12,6 +12,7 @@ namespace NewLife.IoT.ThingSpecification;
 /// 相比于属性，服务可通过一条指令实现更复杂的业务逻辑，例如执行某项特定的任务。
 /// 服务分为异步和同步两种调用方式。
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ServiceSpec))]
 public class ServiceSpec : SpecBase
 {
     #region 属性

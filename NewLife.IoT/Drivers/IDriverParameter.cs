@@ -1,4 +1,4 @@
-﻿using NewLife.Serialization;
+using NewLife.Serialization;
 using NewLife.Xml;
 
 namespace NewLife.IoT.Drivers;
@@ -26,6 +26,7 @@ public interface IDriverParameterKey
 }
 
 /// <summary>默认驱动参数实现</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DriverParameter))]
 public class DriverParameter : IDriverParameter { }
 
 /// <summary>

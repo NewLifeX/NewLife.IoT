@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewLife.IoTSerial", "NewLif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewLife.IoTSocket", "NewLife.IoTSocket\NewLife.IoTSocket.csproj", "{DC552D8C-7A5A-CA86-EACC-633ADE8C144D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AotSmoke", "AotSmoke\AotSmoke.csproj", "{C5A862D5-7E84-4EB5-9D22-BEE55208EE83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{DC552D8C-7A5A-CA86-EACC-633ADE8C144D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC552D8C-7A5A-CA86-EACC-633ADE8C144D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC552D8C-7A5A-CA86-EACC-633ADE8C144D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5A862D5-7E84-4EB5-9D22-BEE55208EE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5A862D5-7E84-4EB5-9D22-BEE55208EE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5A862D5-7E84-4EB5-9D22-BEE55208EE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5A862D5-7E84-4EB5-9D22-BEE55208EE83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

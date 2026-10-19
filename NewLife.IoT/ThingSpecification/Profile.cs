@@ -1,8 +1,9 @@
-﻿namespace NewLife.IoT.ThingSpecification;
+namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>
 /// 简介
 /// </summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(Profile))]
 public class Profile
 {
     /// <summary>

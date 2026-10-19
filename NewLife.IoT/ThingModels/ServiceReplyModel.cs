@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>服务响应模型</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ServiceReplyModel))]
 public class ServiceReplyModel
 {
     /// <summary>编号。用于服务调用请求与结果响应配对</summary>

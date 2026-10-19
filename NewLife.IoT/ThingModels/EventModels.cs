@@ -1,6 +1,7 @@
-﻿namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>事件集合</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(EventModels))]
 public class EventModels
 {
     /// <summary>设备编码</summary>

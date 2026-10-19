@@ -1,9 +1,10 @@
-﻿using NewLife.IoT.ThingModels;
+using NewLife.IoT.ThingModels;
 using NewLife.Reflection;
 
 namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>数据规范</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(DataSpecs))]
 public class DataSpecs
 {
     #region 属性

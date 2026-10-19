@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace NewLife.IoTSerial.Drivers;
 
 /// <summary>通用串口驱动参数</summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(IoTSerialParameter))]
 public class IoTSerialParameter : SerialParameter
 {
     /// <summary>请求命令模板。支持十六进制格式(以0x开头)和字符串格式</summary>

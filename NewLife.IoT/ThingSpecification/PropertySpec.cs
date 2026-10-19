@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using NewLife.Collections;
 using NewLife.IoT.ThingModels;
 
@@ -10,6 +10,7 @@ namespace NewLife.IoT.ThingSpecification;
 /// 例如，环境监测设备所读取的当前环境温度、智能灯开关状态、电风扇风力等级等。
 /// 属性可分为读写和只读两种类型。读写类型支持读取和设置属性值，只读类型仅支持读取属性值。
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(PropertySpec))]
 public class PropertySpec : SpecBase, IDictionarySource
 {
     #region 属性

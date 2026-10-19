@@ -1,8 +1,9 @@
-﻿namespace NewLife.IoT.ThingModels;
+namespace NewLife.IoT.ThingModels;
 
 /// <summary>
 /// 属性集合
 /// </summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(PropertyModels))]
 public class PropertyModels
 {
     /// <summary>设备编码</summary>

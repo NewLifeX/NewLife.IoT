@@ -1,10 +1,11 @@
-﻿using NewLife.Collections;
+using NewLife.Collections;
 
 namespace NewLife.IoT.ThingSpecification;
 
 /// <summary>
 /// 类型规范
 /// </summary>
+[System.Text.Json.Serialization.JsonSerializable(typeof(TypeSpec))]
 public class TypeSpec : IDictionarySource
 {
     /// <summary>

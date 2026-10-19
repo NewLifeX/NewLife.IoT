@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>AotSmoke</RootNamespace>
+    <OutputPath>..\Bin\AotSmoke</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <IsPackable>false</IsPackable>
+    <!-- NativeAOT 冒烟：PublishAot 必须写在应用工程内，不要用命令行全局属性传入 -->
+    <PublishAot>true</PublishAot>
+    <!-- 严格 AOT 姿态：关闭 STJ 反射序列化，验证全链路依赖源生成/自有解析器 -->
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewLife.IoT\NewLife.IoT.csproj" />
+    <ProjectReference Include="..\NewLife.IoTSerial\NewLife.IoTSerial.csproj" />
+    <ProjectReference Include="..\NewLife.IoTSocket\NewLife.IoTSocket.csproj" />
+    <ProjectReference Include="..\NewLife.IoTDatabase\NewLife.IoTDatabase.csproj" />
+  </ItemGroup>
+</Project>
