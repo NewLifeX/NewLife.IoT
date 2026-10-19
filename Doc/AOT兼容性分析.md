@@ -88,6 +88,6 @@ dotnet publish AotSmoke\AotSmoke.csproj -c Release -r win-x64 -o out\win-x64
 .\out\win-x64\AotSmoke.exe
 ```
 
-CI：`.github/workflows/aot.yml`，包含库编译（AOT 分析器常开）与 win-x64 / linux-x64 / linux-arm64 三 RID 冒烟，任一失败即阻断。
+CI：`.github/workflows/aot.yml`，包含库编译（AOT 分析器常开）与 AOT 冒烟：win-x64 / linux-x64 / linux-arm64 为阻断门禁，osx-arm64 为观察期（`continue-on-error`），任一阻断项失败即失败。
 
 （完）

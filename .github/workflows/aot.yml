@@ -33,7 +33,11 @@ jobs:
             rid: linux-x64
           - os: ubuntu-24.04-arm
             rid: linux-arm64
+          - os: macos-latest
+            rid: osx-arm64
+            optional: true
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.optional || false }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup dotNET
