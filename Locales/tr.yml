@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "Veritabanı bağlantı dizesi null olamaz."
 "Database driver does not support write operations.": "Veritabanı sürücüsü yazma işlemlerini desteklemiyor."
 "Database driver does not support control operations.": "Veritabanı sürücüsü hizmet denetimi işlemlerini desteklemiyor."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "Sürücü eklentisi taraması NativeAOT altında desteklenmez. Sürücüleri DriverFactory.Register<T> ile açıkça kaydedin."

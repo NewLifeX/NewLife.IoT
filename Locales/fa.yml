@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "رشته اتصال پایگاه داده نمی‌تواند null باشد."
 "Database driver does not support write operations.": "درایور پایگاه داده از عملیات نوشتن پشتیبانی نمی‌کند."
 "Database driver does not support control operations.": "درایور پایگاه داده از عملیات کنترل سرویس پشتیبانی نمی‌کند."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "اسکن افزونه‌های درایور در NativeAOT پشتیبانی نمی‌شود. درایورها را به‌صراحت با DriverFactory.Register<T> ثبت کنید."

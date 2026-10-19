@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "Tietokannan yhteysmerkkijono ei voi olla null."
 "Database driver does not support write operations.": "Tietokanta-ajuri ei tue kirjoitustoimintoja."
 "Database driver does not support control operations.": "Tietokanta-ajuri ei tue palvelun ohjaustoimintoja."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "Ajuri-liitännäisten skannausta ei tueta NativeAOT:ssa. Rekisteröi ajurit eksplisiittisesti komennolla DriverFactory.Register<T>."

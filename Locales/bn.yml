@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "ডেটাবেস সংযোগ স্ট্রিং null হতে পারে না।"
 "Database driver does not support write operations.": "ডেটাবেস ড্রাইভার লেখার কাজ সমর্থন করে না।"
 "Database driver does not support control operations.": "ডেটাবেস ড্রাইভার সেবা নিয়ন্ত্রণ কাজ সমর্থন করে না।"
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "NativeAOT-এ ড্রাইভার প্লাগইন স্ক্যানিং সমর্থিত নয়। DriverFactory.Register<T> দিয়ে ড্রাইভারগুলি স্পষ্টভাবে নিবন্ধন করুন।"

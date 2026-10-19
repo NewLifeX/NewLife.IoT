@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "Rentetan sambungan pangkalan data tidak boleh null."
 "Database driver does not support write operations.": "Pemacu pangkalan data tidak menyokong operasi tulis."
 "Database driver does not support control operations.": "Pemacu pangkalan data tidak menyokong operasi kawalan perkhidmatan."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "Pengimbasan pemalam pemacu tidak disokong dalam NativeAOT. Daftarkan pemacu secara eksplisit dengan DriverFactory.Register<T>."

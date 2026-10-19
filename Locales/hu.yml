@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "Az adatbázis-kapcsolati karakterlánc nem lehet null."
 "Database driver does not support write operations.": "Az adatbázis-illesztőprogram nem támogatja az írási műveleteket."
 "Database driver does not support control operations.": "Az adatbázis-illesztőprogram nem támogatja a szolgáltatásvezérlési műveleteket."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "Az illesztőprogram-bővítmények vizsgálata nem támogatott NativeAOT alatt. Regisztrálja az illesztőprogramokat explicit módon a DriverFactory.Register<T> használatával."

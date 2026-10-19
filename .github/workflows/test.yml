@@ -48,6 +48,9 @@ jobs:
     - name: Check locales
       shell: pwsh
       run: ./check-locales.ps1
+    - name: Check log messages
+      shell: pwsh
+      run: ./check-log-messages.ps1
     - name: Check README metrics
       shell: pwsh
       run: ./sync-readme-metrics.ps1 -Check

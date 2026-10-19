@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "Η συμβολοσειρά σύνδεσης βάσης δεδομένων δεν μπορεί να είναι null."
 "Database driver does not support write operations.": "Το πρόγραμμα οδήγησης βάσης δεδομένων δεν υποστηρίζει λειτουργίες εγγραφής."
 "Database driver does not support control operations.": "Το πρόγραμμα οδήγησης βάσης δεδομένων δεν υποστηρίζει λειτουργίες ελέγχου υπηρεσίας."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "Η σάρωση προσθέτων προγραμμάτων οδήγησης δεν υποστηρίζεται στο NativeAOT. Καταχωρίστε τα προγράμματα οδήγησης ρητά με DriverFactory.Register<T>."

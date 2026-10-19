@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "데이터베이스 연결 문자열은 null일 수 없습니다."
 "Database driver does not support write operations.": "데이터베이스 드라이버는 쓰기 작업을 지원하지 않습니다."
 "Database driver does not support control operations.": "데이터베이스 드라이버는 서비스 제어 작업을 지원하지 않습니다."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "NativeAOT에서는 드라이버 플러그 인 검색이 지원되지 않습니다. DriverFactory.Register<T>를 사용하여 드라이버를 명시적으로 등록하세요."

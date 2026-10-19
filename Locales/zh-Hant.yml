@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "資料庫連線字串不能為空。"
 "Database driver does not support write operations.": "資料庫驅動不支援寫入操作。"
 "Database driver does not support control operations.": "資料庫驅動不支援服務控制操作。"
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "NativeAOT 下不支援掃描驅動外掛。請使用 DriverFactory.Register<T> 明確註冊驅動。"

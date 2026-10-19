@@ -16,3 +16,4 @@
 "Database connection string cannot be null.": "מחרוזת החיבור של מסד הנתונים לא יכולה להיות null."
 "Database driver does not support write operations.": "מנהל התקן מסד הנתונים אינו תומך בפעולות כתיבה."
 "Database driver does not support control operations.": "מנהל התקן מסד הנתונים אינו תומך בפעולות בקרת שירות."
+"Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.": "סריקת תוספי מנהלי התקנים אינה נתמכת ב-NativeAOT. רשום מנהלי התקנים במפורש באמצעות DriverFactory.Register<T>."
