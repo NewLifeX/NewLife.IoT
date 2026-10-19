@@ -54,6 +54,16 @@ public class DriverFactoryTests
     }
 
     [Fact]
+    public void Create_TypeRegistration_UsesFactory()
+    {
+        var name = "TypeRegistrationDriver";
+        DriverFactory.Register(name, typeof(TestDriver));
+
+        var driver = DriverFactory.Create(name, "");
+        Assert.IsType<TestDriver>(driver);
+    }
+
+    [Fact]
     public void Register_NullType_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => DriverFactory.Register("test", null!));

@@ -6,7 +6,7 @@
 
 ## 1. 现状摘要
 
-- **核心链路实测全通**：12 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec` JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、驱动物模型、传输层前缀、数据库参数。
+- **核心链路实测全通**：14 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec`/结果类型 JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、串口/网络/数据库参数绑定、驱动物模型与传输层前缀。
 - **支持方式**：`IsAotCompatible` 对 net8.0+ 常驻启用；JSON 成员访问由 NewLife.Core 源生成器生成静态表，元数据保留由 `JsonPreserve` 的 `[DynamicDependency]` 声明；驱动工厂提供泛型注册入口，避免运行期反射构造。
 - **告警面**：库自身编译 **0** 条 IL 告警，AOT 发布 **0** 条 ILC 告警。
 - **已知边界**：插件扫描（`DriverFactory.ScanAll`）属于动态发现能力，AOT 下不支持；`DriverFactory.Register(name, Type)` 依赖运行期反射构造，AOT 下应改用 `Register<T>` 或 `Register(name, type, factory)`。
@@ -28,7 +28,9 @@
 | 9 | 驱动注册与参数创建 | `DriverFactory.Register<T>` + JSON 参数绑定 |
 | 10 | 驱动物模型 | `GetSpecification` 与 `DriverAttribute` 反射特性 |
 | 11 | 传输层前缀 | 串口/TCP/HTTP 端点前缀 |
-| 12 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
+| 12 | 网络驱动参数 | `SocketParameter`/`HttpParameter` JSON 绑定 |
+| 13 | 结果类型 JSON | `WriteResult` 序列化与反序列化 |
+| 14 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
 
 > AOT 判真：原生发布件入口 `Assembly.Location` 为空，`RuntimeFeature.IsDynamicCodeSupported=false`。
 
@@ -61,7 +63,8 @@ DriverFactory.Register<IoTSerialDriver>("IoTSerial");
 // AOT 推荐：显式工厂
 DriverFactory.Register("IoTSerial", typeof(IoTSerialDriver), () => new IoTSerialDriver());
 
-// 仅兼容旧代码：依赖运行期反射构造，AOT 下需要额外保留无参构造
+// Type 注册：参数已标注 DynamicallyAccessedMembers，裁剪器保留公开无参构造，
+// 注册时即生成工厂委托，Create 阶段不再依赖运行期反射
 DriverFactory.Register("IoTSerial", typeof(IoTSerialDriver));
 ```
 
@@ -71,8 +74,10 @@ DriverFactory.Register("IoTSerial", typeof(IoTSerialDriver));
 
 | 项 | 位置 | 现状与理由 |
 |---|---|---|
-| 驱动插件扫描 | `DriverFactory.ScanAll` | 程序集与类型发现属 AOT 设计性不支持；AOT 应用应显式注册驱动 |
-| 运行时 Type 注册 | `DriverFactory.Register(String?, Type)` | 反射构造依赖裁剪器保留无参构造；AOT 场景改用泛型或工厂重载 |
+| 驱动插件扫描 | `DriverFactory.ScanAll` | 程序集与类型发现属 AOT 设计性不支持；已标注 `RequiresUnreferencedCode`/`RequiresDynamicCode` 并在 AOT 下直接返回；AOT 应用应显式注册驱动 |
+| 运行时 Type 注册 | `DriverFactory.Register(String?, Type)` | 参数已标注 `DynamicallyAccessedMembers(PublicParameterlessConstructor)`，注册时生成工厂委托；如果直接向 `DriverFactory.Map` 塞入类型则绕过该保证 |
+| 字典参数转换 | `DriverExtensions.Open(IDictionary)` | 依赖运行时类型成员访问，已标注 `RequiresUnreferencedCode`/`RequiresDynamicCode`；AOT 场景使用强类型参数重载 |
+| 板卡动态创建 | `IBoard.CreateSerial` / `IBoard.CreateModbus` | 默认实现通过类型名反射查找串口/Modbus 实现，AOT 下不可用；请注入自定义 `IBoard` 并重写方法，或直接使用静态 `DefaultSerialPort` |
 | 运行时特性读取 | `DriverBase.GetSpecification` / `DriverFactory.ScanAll` | 特性已通过 `GetCustomAttribute<DriverAttribute>()` 静态类型访问，主链可用；任意特性枚举不在支持范围 |
 | 反射式 JSON 未标记类型 | `ThingSpec.FromJson` / `DriverBase.CreateParameter` | 未标记 `[JsonSerializable]` 的派生类型会回退反射路径，AOT 下成员可能被裁剪；自定义模型请自行标记并声明保留 |
 | 数据库驱动查询链路 | `IoTDatabaseDriver.ReadAsync` → XCode DAL | 实际查询能力取决于 NewLife.XCode 与具体数据库提供程序的 AOT 支持；本仓库冒烟覆盖驱动创建与参数绑定，不覆盖数据库提供程序原生依赖 |

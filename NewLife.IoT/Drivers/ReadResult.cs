@@ -26,6 +26,7 @@ namespace NewLife.IoT.Drivers;
 /// </code>
 /// </example>
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ReadResult))]
 public class ReadResult : IExtend, IDriverResult
 {
     #region 属性

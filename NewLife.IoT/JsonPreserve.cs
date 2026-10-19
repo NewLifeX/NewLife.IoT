@@ -45,6 +45,10 @@ internal static class JsonPreserve
     [DynamicDependency(_members, typeof(ControlRequest))]
     [DynamicDependency(_members, typeof(DriverInfo))]
     [DynamicDependency(_members, typeof(DriverParameter))]
+    [DynamicDependency(_members, typeof(ReadResult))]
+    [DynamicDependency(_members, typeof(WriteResult))]
+    [DynamicDependency(_members, typeof(ControlResult))]
+    [DynamicDependency(_members, typeof(DriverDataEventArgs))]
     internal static void Initialize() { }
 #pragma warning restore CA2255
 }

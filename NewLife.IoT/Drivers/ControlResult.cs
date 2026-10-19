@@ -7,6 +7,7 @@ namespace NewLife.IoT.Drivers;
 /// 成功时 <see cref="IsSuccess"/>=true，<see cref="OutputParameters"/> 携带服务输出；
 /// 失败时 <see cref="IsSuccess"/>=false，<see cref="Code"/>/<see cref="Message"/> 说明原因。
 /// </remarks>
+[System.Text.Json.Serialization.JsonSerializable(typeof(ControlResult))]
 public class ControlResult : IExtend, IDriverResult
 {
     #region 属性

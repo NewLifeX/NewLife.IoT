@@ -10,8 +10,10 @@ using NewLife.IoT.ThingSpecification;
 using NewLife.IoTDatabase.Drivers;
 using NewLife.IoTSerial.Drivers;
 using NewLife.IoTSerial.Transport;
+using NewLife.IoTSocket.Drivers;
 using NewLife.IoTSocket.Transport;
 using NewLife.Log;
+using NewLife.Serialization;
 
 try { Console.OutputEncoding = Encoding.UTF8; } catch { }
 
@@ -207,6 +209,29 @@ Run("传输层前缀", () =>
 
     using var http = new HttpTransport { Address = "http://localhost:8080" };
     if (http.LogPrefix != "[Http:http://localhost:8080]") throw new Exception("HTTP 前缀不匹配: " + http.LogPrefix);
+});
+
+Run("网络驱动参数", () =>
+{
+    DriverFactory.Register<IoTTcpDriver>("IoTTcp");
+    var socket = DriverFactory.CreateParameter("IoTTcp", """{"Server":"192.168.1.10","Port":502,"Timeout":1500}""");
+    if (socket is not SocketParameter sp) throw new Exception("TCP 参数创建失败");
+    if (sp.Server != "192.168.1.10" || sp.Port != 502 || sp.Timeout != 1500) throw new Exception("TCP 参数值不匹配");
+
+    DriverFactory.Register<IoTHttpDriver>("IoTHttp");
+    var http = DriverFactory.CreateParameter("IoTHttp", """{"Address":"http://localhost:8080","PathAndQuery":"/api"}""");
+    if (http is not HttpParameter hp) throw new Exception("HTTP 参数创建失败");
+    if (hp.Address != "http://localhost:8080" || hp.PathAndQuery != "/api") throw new Exception("HTTP 参数值不匹配");
+});
+
+Run("结果类型 JSON", () =>
+{
+    var wr = WriteResult.Fail(IoTErrorCode.Timeout, "Node or parameter is invalid.");
+    var json = wr.ToJson();
+    var raw = JsonHelper.Default.Parse(json) ?? throw new Exception("WriteResult JSON 解析失败");
+    var back = JsonHelper.Default.Convert(raw, typeof(WriteResult));
+    if (back is not WriteResult wr2) throw new Exception("WriteResult 反序列化失败");
+    if (wr2.Code != IoTErrorCode.Timeout) throw new Exception("WriteResult 错误码不匹配: " + wr2.Code);
 });
 
 Run("数据库参数", () =>

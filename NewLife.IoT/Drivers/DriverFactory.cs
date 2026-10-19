@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using NewLife.Log;
 using NewLife.Reflection;
@@ -19,13 +20,14 @@ public class DriverFactory
 
     /// <summary>注册协议实现</summary>
     /// <param name="name"></param>
-    /// <param name="type"></param>
-    public static void Register(String? name, Type type)
+    /// <param name="type">驱动类型。裁剪器保留公开无参构造，供 Activator 创建实例</param>
+    public static void Register(String? name, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
     {
         if (type == null) throw new ArgumentNullException(nameof(type));
         if (name.IsNullOrEmpty()) name = type.Name;
 
         _map[name] = type;
+        _factories[name] = () => (IDriver)Activator.CreateInstance(type)!;
     }
 
     /// <summary>注册协议实现</summary>
@@ -85,8 +87,19 @@ public class DriverFactory
     /// <summary>
     /// 扫描所有程序集，加载插件
     /// </summary>
+    /// <remarks>依赖程序集与类型反射，NativeAOT 下不支持；AOT 应用请使用 <see cref="Register{T}(String?)"/> 显式注册。</remarks>
+    [RequiresUnreferencedCode("插件扫描依赖程序集与类型反射，NativeAOT 下请使用 Register<T> 显式注册。")]
+    [RequiresDynamicCode("插件实例化依赖运行期类型创建，NativeAOT 下不可用。")]
     public static void ScanAll()
     {
+#if NET5_0_OR_GREATER
+        if (!System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported)
+        {
+            XTrace.WriteLine("Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.");
+            return;
+        }
+#endif
+
         XTrace.WriteLine("================Start scanning driver plugins================");
 
         var iot = Assembly.GetExecutingAssembly();
