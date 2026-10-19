@@ -89,6 +89,6 @@ dotnet publish AotSmoke\AotSmoke.csproj -c Release -r win-x64 -o out\win-x64
 .\out\win-x64\AotSmoke.exe
 ```
 
-CI：`.github/workflows/aot.yml`，包含库编译（AOT 分析器常开）与 AOT 冒烟：win-x64 / linux-x64 / linux-arm64 为阻断门禁，osx-arm64 为观察期（`continue-on-error`），任一阻断项失败即失败。
+CI：`.github/workflows/aot.yml`，包含库编译（AOT 分析器常开，IL2026/IL2070/IL2072/IL2075/IL3050 视为错误）与 AOT 冒烟：win-x64 / linux-x64 / linux-arm64 为阻断门禁，osx-arm64 为观察期（`continue-on-error`），任一阻断项失败即失败。标量指令集回归由 test.yml 的 `DOTNET_EnableHWIntrinsic=0` 任务覆盖。
 
 （完）

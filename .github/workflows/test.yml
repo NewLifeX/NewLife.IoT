@@ -36,3 +36,8 @@ jobs:
       run: dotnet build -c Release
     - name: Test
       run: dotnet test XUnitTest/XUnitTest.csproj -c Release
+    - name: Test (scalar instruction set)
+      if: matrix.os == 'ubuntu-latest'
+      env:
+        DOTNET_EnableHWIntrinsic: 0
+      run: dotnet test XUnitTest/XUnitTest.csproj -c Release --no-build

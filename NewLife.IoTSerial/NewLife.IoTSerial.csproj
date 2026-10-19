@@ -20,7 +20,7 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
     <AnalysisLevel>latest</AnalysisLevel>
-    <WarningsAsErrors>CA2007</WarningsAsErrors>
+    <WarningsAsErrors>CA2007;IL2026;IL2070;IL2072;IL2075;IL3050</WarningsAsErrors>
     <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035;SYSLIB1224</NoWarn>
   </PropertyGroup>
 
