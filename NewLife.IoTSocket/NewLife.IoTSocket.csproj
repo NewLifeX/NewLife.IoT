@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net45;net462</TargetFrameworks>
+    <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
+    <TargetFrameworks>net45;net461;net462;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
     <AssemblyTitle>IoT Generic Network Driver (IoT通用网络驱动)</AssemblyTitle>
     <Description>IoT Generic Network Driver — standards-compliant TCP/UDP/HTTP driver implementing IDriver/DriverBase. Includes IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver for broadcast discovery), IoTHttpDriver. Built-in TcpTransport/UdpTransport/HttpTransport (ITransport).  |  IoT通用网络驱动，符合IoT标准的TCP/UDP/HTTP驱动实现，含IoTTcpDriver、IoTUdpDriver（支持广播发现）、IoTHttpDriver，内置TcpTransport/UdpTransport/HttpTransport传输层。</Description>
     <Company>新生命开发团队</Company>
@@ -18,6 +19,14 @@
     <LangVersion>latest</LangVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <WarningsAsErrors>CA2007</WarningsAsErrors>
+    <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035</NoWarn>
+  </PropertyGroup>
+
+  <!-- net8.0+ 常驻启用 AOT 兼容性分析（对齐 NewLife.Core v12） -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -42,11 +51,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NewLife.Core" Version="11.18.2026.801" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1019-beta0659" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45' or '$(TargetFramework)'=='net461' or '$(TargetFramework)'=='net462'">
     <Using Include="System.Net.Http" />

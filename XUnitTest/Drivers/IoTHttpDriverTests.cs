@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NewLife.IoT;
@@ -11,12 +15,45 @@ using Xunit;
 
 namespace XUnitTest.Drivers;
 
+/// <summary>IoTHttpDriver 单元测试。使用本地假 HttpClient 处理器，避免依赖外部网络</summary>
 public class IoTHttpDriverTests
 {
+    private sealed class FakeHttpDriver : IoTHttpDriver
+    {
+        protected override HttpClient CreateClient(HttpParameter parameter) => new(new FakeHttpHandler())
+        {
+            BaseAddress = new Uri(parameter.Address),
+            Timeout = TimeSpan.FromMilliseconds(parameter.Timeout),
+        };
+    }
+
+    private sealed class FakeHttpHandler : HttpMessageHandler
+    {
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var state = "";
+            if (request.Content != null)
+            {
+                var body = await request.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                foreach (var item in body.Split('&'))
+                {
+                    var ss = item.Split('=');
+                    if (ss.Length == 2 && ss[0] == "state") state = ss[1];
+                }
+            }
+
+            var json = $"{{\"fileVersion\":\"3.1.0\",\"compile\":\"2026-10-19\",\"port\":6600,\"state\":\"{state}\"}}";
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json"),
+            };
+        }
+    }
+
     [Fact]
     public async Task GetTest()
     {
-        var driver = new IoTHttpDriver();
+        var driver = new FakeHttpDriver();
 
         // 验证基础
         {
@@ -96,7 +133,7 @@ public class IoTHttpDriverTests
     [Fact]
     public async Task PostTest()
     {
-        using var driver = new IoTHttpDriver();
+        using var driver = new FakeHttpDriver();
 
         // 验证参数
         var hp = new HttpParameter
@@ -124,7 +161,7 @@ public class IoTHttpDriverTests
     [Fact]
     public async Task PostTest2()
     {
-        using var driver = new IoTHttpDriver();
+        using var driver = new FakeHttpDriver();
 
         // 验证参数
         var state = Rand.NextString(16);
@@ -155,7 +192,7 @@ public class IoTHttpDriverTests
     [Fact]
     public async Task CaptureAll()
     {
-        using var driver = new IoTHttpDriver();
+        using var driver = new FakeHttpDriver();
 
         // 验证参数
         var state = Rand.NextString(16);

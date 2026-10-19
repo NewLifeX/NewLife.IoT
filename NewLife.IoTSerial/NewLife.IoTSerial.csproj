@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net45;net461;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+    <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
+    <TargetFrameworks>net45;net461;net462;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
     <AssemblyTitle>IoT Generic Serial Driver (IoT通用串口驱动)</AssemblyTitle>
     <Description>IoT Generic Serial Driver — standards-compliant serial port driver implementing IDriver/DriverBase. Supports multi-device sharing of a single COM port via INode. Built-in SerialTransport (ITransport) for Open/Close/Send/Receive/SendReceive operations.  |  IoT通用串口驱动，符合IoT标准的串口驱动实现，通过INode支持多设备共用同一COM口，内置SerialTransport传输层。</Description>
     <Company>新生命开发团队</Company>
@@ -18,6 +19,14 @@
     <LangVersion>latest</LangVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <WarningsAsErrors>CA2007</WarningsAsErrors>
+    <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035</NoWarn>
+  </PropertyGroup>
+
+  <!-- net8.0+ 常驻启用 AOT 兼容性分析（对齐 NewLife.Core v12） -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -38,27 +47,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='netstandard2.1'">
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net9.0'">
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net10.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='netstandard2.1' or '$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net10.0'">
     <PackageReference Include="System.IO.Ports" Version="10.0.10" />
   </ItemGroup>
 

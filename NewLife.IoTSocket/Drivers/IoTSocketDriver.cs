@@ -5,6 +5,7 @@ using NewLife.IoT.Drivers;
 using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Net;
+using ReadResult = NewLife.IoT.Drivers.ReadResult;
 
 namespace NewLife.IoTSocket.Drivers;
 /// <summary>IoT标准通用T网络驱动</summary>

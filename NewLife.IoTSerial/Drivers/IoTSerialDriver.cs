@@ -7,6 +7,7 @@ using NewLife.IoT.ThingModels;
 using NewLife.IoT.ThingSpecification;
 using NewLife.Model;
 using NewLife.Reflection;
+using ReadResult = NewLife.IoT.Drivers.ReadResult;
 
 namespace NewLife.IoTSerial.Drivers;
 /// <summary>IoT标准通用串口驱动</summary>

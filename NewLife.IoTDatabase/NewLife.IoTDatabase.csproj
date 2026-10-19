@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net45</TargetFrameworks>
+    <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
+    <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
     <AssemblyTitle>IoT Generic Database Driver (IoT通用数据库驱动)</AssemblyTitle>
     <Description>IoT Generic Database Driver — standards-compliant SQL-based driver implementing IDriver/DriverBase. Maps SQL query results to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng).  |  IoT通用数据库驱动，符合IoT标准的SQL驱动实现，通过IoTDatabaseDriver将查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</Description>
     <Company>新生命开发团队</Company>
@@ -17,6 +18,14 @@
     <LangVersion>latest</LangVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Doc\newlife.snk</AssemblyOriginatorKeyFile>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <WarningsAsErrors>CA2007</WarningsAsErrors>
+    <NoWarn>1701;1702;NU5104;NETSDK1138;CS7035</NoWarn>
+  </PropertyGroup>
+
+  <!-- net8.0+ 常驻启用 AOT 兼容性分析（对齐 NewLife.Core v12） -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -37,11 +46,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NewLife.XCode" Version="12.1.2026.801" />
+    <PackageReference Include="NewLife.XCode" Version="12.2.2026.1019-beta0432" />
   </ItemGroup>
 
   <ItemGroup>

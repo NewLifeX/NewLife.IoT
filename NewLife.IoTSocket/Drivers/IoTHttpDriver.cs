@@ -114,15 +114,15 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
         String? response = null;
         if (parameter.Method.EqualIgnoreCase("GET"))
         {
-            response = await client.GetStringAsync(path);
+            response = await client.GetStringAsync(path).ConfigureAwait(false);
         }
         else
         {
             var str = parameter.PostData;
             if (str.IsNullOrEmpty())
             {
-                var rs = await client.PostAsync(path, new StringContent(""), cancellationToken);
-                response = await rs.Content.ReadAsStringAsync();
+                var rs = await client.PostAsync(path, new StringContent(""), cancellationToken).ConfigureAwait(false);
+                response = await rs.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
             else
             {
@@ -136,8 +136,8 @@ public class IoTHttpDriver : DriverBase<Node, HttpParameter>
                 else
                     content = new StringContent(str, Encoding.UTF8, "text/plain");
 
-                var rs = await client.PostAsync(path, content, cancellationToken);
-                response = await rs.Content.ReadAsStringAsync();
+                var rs = await client.PostAsync(path, content, cancellationToken).ConfigureAwait(false);
+                response = await rs.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
 
