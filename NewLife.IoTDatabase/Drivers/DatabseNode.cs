@@ -14,5 +14,5 @@ public class DatabseNode : Node
     /// <summary>
     /// 参数。设备使用的专用参数
     /// </summary>
-    public DatabaseParameter DatabaseParameter { get; set; }
+    public DatabaseParameter DatabaseParameter { get; set; } = null!;
 }

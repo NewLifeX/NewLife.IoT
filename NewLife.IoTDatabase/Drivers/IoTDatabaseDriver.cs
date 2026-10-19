@@ -44,7 +44,7 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
         // 并发打开同一连接串时，避免重复注册
         lock (_lock)
         {
-            if (!DAL.ConnStrs.ContainsKey(connName))
+            if (DAL.ConnStrs?.ContainsKey(connName) != true)
             {
                 DAL.AddConnStr(connName, p.ConnectionString, null, p.DatabaseType + "");
             }
@@ -86,7 +86,8 @@ public class IoTDatabaseDriver : DriverBase<DatabseNode, DatabaseParameter>
         {
             var pt = points[i];
             String? matchedCol = null;
-            if (colDict.TryGetValue(pt.Name, out var val))
+            Object? val = null;
+            if (!pt.Name.IsNullOrEmpty() && colDict.TryGetValue(pt.Name, out val))
                 matchedCol = pt.Name;
             else if (!pt.Address.IsNullOrEmpty() && colDict.TryGetValue(pt.Address!, out val))
                 matchedCol = pt.Address;

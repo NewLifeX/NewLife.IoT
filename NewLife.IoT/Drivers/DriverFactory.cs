@@ -96,7 +96,7 @@ public class DriverFactory
         foreach (var type in AssemblyX.FindAllPlugins(typeof(IDriver), true, true))
         {
             var att = type.GetCustomAttribute<DriverAttribute>();
-            var name = att?.Name ?? type.Name.TrimEnd("Procotol", "Driver");
+            var name = att?.Name ?? type.Name.TrimSuffix("Protocol", "Driver");
 
             var name2 = $"[{name}]";
             XTrace.WriteLine("{0,16}\t{1,-14}\t{2}", name2, type.GetDisplayName(), type.FullName);

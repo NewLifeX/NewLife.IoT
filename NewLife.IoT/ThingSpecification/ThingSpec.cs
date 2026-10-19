@@ -100,7 +100,7 @@ public class ThingSpec
             //EnumString = true,
         };
         jw.Options.WriteIndented = true;
-        jw.Options.CamelCase = true;
+        jw.Options.PropertyNaming = PropertyNaming.CamelCase;
         jw.Options.EnumString = true;
         jw.Write(dic);
 

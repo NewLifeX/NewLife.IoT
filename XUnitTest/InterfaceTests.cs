@@ -24,10 +24,10 @@ public class InterfaceTests
     {
         var mock = new Mock<IDriver>();
 
-        // 事件
-        var fired = false;
-        mock.SetupAdd(m => m.DataReceived += It.IsAny<EventHandler<DriverDataEventArgs>>());
-        mock.Object.DataReceived += (s, e) => fired = true;
+        // 事件（验证事件可订阅与退订）
+        EventHandler<DriverDataEventArgs> handler = (s, e) => { };
+        mock.Object.DataReceived += handler;
+        mock.Object.DataReceived -= handler;
 
         // CreateParameter
         var param = new Mock<IDriverParameter>().Object;

@@ -14,6 +14,7 @@
     <Deterministic>false</Deterministic>
     <OutputPath>..\Bin</OutputPath>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <SignAssembly>True</SignAssembly>
