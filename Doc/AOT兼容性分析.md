@@ -6,7 +6,7 @@
 
 ## 1. 现状摘要
 
-- **核心链路实测全通**：11 个场景冒烟 JIT/AOT 双通，覆盖多语言词表与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec` JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、驱动物模型、传输层前缀、数据库参数。
+- **核心链路实测全通**：12 个场景冒烟 JIT/AOT 双通，覆盖多语言词表（全部 31 种语言）与带前缀日志、类型映射、字节序编解码、`DriverCodec`、`ThingSpec` JSON 往返、结果类型与异常翻译、驱动工厂注册与参数创建、驱动物模型、传输层前缀、数据库参数。
 - **支持方式**：`IsAotCompatible` 对 net8.0+ 常驻启用；JSON 成员访问由 NewLife.Core 源生成器生成静态表，元数据保留由 `JsonPreserve` 的 `[DynamicDependency]` 声明；驱动工厂提供泛型注册入口，避免运行期反射构造。
 - **告警面**：库自身编译 **0** 条 IL 告警，AOT 发布 **0** 条 ILC 告警。
 - **已知边界**：插件扫描（`DriverFactory.ScanAll`）属于动态发现能力，AOT 下不支持；`DriverFactory.Register(name, Type)` 依赖运行期反射构造，AOT 下应改用 `Register<T>` 或 `Register(name, type, factory)`。
@@ -18,16 +18,17 @@
 | # | 场景 | 说明 |
 |---|------|------|
 | 1 | Localization 多语言词表 | `zh-CN` → `zh-Hans` 翻译；未提供语言回退英文 |
-| 2 | 带前缀日志与本地化 | `[IoTSerial]` 前缀 + 翻译后的消息 |
-| 3 | TypeHelper 类型映射 | `Int16` ⇄ `short`/`int`，点位类型解析 |
-| 4 | DataHelper 字节序编解码 | BigEndian `UInt16` 往返 |
-| 5 | DriverCodec 编解码 | HEX 编码与解码 |
-| 6 | ThingSpec JSON 往返 | `ToJson`/`FromJson` 属性不丢失 |
-| 7 | 结果类型与异常翻译 | `ReadResult`/`WriteResult`/`ControlResult`/`IoTException` |
-| 8 | 驱动注册与参数创建 | `DriverFactory.Register<T>` + JSON 参数绑定 |
-| 9 | 驱动物模型 | `GetSpecification` 与 `DriverAttribute` 反射特性 |
-| 10 | 传输层前缀 | 串口/TCP/HTTP 端点前缀 |
-| 11 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
+| 2 | 全语言词表（31 种） | 逐语言查找，31 种语言均有译文 |
+| 3 | 带前缀日志与本地化 | `[IoTSerial]` 前缀 + 翻译后的消息 |
+| 4 | TypeHelper 类型映射 | `Int16` ⇄ `short`/`int`，点位类型解析 |
+| 5 | DataHelper 字节序编解码 | BigEndian `UInt16` 往返 |
+| 6 | DriverCodec 编解码 | HEX 编码与解码 |
+| 7 | ThingSpec JSON 往返 | `ToJson`/`FromJson` 属性不丢失 |
+| 8 | 结果类型与异常翻译 | `ReadResult`/`WriteResult`/`ControlResult`/`IoTException` |
+| 9 | 驱动注册与参数创建 | `DriverFactory.Register<T>` + JSON 参数绑定 |
+| 10 | 驱动物模型 | `GetSpecification` 与 `DriverAttribute` 反射特性 |
+| 11 | 传输层前缀 | 串口/TCP/HTTP 端点前缀 |
+| 12 | 数据库参数 | `DatabaseParameter` JSON 绑定 |
 
 > AOT 判真：原生发布件入口 `Assembly.Location` 为空，`RuntimeFeature.IsDynamicCodeSupported=false`。
 

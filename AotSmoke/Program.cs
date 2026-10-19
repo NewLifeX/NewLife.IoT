@@ -58,6 +58,35 @@ Run("Localization 多语言词表", () =>
     }
 });
 
+Run("全语言词表（31 种）", () =>
+{
+    _ = typeof(IoTException).Assembly;
+
+    var cultures = new[]
+    {
+        "ar", "bn", "cs", "da", "de", "el", "es", "fa", "fi", "fr", "he", "hi", "hu", "id", "it",
+        "ja", "ko", "ms", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant",
+    };
+
+    var saved = Localization.Culture;
+    try
+    {
+        Localization.Culture = new CultureInfo("en-US");
+        var english = Localization.Translate("Parameter cannot be null.");
+
+        foreach (var code in cultures)
+        {
+            Localization.Culture = new CultureInfo(code);
+            var text = Localization.Translate("Parameter cannot be null.");
+            if (text == english) throw new Exception($"{code} 未命中译文");
+        }
+    }
+    finally
+    {
+        Localization.Culture = saved;
+    }
+});
+
 Run("带前缀日志与本地化", () =>
 {
     var saved = Localization.Culture;
