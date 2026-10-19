@@ -1,8 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
+using System.IO;
+using System.Text.RegularExpressions;
 using NewLife;
+using NewLife.IoT;
 using NewLife.IoT.Drivers;
+using NewLife.IoT.ThingModels;
+using NewLife.IoT.ThingSpecification;
 using NewLife.Log;
 using Xunit;
 
@@ -34,7 +40,43 @@ public class LocalizationTests
         "Database driver does not support write operations.",
         "Database driver does not support control operations.",
         "Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.",
+        "Short integer",
+        "Integer",
+        "Decimal number",
+        "Boolean",
+        "Byte",
+        "Long integer",
+        "Double precision",
+        "Text",
+        "Time",
+        "Response data",
     ];
+    private static String GetRepositoryRoot()
+    {
+        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+        {
+            if (File.Exists(Path.Combine(dir.FullName, "NewLife.IoT.slnx"))) return dir.FullName;
+        }
+
+        throw new InvalidOperationException("无法定位仓库根目录");
+    }
+
+    private static Dictionary<String, String> ReadLocale(String culture)
+    {
+        var path = Path.Combine(GetRepositoryRoot(), "Locales", culture + ".yml");
+        var map = new Dictionary<String, String>(StringComparer.Ordinal);
+        foreach (var line in File.ReadAllLines(path))
+        {
+            var text = line.Trim();
+            if (text.Length == 0 || text.StartsWith("#")) continue;
+
+            var match = Regex.Match(text, "^\"" + "(?<key>(?:[^\"\\\\]|\\\\.)*)" + "\"\\s*:\\s*\"" + "(?<value>(?:[^\"\\\\]|\\\\.)*)" + "\"\\s*$");
+            if (match.Success) map[match.Groups["key"].Value] = match.Groups["value"].Value;
+        }
+
+        return map;
+    }
+
     private sealed class MemoryLog : Logger
     {
         public List<String> Messages { get; } = [];
@@ -100,7 +142,8 @@ public class LocalizationTests
 
     [Fact]
     public void PrefixedLogKeepsPrefixAndTranslates()
-    {        var old = Localization.Culture;
+    {
+        var old = Localization.Culture;
         try
         {
             Localization.Culture = new CultureInfo("zh-CN");
@@ -120,7 +163,8 @@ public class LocalizationTests
 
     [Fact]
     public void DriverAndTransportPrefixes()
-    {        using var serialDriver = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
+    {
+        using var serialDriver = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
         using var udpDriver = new NewLife.IoTSocket.Drivers.IoTUdpDriver();
         using var serial = new NewLife.IoTSerial.Transport.SerialTransport { PortName = "COM9" };
         using var tcp = new NewLife.IoTSocket.Transport.TcpTransport { Server = "10.0.0.1", Port = 502 };
@@ -170,10 +214,11 @@ public class LocalizationTests
         {
             Localization.Culture = new CultureInfo(culture);
 
+            var table = ReadLocale(culture);
             foreach (var key in _allKeys)
             {
-                var text = Localization.Translate(key);
-                Assert.NotEqual(key, text);
+                Assert.True(table.ContainsKey(key), $"{culture} 缺少词表键：{key}");
+                Assert.Equal(table[key], Localization.Translate(key));
             }
         }
         finally
@@ -229,6 +274,104 @@ public class LocalizationTests
         finally
         {
             Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("IoT类型显示名随语言切换，不使用跨语言缓存")]
+    public void TypeHelperDisplayNamesFollowCulture()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = new CultureInfo("zh-CN");
+            var zh = TypeHelper.GetIoTTypes(true);
+            Assert.Equal("整数", zh["int"]);
+            Assert.Equal("小数", zh["float"]);
+            Assert.Equal("布尔型", zh["bool"]);
+            Assert.Equal("字节", zh["byte"]);
+            Assert.Equal("文本", zh["text"]);
+            Assert.Equal("时间", zh["time"]);
+
+            Localization.Culture = new CultureInfo("en-US");
+            var en = TypeHelper.GetIoTTypes(true);
+            Assert.Equal("Integer", en["int"]);
+            Assert.Equal("Decimal number", en["float"]);
+            Assert.Equal("Boolean", en["bool"]);
+
+            Localization.Culture = new CultureInfo("zh-Hans");
+            Assert.Equal("整数", TypeHelper.GetIoTTypes(true)["int"]);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("驱动物模型属性名随语言切换")]
+    public void DriverSpecificationNamesFollowCulture()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            using var driver = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
+
+            Localization.Culture = new CultureInfo("zh-CN");
+            Assert.Equal("响应数据", driver.GetSpecification()!.Properties![0].Name);
+
+            Localization.Culture = new CultureInfo("en-US");
+            Assert.Equal("Response data", driver.GetSpecification()!.Properties![0].Name);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("IoT类型兜底名称不受土耳其语大小写规则影响")]
+    public void IoTTypeFallbackNameIsCultureInvariant()
+    {
+        var old = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
+
+            Assert.Equal("intptr", TypeHelper.GetIoTType(typeof(IntPtr), true));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("物模型步进精度不受当前区域性小数点符号影响")]
+    public void DecodeStepDigitsUseInvariantCulture()
+    {
+        var old = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+
+            var ps = new PropertySpec
+            {
+                DataType = new TypeSpec { Type = "float", Specs = new DataSpecs { Step = 0.1, Order = ByteOrder.DCBA } },
+                Scaling = 2,
+            };
+            Assert.Equal(2.5f, (Single)ps.Decode(1.2345f.GetBytes(ByteOrder.DCBA))!);
+
+            var ps2 = new PropertySpec
+            {
+                DataType = new TypeSpec { Type = "double", Specs = new DataSpecs { Step = 0.01, Order = ByteOrder.DCBA } },
+                Scaling = 2,
+            };
+            Assert.Equal(2.47, (Double)ps2.Decode(1.234567.GetBytes(ByteOrder.DCBA))!);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = old;
         }
     }
 }

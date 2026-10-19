@@ -166,7 +166,7 @@ public static class TypeHelper
                 TypeCode.Double or TypeCode.Decimal => "double",
                 TypeCode.String => "text",
                 TypeCode.DateTime => "time",
-                _ => type?.Name.ToLower(),
+                _ => type?.Name.ToLowerInvariant(),
             };
         }
         else
@@ -199,10 +199,8 @@ public static class TypeHelper
         return GetIoTType(type, full);
     }
 
-    private static IDictionary<String, String>? _fullTypes;
-    private static IDictionary<String, String>? _iotTypes;
     /// <summary>
-    /// 获取所有可用IoT类型
+    /// 获取所有可用IoT类型。显示名按 <see cref="Localization.Culture"/> 翻译，不跨语言缓存
     /// </summary>
     /// <param name="full">是否返回完成类型，默认false返回精简类型</param>
     /// <returns></returns>
@@ -210,36 +208,28 @@ public static class TypeHelper
     {
         if (full)
         {
-            if (_fullTypes != null) return _fullTypes;
-
-            var dic = new Dictionary<String, String>
+            return new Dictionary<String, String>
             {
-                ["short"] = "短整数",
-                ["int"] = "整数",
-                ["float"] = "小数",
-                ["bool"] = "布尔型",
-                ["byte"] = "字节",
-                ["long"] = "长整数",
-                ["double"] = "双精度",
-                ["text"] = "文本",
-                ["time"] = "时间",
+                ["short"] = Localization.Translate("Short integer"),
+                ["int"] = Localization.Translate("Integer"),
+                ["float"] = Localization.Translate("Decimal number"),
+                ["bool"] = Localization.Translate("Boolean"),
+                ["byte"] = Localization.Translate("Byte"),
+                ["long"] = Localization.Translate("Long integer"),
+                ["double"] = Localization.Translate("Double precision"),
+                ["text"] = Localization.Translate("Text"),
+                ["time"] = Localization.Translate("Time"),
             };
-
-            return _fullTypes = dic;
         }
         else
         {
-            if (_iotTypes != null) return _iotTypes;
-
-            var dic = new Dictionary<String, String>
+            return new Dictionary<String, String>
             {
-                ["int"] = "整数",
-                ["float"] = "小数",
-                ["bool"] = "布尔型",
-                ["text"] = "文本",
+                ["int"] = Localization.Translate("Integer"),
+                ["float"] = Localization.Translate("Decimal number"),
+                ["bool"] = Localization.Translate("Boolean"),
+                ["text"] = Localization.Translate("Text"),
             };
-
-            return _iotTypes = dic;
         }
     }
 }

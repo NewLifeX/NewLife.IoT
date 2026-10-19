@@ -26,7 +26,7 @@ public abstract class IoTSocketDriver : DriverBase<SocketNode, SocketParameter>
     {
         thingSpec.Properties =
         [
-            PropertySpec.Create("Data", "响应数据", "string")
+            PropertySpec.Create("Data", L.T("Response data"), "string")
         ];
 
         return true;

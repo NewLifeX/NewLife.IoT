@@ -30,7 +30,7 @@ public class IoTSerialDriver : DriverBase<SerialNode, IoTSerialParameter>
     {
         thingSpec.Properties =
         [
-            PropertySpec.Create("Data", "响应数据", "string")
+            PropertySpec.Create("Data", L.T("Response data"), "string")
         ];
 
         return true;

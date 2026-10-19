@@ -73,7 +73,7 @@ public static class DriverParameterExtensions
         if (parameter.IsNullOrEmpty()) throw new ArgumentNullException(nameof(parameter));
 
         // 按Xml或Json解析参数成为字典
-        var ps = parameter.StartsWith("<") && parameter.EndsWith(">") ?
+        var ps = parameter.StartsWith("<", StringComparison.Ordinal) && parameter.EndsWith(">", StringComparison.Ordinal) ?
             XmlParser.Decode(parameter) :
             JsonParser.Decode(parameter);
 

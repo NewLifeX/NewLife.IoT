@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
-# 运行时消息英文检查：异常、日志与结果消息不得包含中文
+# 运行时消息英文检查：代码中的字符串字面量不得包含中文（元数据特性除外）
 param(
-    [String[]]$Dir = @("NewLife.IoT", "NewLife.IoTSerial", "NewLife.IoSocket", "NewLife.IoTDatabase"),
+    [String[]]$Dir = @("NewLife.IoT", "NewLife.IoTSerial", "NewLife.IoTSocket", "NewLife.IoTDatabase"),
     [Switch]$List,
     [String]$Csv
 )
@@ -22,7 +22,12 @@ foreach ($d in $Dir) {
             $text = $line.Trim()
             if ($text.StartsWith("//") -or $text.StartsWith("///") -or $text.StartsWith("*")) { continue }
             if ($line -notmatch '[\u4e00-\u9fff]') { continue }
-            if ($line -match '(throw\s+new|\.Fail\(|WriteLog\(|XTrace\.Write(Line)?\()') {
+            # [Description]/[DisplayName] 等元数据特性按约定保留源码语言
+            if ($text.StartsWith("[")) { continue }
+            # 仅检查字符串字面量，中文注释与中文标识符不在本门禁范围
+            $literal = [regex]::Match($line, '"(?:[^"\\]|\\.)*"')
+            if (-not $literal.Success) { continue }
+            if ($literal.Value -match '[\u4e00-\u9fff]') {
                 $hits += [pscustomobject]@{ File = $file.FullName; Line = $lineNo; Text = $text }
             }
         }

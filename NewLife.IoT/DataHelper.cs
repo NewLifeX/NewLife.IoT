@@ -494,15 +494,9 @@ public static class DataHelper
                 var rs = data.ToSingle(order);
                 if (constant != 0 || scaling != 1)
                 {
-                    // 计算小数精度
-                    var digits = 2;
+                    // 计算小数精度。不能依赖当前区域性的小数点符号
                     var step = propertySpec?.DataType?.Specs?.Step ?? 0;
-                    if (step > 0)
-                    {
-                        var str = step.ToString();
-                        var idx = str.IndexOf('.');
-                        if (idx >= 0) digits = str.Length - idx - 1;
-                    }
+                    var digits = GetStepDigits(step, 2);
 
                     rs = (Single)Math.Round(rs * scaling + constant, digits);
                 }
@@ -522,15 +516,9 @@ public static class DataHelper
                 var rs = data.ToDouble(order);
                 if (constant != 0 || scaling != 1)
                 {
-                    // 计算小数精度
-                    var digits = 4;
+                    // 计算小数精度。不能依赖当前区域性的小数点符号
                     var step = propertySpec?.DataType?.Specs?.Step ?? 0;
-                    if (step > 0)
-                    {
-                        var str = step.ToString();
-                        var idx = str.IndexOf('.');
-                        if (idx >= 0) digits = str.Length - idx - 1;
-                    }
+                    var digits = GetStepDigits(step, 4);
 
                     rs = Math.Round(rs * scaling + constant, digits);
                 }
@@ -547,5 +535,24 @@ public static class DataHelper
     /// <param name="name">点位名称</param>
     /// <returns></returns>
     public static Object? Decode(this ThingSpec spec, Byte[] data, String name) => Decode(spec, data, new PointModel { Name = name });
+
+    /// <summary>根据步进值计算小数位数。仅处理小于1的步进，其余保留默认精度</summary>
+    /// <param name="step">步进值</param>
+    /// <param name="defaultDigits">无法确定时使用的默认小数位数</param>
+    /// <returns></returns>
+    private static Int32 GetStepDigits(Double step, Int32 defaultDigits)
+    {
+        if (step <= 0 || step >= 1) return defaultDigits;
+
+        // 通过乘以10逼近整数，避免 ToString 依赖区域性的小数点符号
+        var value = step;
+        for (var digits = 1; digits <= 15; digits++)
+        {
+            value *= 10;
+            if (Math.Abs(value - Math.Round(value)) < 1E-9) return digits;
+        }
+
+        return defaultDigits;
+    }
     #endregion
 }

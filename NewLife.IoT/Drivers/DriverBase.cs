@@ -86,7 +86,7 @@ public abstract class DriverBase : DisposeBase, IDriver, ILogFeature, ITracerFea
         if (!parameter.IsNullOrEmpty())
         {
             // 按Xml或Json解析参数成为字典
-            var ps = parameter.StartsWith("<") && parameter.EndsWith(">") ?
+            var ps = parameter.StartsWith("<", StringComparison.Ordinal) && parameter.EndsWith(">", StringComparison.Ordinal) ?
                 XmlParser.Decode(parameter) :
                 JsonParser.Decode(parameter);
 

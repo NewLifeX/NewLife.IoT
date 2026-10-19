@@ -67,6 +67,7 @@ try {
     $program = @"
 using System.Globalization;
 using NewLife;
+using NewLife.IoT;
 using NewLife.IoT.Controllers;
 using NewLife.IoT.Drivers;
 using NewLife.IoTSerial.Drivers;
@@ -79,6 +80,17 @@ try
     if (text != "参数不能为空。")
     {
         Console.WriteLine(`"LOCALIZATION FAILED: `" + text);
+        return 1;
+    }
+    if (TypeHelper.GetIoTTypes(true)[`"int`"] != `"整数`")
+    {
+        Console.WriteLine("TYPE NAME LOCALIZATION FAILED");
+        return 1;
+    }
+    using var specDriver = new IoTSerialDriver();
+    if (specDriver.GetSpecification()?.Properties?[0].Name != `"响应数据`")
+    {
+        Console.WriteLine("SPECIFICATION LOCALIZATION FAILED");
         return 1;
     }
 }

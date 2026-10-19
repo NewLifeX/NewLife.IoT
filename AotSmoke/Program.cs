@@ -91,6 +91,12 @@ Run("全语言词表（31 种）", () =>
         "Database driver does not support write operations.",
         "Database driver does not support control operations.",
         "Driver plugin scanning is not supported under NativeAOT. Register drivers explicitly with DriverFactory.Register<T>.",
+        // Integer/Boolean/Byte/Text/Time 在部分语言中与英文同形，不能以“译文不等于键”判定命中
+        "Short integer",
+        "Decimal number",
+        "Long integer",
+        "Double precision",
+        "Response data",
     };
 
     var saved = Localization.Culture;
@@ -149,6 +155,20 @@ Run("TypeHelper 类型映射", () =>
 
     var point = new PointModel { Name = "temp", Type = "short", Length = 2 };
     if (point.GetNetType() != typeof(Int16)) throw new Exception("short → Int16");
+
+    var saved = Localization.Culture;
+    try
+    {
+        Localization.Culture = new CultureInfo("zh-CN");
+        if (TypeHelper.GetIoTTypes(true)["int"] != "整数") throw new Exception("类型显示名未翻译");
+
+        Localization.Culture = new CultureInfo("en-US");
+        if (TypeHelper.GetIoTTypes(true)["int"] != "Integer") throw new Exception("类型显示名未随语言切换");
+    }
+    finally
+    {
+        Localization.Culture = saved;
+    }
 });
 
 Run("DataHelper 字节序编解码", () =>
