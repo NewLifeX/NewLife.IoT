@@ -9,21 +9,24 @@ on:
 
 jobs:
   build-test:
-
-    runs-on: ubuntu-latest
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
     - name: Setup dotNET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-          6.x
-          7.x
-          8.x
-          9.x
-          10.x
+        dotnet-version: 10.x
     - name: Build
       run: dotnet build -c Release
     - name: Test
-      run: dotnet test -c Release
+      run: dotnet test XUnitTest/XUnitTest.csproj -c Release

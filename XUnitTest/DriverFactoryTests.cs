@@ -60,6 +60,37 @@ public class DriverFactoryTests
     }
 
     [Fact]
+    public void Register_WithFactory_UsesFactory()
+    {
+        var name = "FactoryTestDriver";
+        var count = 0;
+        DriverFactory.Register(name, typeof(TestDriver), () =>
+        {
+            count++;
+            return new TestDriver();
+        });
+
+        var d1 = DriverFactory.Create(name, "");
+        var d2 = DriverFactory.Create(name, "");
+        Assert.IsType<TestDriver>(d1);
+        Assert.IsType<TestDriver>(d2);
+        Assert.NotSame(d1, d2);
+        Assert.Equal(2, count);
+
+        var d3 = DriverFactory.Create(name, "FACTORY-ID-1");
+        var d4 = DriverFactory.Create(name, "FACTORY-ID-1");
+        Assert.Same(d3, d4);
+        Assert.Equal(3, count);
+    }
+
+    [Fact]
+    public void Register_WithFactory_NullArguments_Throw()
+    {
+        Assert.Throws<ArgumentNullException>(() => DriverFactory.Register("FactoryNullType", null!, () => new TestDriver()));
+        Assert.Throws<ArgumentNullException>(() => DriverFactory.Register("FactoryNullFunc", typeof(TestDriver), null!));
+    }
+
+    [Fact]
     public void Create_NoIdentifier_ReturnsNewInstance()
     {
         var name = "NoIdTestDriver";

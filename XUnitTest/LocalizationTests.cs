@@ -99,8 +99,7 @@ public class LocalizationTests
 
     [Fact]
     public void DriverAndTransportPrefixes()
-    {
-        using var serialDriver = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
+    {        using var serialDriver = new NewLife.IoTSerial.Drivers.IoTSerialDriver();
         using var udpDriver = new NewLife.IoTSocket.Drivers.IoTUdpDriver();
         using var serial = new NewLife.IoTSerial.Transport.SerialTransport { PortName = "COM9" };
         using var tcp = new NewLife.IoTSocket.Transport.TcpTransport { Server = "10.0.0.1", Port = 502 };
@@ -109,6 +108,30 @@ public class LocalizationTests
         Assert.Equal("[IoTUdp]", udpDriver.LogPrefix);
         Assert.Equal("[Serial:COM9]", serial.LogPrefix);
         Assert.Equal("[Tcp:10.0.0.1:502]", tcp.LogPrefix);
+    }
+
+    [Fact]
+    public void LogCultureOverridesCultureForPrefixedLog()
+    {
+        var culture = Localization.Culture;
+        var logCulture = Localization.LogCulture;
+        try
+        {
+            Localization.Culture = new CultureInfo("zh-Hans");
+            Localization.LogCulture = new CultureInfo("ja");
+
+            var log = new MemoryLog();
+            var driver = new TestDriver { Log = log };
+            driver.LogMessage("Parameter cannot be null.");
+
+            Assert.Single(log.Messages);
+            Assert.Equal("[Test]パラメーターを null にすることはできません。", log.Messages[0]);
+        }
+        finally
+        {
+            Localization.Culture = culture;
+            Localization.LogCulture = logCulture;
+        }
     }
 
     [Fact]

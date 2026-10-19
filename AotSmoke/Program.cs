@@ -17,6 +17,8 @@ try { Console.OutputEncoding = Encoding.UTF8; } catch { }
 
 Console.WriteLine("=== NewLife.IoT AOT smoke ===");
 Console.WriteLine($"framework={System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+Console.WriteLine($"rid={System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier} os={System.Runtime.InteropServices.RuntimeInformation.OSDescription}");
+Console.WriteLine($"arch={System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture}");
 Console.WriteLine($"IsDynamicCodeSupported={System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported}");
 
 var failed = 0;
