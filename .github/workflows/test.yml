@@ -32,6 +32,9 @@ jobs:
     - name: Check locales
       shell: pwsh
       run: ./check-locales.ps1
+    - name: Check README metrics
+      shell: pwsh
+      run: ./sync-readme-metrics.ps1 -Check
     - name: Build
       run: dotnet build -c Release
     - name: Test

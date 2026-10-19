@@ -8,7 +8,9 @@
     <File Path="check-english-exceptions.ps1" />
     <File Path="check-locales.ps1" />
     <File Path="locales.json" />
+    <File Path="readme-metrics.json" />
     <File Path="Readme.MD" />
+    <File Path="sync-readme-metrics.ps1" />
   </Folder>
   <Project Path="AotSmoke/AotSmoke.csproj" />
   <Project Path="NewLife.IoT/NewLife.IoT.csproj" />
