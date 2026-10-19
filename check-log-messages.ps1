@@ -72,3 +72,4 @@ if ($hits.Count -gt 0) {
 }
 
 Write-Host "日志词表校验通过"
+exit 0

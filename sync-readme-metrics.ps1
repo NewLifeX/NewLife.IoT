@@ -22,10 +22,35 @@ foreach ($file in Get-ChildItem -Path . -Filter "Readme*.md") {
         -replace 'locales-\d+-2ea44f', "locales-$($metrics.locales)-2ea44f" `
         -replace 'TFM-\d+%20', "TFM-$($metrics.tfm)%20"
 
+    # 运行时能力行中的 AOT 场景数（排除徽章行）
+    $missingAot = $false
+    $lines = $new -split "`n"
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $line = $lines[$i]
+        if ($line -match 'NativeAOT' -and $line -notmatch 'badge\.svg|img\.shields\.io') {
+            $rx = [regex]'(NativeAOT[^\r\n]*?)\d+'
+            if ($rx.IsMatch($line)) {
+                $evaluator = [System.Text.RegularExpressions.MatchEvaluator] { param($m) $m.Groups[1].Value + $metrics.aot }
+                $lines[$i] = $rx.Replace($line, $evaluator, 1)
+            }
+            else {
+                $missingAot = $true
+            }
+        }
+    }
+    $new = $lines -join "`n"
+
+    if ($missingAot) {
+        Write-Host "[README002] $($file.Name) 运行时能力行缺少 AOT 场景数"
+        if ($Check) { $failed++ }
+    }
+
     if ($new -ne $text) {
         if ($Check) {
-            Write-Host "[README001] $($file.Name) 徽章指标与 readme-metrics.json 不一致"
-            $failed++
+            if (-not $missingAot) {
+                Write-Host "[README001] $($file.Name) 徽章指标与 readme-metrics.json 不一致"
+                $failed++
+            }
         }
         else {
             Set-Content -LiteralPath $file.FullName -Value $new -NoNewline -Encoding UTF8
@@ -45,3 +70,5 @@ if ($Check) {
 else {
     Write-Host "README 指标同步完成：更新 $updated 个文件"
 }
+
+exit 0
