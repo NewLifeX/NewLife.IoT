@@ -2,8 +2,8 @@
   <PropertyGroup>
     <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
     <TargetFrameworks>net45;net461;net462;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT Generic Network Driver (IoT通用网络驱动)</AssemblyTitle>
-    <Description>IoT Generic Network Driver — standards-compliant TCP/UDP/HTTP driver implementing IDriver/DriverBase. Includes IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver for broadcast discovery), IoTHttpDriver. Built-in TcpTransport/UdpTransport/HttpTransport (ITransport).  |  IoT通用网络驱动，符合IoT标准的TCP/UDP/HTTP驱动实现，含IoTTcpDriver、IoTUdpDriver（支持广播发现）、IoTHttpDriver，内置TcpTransport/UdpTransport/HttpTransport传输层。</Description>
+    <AssemblyTitle>IoT Generic Network Driver</AssemblyTitle>
+    <Description>Generic IoT network driver for TCP, UDP and HTTP, with broadcast discovery and built-in transports.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -33,6 +33,7 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Company)</Authors>
+    <PackageDescription>IoT Generic Network Driver — standards-compliant TCP/UDP/HTTP driver implementing IDriver/DriverBase. Includes IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver for broadcast discovery), IoTHttpDriver. Built-in TcpTransport/UdpTransport/HttpTransport (ITransport).  |  IoT通用网络驱动，符合IoT标准的TCP/UDP/HTTP驱动实现，含IoTTcpDriver、IoTUdpDriver（支持广播发现）、IoTHttpDriver，内置TcpTransport/UdpTransport/HttpTransport传输层。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>

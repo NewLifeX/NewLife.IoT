@@ -2,8 +2,8 @@
   <PropertyGroup>
     <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
     <TargetFrameworks>net45;net461;net462;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT Generic Serial Driver (IoT通用串口驱动)</AssemblyTitle>
-    <Description>IoT Generic Serial Driver — standards-compliant serial port driver implementing IDriver/DriverBase. Supports multi-device sharing of a single COM port via INode. Built-in SerialTransport (ITransport) for Open/Close/Send/Receive/SendReceive operations.  |  IoT通用串口驱动，符合IoT标准的串口驱动实现，通过INode支持多设备共用同一COM口，内置SerialTransport传输层。</Description>
+    <AssemblyTitle>IoT Generic Serial Driver</AssemblyTitle>
+    <Description>Generic IoT serial port driver that lets multiple devices share one COM port, with a built-in serial transport.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -33,6 +33,7 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Company)</Authors>
+    <PackageDescription>IoT Generic Serial Driver — standards-compliant serial port driver implementing IDriver/DriverBase. Supports multi-device sharing of a single COM port via INode. Built-in SerialTransport (ITransport) for Open/Close/Send/Receive/SendReceive operations.  |  IoT通用串口驱动，符合IoT标准的串口驱动实现，通过INode支持多设备共用同一COM口，内置SerialTransport传输层。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>

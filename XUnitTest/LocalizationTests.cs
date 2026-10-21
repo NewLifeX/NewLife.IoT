@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using NewLife;
 using NewLife.IoT;
@@ -193,6 +194,33 @@ public class LocalizationTests
                 Assert.True(table.ContainsKey(key), $"{culture} 缺少词表键：{key}");
                 Assert.Equal(table[key], Localization.Translate(key));
             }
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    public void AssemblyMetadataIsLocalized()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = new CultureInfo("zh-CN");
+
+            // 程序集标题/描述以英文源文写入 csproj，同一字符串作为词表键；
+            // 展示层翻译后应得到目标语言文本，原始元数据保持英文不变。
+            var title = Assembly.GetAssembly(typeof(DriverBase))?.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+            Assert.Equal("IoT Standard Library", title);
+            Assert.Equal("IoT 标准库", Localization.Translate(title!));
+
+            Assert.Equal("IoT 通用数据库驱动", Localization.Translate("IoT Generic Database Driver"));
+            Assert.Equal("IoT 通用串口驱动", Localization.Translate("IoT Generic Serial Driver"));
+            Assert.Equal("IoT 通用网络驱动", Localization.Translate("IoT Generic Network Driver"));
+            Assert.Equal(
+                "通用 IoT 网络驱动，支持 TCP、UDP 与 HTTP，具备广播发现与内置传输层。",
+                Localization.Translate("Generic IoT network driver for TCP, UDP and HTTP, with broadcast discovery and built-in transports."));
         }
         finally
         {

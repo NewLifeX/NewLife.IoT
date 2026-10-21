@@ -3,8 +3,8 @@
     <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0），
          保留会被 NuGet 回退到 netstandard2.1 资产 -->
     <TargetFrameworks>net45;net461;net462;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT Standard Library (IoT标准库)</AssemblyTitle>
-    <Description>IoT Standard Library — defines unified communication protocol contracts for IoT platforms and hardware drivers. No concrete protocol implementations. Async-first IDriver with structured results: ReadResult (Quality/Timestamp), WriteResult (zero-allocation struct), ControlResult. ThingSpec thing model for properties/events/services. ITransport unifies serial/TCP/UDP/HTTP transport.  |  IoT标准库，为物联网平台与硬件驱动定义统一通信协议契约，不含具体协议实现。异步优先IDriver配合结构化结果。ThingSpec物模型。ITransport统一传输层。</Description>
+    <AssemblyTitle>IoT Standard Library</AssemblyTitle>
+    <Description>IoT standard library that defines unified communication protocol contracts for IoT platforms and hardware drivers, without concrete protocol implementations.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>3.1</VersionPrefix>
@@ -34,6 +34,7 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Company)</Authors>
+    <PackageDescription>IoT Standard Library — defines unified communication protocol contracts for IoT platforms and hardware drivers. No concrete protocol implementations. Async-first IDriver with structured results: ReadResult (Quality/Timestamp), WriteResult (zero-allocation struct), ControlResult. ThingSpec thing model for properties/events/services. ITransport unifies serial/TCP/UDP/HTTP transport.  |  IoT标准库，为物联网平台与硬件驱动定义统一通信协议契约，不含具体协议实现。异步优先IDriver配合结构化结果。ThingSpec物模型。ITransport统一传输层。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>

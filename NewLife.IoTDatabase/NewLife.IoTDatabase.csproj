@@ -2,8 +2,8 @@
   <PropertyGroup>
     <!-- 目标框架对齐 NewLife.Core v12：net7.0/net9.0 已由 Core 侧合并（net7.0→net6.0，net9.0→net8.0） -->
     <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
-    <AssemblyTitle>IoT Generic Database Driver (IoT通用数据库驱动)</AssemblyTitle>
-    <Description>IoT Generic Database Driver — standards-compliant SQL-based driver implementing IDriver/DriverBase. Maps SQL query results to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng).  |  IoT通用数据库驱动，符合IoT标准的SQL驱动实现，通过IoTDatabaseDriver将查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</Description>
+    <AssemblyTitle>IoT Generic Database Driver</AssemblyTitle>
+    <Description>Generic IoT database driver that maps SQL query results to IoT data points through the XCode data access layer, supporting multiple databases.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
@@ -33,6 +33,7 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Company)</Authors>
+    <PackageDescription>IoT Generic Database Driver — standards-compliant SQL-based driver implementing IDriver/DriverBase. Maps SQL query results to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng).  |  IoT通用数据库驱动，符合IoT标准的SQL驱动实现，通过IoTDatabaseDriver将查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
