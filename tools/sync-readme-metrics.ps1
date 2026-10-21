@@ -6,7 +6,10 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$metricsPath = Join-Path (Get-Location) "readme-metrics.json"
+# 脚本位于 tools，仓库根目录在其上一级
+$root = Split-Path -Parent $PSScriptRoot
+
+$metricsPath = Join-Path $root "readme-metrics.json"
 if (-not (Test-Path $metricsPath)) {
     Write-Host "[README000] 未找到 readme-metrics.json"
     exit 1
@@ -16,7 +19,7 @@ $metrics = Get-Content -LiteralPath $metricsPath -Raw -Encoding UTF8 | ConvertFr
 $failed = 0
 $updated = 0
 
-foreach ($file in Get-ChildItem -Path . -File | Where-Object { $_.Name -like "README*.md" -and $_.Name -notlike "*.nuget.md" }) {
+foreach ($file in Get-ChildItem -Path $root -File | Where-Object { $_.Name -like "README*.md" -and $_.Name -notlike "*.nuget.md" }) {
     $text = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
     $new = $text `
         -replace 'locales-\d+-2ea44f', "locales-$($metrics.locales)-2ea44f" `

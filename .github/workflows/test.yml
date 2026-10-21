@@ -22,7 +22,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
     - name: Package consumer smoke
       shell: pwsh
-      run: ./check-package-consumer.ps1 -Aot
+      run: ./tools/check-package-consumer.ps1 -Aot
 
   build-test:
     name: test (${{ matrix.os }})
@@ -44,19 +44,19 @@ jobs:
         dotnet-version: 10.x
     - name: Check English runtime messages
       shell: pwsh
-      run: ./check-english-exceptions.ps1
+      run: ./tools/check-english-exceptions.ps1
     - name: Check locales
       shell: pwsh
-      run: ./check-locales.ps1
+      run: ./tools/check-locales.ps1
     - name: Check log messages
       shell: pwsh
-      run: ./check-log-messages.ps1
+      run: ./tools/check-log-messages.ps1
     - name: Check runtime messages
       shell: pwsh
-      run: ./check-runtime-messages.ps1
+      run: ./tools/check-runtime-messages.ps1
     - name: Check README metrics
       shell: pwsh
-      run: ./sync-readme-metrics.ps1 -Check
+      run: ./tools/sync-readme-metrics.ps1 -Check
     - name: Build
       run: dotnet build XUnitTest/XUnitTest.csproj -c Release
     - name: Build sample

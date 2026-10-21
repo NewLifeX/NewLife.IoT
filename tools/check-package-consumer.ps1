@@ -12,7 +12,7 @@ if ([String]::IsNullOrWhiteSpace($Version)) {
     $Version = "9.9.9-local." + [DateTime]::Now.ToString("yyyyMMddHHmmss")
 }
 
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = Split-Path -Parent $PSScriptRoot
 $work = Join-Path ([IO.Path]::GetTempPath()) ("iot-package-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
 $packages = Join-Path $work "packages"
 $app = Join-Path $work "app"

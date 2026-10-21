@@ -10,7 +10,8 @@
 #   pwsh -File sync-readme-package.ps1 -Root D:\src\MyLib
 param(
     [Switch]$Check,
-    [String]$Root = $PSScriptRoot,
+    # 默认仓库根：脚本位于 tools，在其上一级；下游复用可显式传入 -Root
+    [String]$Root = (Split-Path -Parent $PSScriptRoot),
     [String]$Config = "readme-package.json"
 )
 

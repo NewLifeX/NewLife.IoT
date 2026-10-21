@@ -10,6 +10,11 @@ param(
 $ErrorActionPreference = "Stop"
 $script:errors = 0
 
+# 脚本位于 tools，仓库根目录在其上一级；相对路径一律按仓库根解析
+$root = Split-Path -Parent $PSScriptRoot
+if (![IO.Path]::IsPathRooted($LocaleDir)) { $LocaleDir = Join-Path $root $LocaleDir }
+if (![IO.Path]::IsPathRooted($SourceDir)) { $SourceDir = Join-Path $root $SourceDir }
+
 $files = @(Get-ChildItem -Path $LocaleDir -Filter *.yml | Sort-Object Name)
 if ($files.Count -eq 0) {
     Write-Host "[LOC000] 未找到词表目录或文件：$LocaleDir"
@@ -54,7 +59,7 @@ if (-not $tables.ContainsKey($baselineName)) {
 $base = $tables[$baselineName]
 
 # 语言清单与 locales.json 对齐
-$manifestPath = Join-Path (Get-Location) "locales.json"
+$manifestPath = Join-Path $root "locales.json"
 if (Test-Path $manifestPath) {
     $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
     $actual = @($files | ForEach-Object { $_.BaseName })
@@ -101,8 +106,9 @@ foreach ($name in $tables.Keys) {
 }
 
 # 孤儿键：词表键必须能在库源码中找到
+# 源文范围含 .cs 与 .csproj：程序集标题/描述等元数据写在 csproj 中，同样是词表源文
 if (-not $SkipOrphan) {
-    $code = @(Get-ChildItem -Path $SourceDir -Recurse -Filter *.cs |
+    $code = @(Get-ChildItem -Path $SourceDir -Recurse -Include *.cs, *.csproj |
         Where-Object { $_.FullName -notmatch '[/\\](obj|bin|XUnitTest|Test|AotSmoke)[/\\]' } |
         ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 }) -join "`n"
 

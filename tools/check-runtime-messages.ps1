@@ -8,6 +8,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# 脚本位于 tools，仓库根目录在其上一级；相对路径一律按仓库根解析
+$root = Split-Path -Parent $PSScriptRoot
+$Dir = @($Dir | ForEach-Object { if ([IO.Path]::IsPathRooted($_)) { $_ } else { Join-Path $root $_ } })
+if (![IO.Path]::IsPathRooted($LocaleDir)) { $LocaleDir = Join-Path $root $LocaleDir }
+
 $baselinePath = Join-Path $LocaleDir $Baseline
 if (-not (Test-Path $baselinePath)) {
     Write-Host "[RUN000] 基线词表不存在：$baselinePath"
