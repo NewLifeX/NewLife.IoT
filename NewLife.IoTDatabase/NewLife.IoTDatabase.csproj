@@ -54,7 +54,7 @@
     </PackageReference>
     <!-- 非 Windows 构建 net45/net461/net462 需要引用程序集包，Windows 已安装目标包时可忽略 -->
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="$(TargetFramework.StartsWith('net4'))" />
-    <PackageReference Include="NewLife.XCode" Version="12.2.2026.1019-beta0432" />
+    <PackageReference Include="NewLife.XCode" Version="12.2.2026.1021-beta0423" />
   </ItemGroup>
 
   <!-- 多语言词表：编译期由 NewLife.Core 源生成器打包进程序集，运行时自动注册 -->
