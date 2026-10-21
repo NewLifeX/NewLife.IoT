@@ -4,6 +4,7 @@
   "languages": [
     { "code": "en", "name": "English", "file": "README.md" },
     { "code": "zh-CN", "name": "简体中文", "file": "README.zh-CN.md" },
+    { "code": "zh-TW", "name": "繁體中文", "file": "README.zh-TW.md" },
     { "code": "ar", "name": "العربية", "file": "README.ar.md" },
     { "code": "bn", "name": "বাংলা", "file": "README.bn.md" },
     { "code": "es", "name": "Español", "file": "README.es.md" },
@@ -11,6 +12,8 @@
     { "code": "hi", "name": "हिन्दी", "file": "README.hi.md" },
     { "code": "ja", "name": "日本語", "file": "README.ja.md" },
     { "code": "pt", "name": "Português", "file": "README.pt.md" },
-    { "code": "ru", "name": "Русский", "file": "README.ru.md" }
+    { "code": "ru", "name": "Русский", "file": "README.ru.md" },
+    { "code": "de", "name": "Deutsch", "file": "README.de.md" },
+    { "code": "ko", "name": "한국어", "file": "README.ko.md" }
   ]
 }
