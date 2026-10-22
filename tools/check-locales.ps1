@@ -1,10 +1,11 @@
 #!/usr/bin/env pwsh
-# 多语言词表校验：语言清单、键集合、占位符、孤儿键
+# 多语言词表校验：语言清单、键集合、占位符、孤儿键、同形漏译
 param(
     [String]$LocaleDir = "Locales",
     [String]$Baseline = "zh-Hans.yml",
     [String]$SourceDir = ".",
-    [Switch]$SkipOrphan
+    [Switch]$SkipOrphan,
+    [Switch]$SkipSameAsSource
 )
 
 $ErrorActionPreference = "Stop"
@@ -116,6 +117,42 @@ if (-not $SkipOrphan) {
         if (-not $code.Contains($key)) {
             Write-Host "[LOC008] 孤儿键（源码中未找到）：$key"
             $script:errors++
+        }
+    }
+}
+
+# 同形检测：译文与英文源文完全相同，通常是未翻译；
+# 目标语言本就如此书写的技术词登记到 same-as-source.json，白名单失效同样报错。
+if (-not $SkipSameAsSource) {
+    $whitelistPath = Join-Path $LocaleDir "same-as-source.json"
+    $whitelist = @{}
+    if (Test-Path -LiteralPath $whitelistPath) {
+        $manifest = Get-Content -LiteralPath $whitelistPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        foreach ($item in $manifest.entries.PSObject.Properties) {
+            $whitelist[$item.Name] = @($item.Value)
+        }
+    }
+
+    foreach ($name in $tables.Keys) {
+        if ($name -eq $baselineName) { continue }
+
+        $culture = [IO.Path]::GetFileNameWithoutExtension($name)
+        $table = $tables[$name]
+        $allowed = if ($whitelist.ContainsKey($culture)) { @($whitelist[$culture]) } else { @() }
+        foreach ($key in $base.Keys) {
+            if (-not $table.Contains($key)) { continue }
+            if ($table[$key] -ne $key) { continue }
+            if ($allowed -contains $key) { continue }
+
+            Write-Host "[LOC009] ${culture} 译文与英文原文相同（疑为未翻译）：$key"
+            $script:errors++
+        }
+
+        foreach ($key in $allowed) {
+            if (-not $table.Contains($key) -or $table[$key] -ne $key) {
+                Write-Host "[LOC010] ${culture} 同形白名单已失效（译文已翻译或键已删除）：$key"
+                $script:errors++
+            }
         }
     }
 }

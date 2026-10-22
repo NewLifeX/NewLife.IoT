@@ -1,0 +1,19 @@
+{
+  "note": "同形白名单：译文与英文原文相同但在目标语言中本就如此书写的技术词。check-locales.ps1 对未登记的同形条目报 LOC009（疑为未翻译），白名单失效报 LOC010。新增语言或调整译文时同步维护。",
+  "entries": {
+    "cs": ["Text"],
+    "da": ["Byte"],
+    "de": ["Byte", "Text"],
+    "el": ["Byte"],
+    "es": ["Byte"],
+    "id": ["Boolean", "Byte", "Baud rate"],
+    "it": ["Byte"],
+    "ms": ["Integer", "Boolean"],
+    "nb": ["Byte"],
+    "nl": ["Byte"],
+    "pt": ["Byte"],
+    "ro": ["Boolean", "Text"],
+    "sv": ["Byte", "Text"],
+    "vi": ["Boolean", "Byte"]
+  }
+}
