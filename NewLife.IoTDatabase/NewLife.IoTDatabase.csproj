@@ -6,7 +6,7 @@
     <Description>Generic IoT database driver that maps SQL query results to IoT data points through the XCode data access layer, supporting multiple databases.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>1.1</VersionPrefix>
+    <VersionPrefix>1.2</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -36,10 +36,10 @@
     <PackageDescription>IoT Generic Database Driver — standards-compliant SQL-based driver implementing IDriver/DriverBase. Maps SQL query results to IPoint data via IoTDatabaseDriver. Built on XCode DAL for multi-database support (MySQL, SQLite, SQL Server, Oracle, PostgreSQL, DaMeng).  |  IoT通用数据库驱动，符合IoT标准的SQL驱动实现，通过IoTDatabaseDriver将查询结果映射为IPoint数据，基于XCode DAL支持多数据库。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
-    <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>IoT;Database;SQL;MySQL;SQLite;SqlServer;Oracle;PostgreSQL;DaMeng;XCode;DAL;IDriver;DriverBase;Edge Computing;NewLife;物联网;数据库;达梦;边缘计算;新生命团队;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>Fixed IoTDatabaseDriver defects, adopted to shared DriverCodec and IPoint spec.  修复IoTDatabaseDriver缺陷，适配共享DriverCodec编解码与IPoint规范。</PackageReleaseNotes>
+    <PackageTags>IoT;Database;SQL;MySQL;SQLite;SqlServer;Oracle;PostgreSQL;DaMeng;XCode;DAL;IDriver;DriverBase;NativeAOT;Localization;Edge Computing;NewLife;物联网;数据库;达梦;边缘计算;AOT;多语言;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>NativeAOT compatibility and JSON source-generation models; 31-language localization for driver metadata, parameters and logs; instance-prefixed logging; NewLife.XCode dependency upgraded to 12.2.2026.1021-beta0423.  NativeAOT 兼容与 JSON 源生成模型；31 种语言本地化覆盖驱动元数据、参数与日志；实例前缀日志；NewLife.XCode 依赖升级到 12.2.2026.1021-beta0423。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

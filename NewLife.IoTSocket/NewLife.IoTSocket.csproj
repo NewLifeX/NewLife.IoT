@@ -6,7 +6,7 @@
     <Description>Generic IoT network driver for TCP, UDP and HTTP, with broadcast discovery and built-in transports.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>1.1</VersionPrefix>
+    <VersionPrefix>1.2</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -36,10 +36,10 @@
     <PackageDescription>IoT Generic Network Driver — standards-compliant TCP/UDP/HTTP driver implementing IDriver/DriverBase. Includes IoTTcpDriver, IoTUdpDriver (with IDiscoverableDriver for broadcast discovery), IoTHttpDriver. Built-in TcpTransport/UdpTransport/HttpTransport (ITransport).  |  IoT通用网络驱动，符合IoT标准的TCP/UDP/HTTP驱动实现，含IoTTcpDriver、IoTUdpDriver（支持广播发现）、IoTHttpDriver，内置TcpTransport/UdpTransport/HttpTransport传输层。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
-    <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>IoT;TCP;UDP;HTTP;Network;Socket;TcpTransport;UdpTransport;HttpTransport;IDriver;DriverBase;ITransport;Edge Computing;Industrial Automation;NewLife;物联网;网络;边缘计算;工业自动化;新生命团队;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>Fixed driver &amp; transport-layer defects: atomic request-response, concurrency safety, timeout handling and resource cleanup in SocketTransport/IoTSocketDriver/IoTHttpDriver; adopt shared DriverCodec.  修复网络驱动与传输层缺陷：请求-响应原子化、并发安全、超时处理与资源清理，使用共享DriverCodec编解码。</PackageReleaseNotes>
+    <PackageTags>IoT;TCP;UDP;HTTP;Network;Socket;TcpTransport;UdpTransport;HttpTransport;IDriver;DriverBase;ITransport;NativeAOT;Localization;Edge Computing;Industrial Automation;NewLife;物联网;网络;边缘计算;工业自动化;AOT;多语言;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>NativeAOT compatibility and trim-safe JSON models; 31-language localization for driver metadata, parameters and logs; instance-prefixed logging; dependency upgraded to NewLife.Core 12.0.2026.1024.  NativeAOT 兼容与裁剪安全的 JSON 模型；31 种语言本地化覆盖驱动元数据、参数与日志；实例前缀日志；依赖升级到 NewLife.Core 12.0.2026.1024。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -59,7 +59,7 @@
     </PackageReference>
     <!-- 非 Windows 构建 net45/net461/net462 需要引用程序集包，Windows 已安装目标包时可忽略 -->
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="$(TargetFramework.StartsWith('net4'))" />
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1021-beta0321" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1024" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45' or '$(TargetFramework)'=='net461' or '$(TargetFramework)'=='net462'">
     <Using Include="System.Net.Http" />

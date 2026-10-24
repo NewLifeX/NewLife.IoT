@@ -7,7 +7,7 @@
     <Description>IoT standard library that defines unified communication protocol contracts for IoT platforms and hardware drivers, without concrete protocol implementations.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>3.1</VersionPrefix>
+    <VersionPrefix>3.2</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -39,8 +39,8 @@
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>IoT;Internet of Things;IDriver;DriverBase;ThingSpec;DataQuality;Modbus;Siemens;OPC-UA;Edge Computing;Industrial Automation;Protocol;Async;NewLife;物联网;物模型;边缘计算;工业自动化;协议;异步;新生命团队;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>v3.1 — Async interface for IModbus/IRelayController/IDevice with CancellationToken &amp; async report; new DriverCodec shared codec (HEX/ASCII/UTF8/Json); zero-allocation hot paths in DataHelper/TypeHelper; serial/network driver concurrency &amp; timeout fixes; 130+ new tests, 372 all pass.  v3.1 — IModbus/IRelayController/IDevice接口异步化，支持取消令牌与异步上报；新增DriverCodec共享编解码助手；采集热点路径零分配化；修复串口/网络驱动并发安全与超时缺陷；新增130+单元测试全部通过。</PackageReleaseNotes>
+    <PackageTags>IoT;Internet of Things;IDriver;DriverBase;ThingSpec;DataQuality;Modbus;Siemens;OPC-UA;Edge Computing;Industrial Automation;Protocol;Async;NativeAOT;Localization;NewLife;物联网;物模型;边缘计算;工业自动化;协议;异步;AOT;多语言;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>NativeAOT support: AOT analyzers on net8.0+, reflection-free driver factory registration, AotSmoke across Windows/Linux/macOS; 31-language runtime localization covering driver metadata, parameter descriptions, exception messages and log templates; new serial-port and Modbus factory injection for board drivers; fixed float/double and point byte-order conversion on big-endian hosts; 424 unit tests pass.  NativeAOT 支持：net8.0+ 启用 AOT 分析器，驱动工厂免反射注册，AotSmoke 覆盖 Windows/Linux/macOS；31 种语言运行时本地化，覆盖驱动元数据、参数描述、异常消息与日志模板；新增板卡串口与 Modbus 工厂注入；修复大端主机浮点与点位字节序转换；424 项单元测试全部通过。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -58,7 +58,7 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="$(TargetFramework.StartsWith('net4'))" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1021-beta0321" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1024" />
   </ItemGroup>
 
   <!-- 多语言词表：编译期由 NewLife.Core 源生成器打包进程序集，运行时自动注册 -->

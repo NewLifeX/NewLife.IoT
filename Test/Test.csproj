@@ -16,8 +16,8 @@
     <PackageReference Include="NewLife.Keyence" Version="1.0.2025.528-beta1321" />
     <PackageReference Include="NewLife.LoRa" Version="1.1.2026.302-beta0610" />
     <PackageReference Include="NewLife.Melsec" Version="1.2.2026.501" />
-    <PackageReference Include="NewLife.Modbus" Version="2.1.2026.902-beta1359" />
-    <PackageReference Include="NewLife.ModbusRTU" Version="2.1.2026.902-beta1359" />
+    <PackageReference Include="NewLife.Modbus" Version="2.1.2026.1022-beta0202" />
+    <PackageReference Include="NewLife.ModbusRTU" Version="2.1.2026.1022-beta0202" />
     <PackageReference Include="NewLife.NetPing" Version="1.1.2026.609" />
     <PackageReference Include="NewLife.Omron" Version="1.1.2026.901" />
     <PackageReference Include="NewLife.OpcDa" Version="1.0.2025.1206-beta1835" />

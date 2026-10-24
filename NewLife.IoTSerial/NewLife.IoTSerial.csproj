@@ -6,7 +6,7 @@
     <Description>Generic IoT serial port driver that lets multiple devices share one COM port, with a built-in serial transport.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>1.1</VersionPrefix>
+    <VersionPrefix>1.2</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -36,10 +36,10 @@
     <PackageDescription>IoT Generic Serial Driver — standards-compliant serial port driver implementing IDriver/DriverBase. Supports multi-device sharing of a single COM port via INode. Built-in SerialTransport (ITransport) for Open/Close/Send/Receive/SendReceive operations.  |  IoT通用串口驱动，符合IoT标准的串口驱动实现，通过INode支持多设备共用同一COM口，内置SerialTransport传输层。</PackageDescription>
     <PackageProjectUrl>https://newlifex.com/iot</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
-    <RepositoryUrl>https://github.com/NewLifeX/NewLife.PC</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NewLifeX/NewLife.IoT</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>IoT;Serial;COM Port;RS232;RS485;SerialTransport;IDriver;DriverBase;ITransport;Edge Computing;Industrial Automation;NewLife;物联网;串口;边缘计算;工业自动化;新生命团队;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>Fixed serial driver &amp; transport defects: concurrency safety, timeout handling and resource cleanup in SerialTransport/IoTSerialDriver; adopt shared DriverCodec.  修复串口驱动与传输层缺陷：并发安全、超时处理与资源清理，使用共享DriverCodec编解码。</PackageReleaseNotes>
+    <PackageTags>IoT;Serial;COM Port;RS232;RS485;SerialTransport;IDriver;DriverBase;ITransport;NativeAOT;Localization;Edge Computing;Industrial Automation;NewLife;物联网;串口;边缘计算;工业自动化;AOT;多语言;新生命团队;$(AssemblyName)</PackageTags>
+    <PackageReleaseNotes>NativeAOT compatibility with automatic serial-port factory registration; 31-language localization for driver metadata, parameters and logs; instance-prefixed logging; dependency upgraded to NewLife.Core 12.0.2026.1024.  NativeAOT 兼容并自动注册串口工厂；31 种语言本地化覆盖驱动元数据、参数与日志；实例前缀日志；依赖升级到 NewLife.Core 12.0.2026.1024。</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>

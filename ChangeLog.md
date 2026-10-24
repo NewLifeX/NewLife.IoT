@@ -1,5 +1,37 @@
 # NewLife.IoT 变更日志
 
+## v3.2.2026.1024 (2026-10-24)
+
+### NativeAOT 支持
+- **AOT 分析器常驻**：net8.0 及以上目标启用 IsAotCompatible，IL2026/IL2070/IL2072/IL2075/IL3050 作为错误阻断
+- **驱动工厂免反射注册**：DriverFactory.Register 标注裁剪保留并生成构造委托，新增 SerialPortFactory/ModbusFactory 工厂注入，板卡驱动在 AOT 下不再依赖运行期反射
+- **AOT 冒烟矩阵**：AotSmoke 扩展至 20 个场景，覆盖 win-x64/linux-x64/linux-arm64/osx-arm64 的 JIT 与 NativeAOT 双跑
+- **裁剪安全 JSON**：ReadResult/ControlResult/DriverDataEventArgs 等模型补充 JsonSerializable 与裁剪保留声明
+
+### 多语言本地化
+- **31 种语言词表**：与 NewLife.Core 语言集完全对齐，新增 21 种语言资源，覆盖驱动元数据、参数描述、异常消息与日志模板
+- **带前缀日志**：驱动与传输层日志统一实例前缀，并支持通过 LogCulture 切换输出语言
+- **区域性无关处理**：JSON 与数值转换固定 InvariantCulture，不同区域性下输出一致
+
+### 驱动与传输层
+- **板卡工厂注入**：NewLife.IoTSerial 模块初始化时自动注册串口工厂，Board 优先使用工厂委托并保留反射回退
+- **大端字节序修复**：DataHelper 的单精度/双精度转换按主机字节序换算，PointHelper 保持小端契约，修复大端主机上的浮点与点位转换错误
+
+### 测试与质量
+- **424 项单元测试**：新增多语言、驱动工厂、板卡工厂与字节序测试，全部通过
+- **词表门禁**：新增本地化、英文源文、日志模板与运行时消息校验脚本，CI 拦截键集合、占位符与漏译问题
+- **包消费验证**：以本地源消费者验证包内多语言、驱动工厂、参数绑定与板卡串口，并支持 NativeAOT 发布运行
+
+### 文档与协作
+- **README 13 语种**：默认语言切换为英文，生态版图与团队介绍对齐 NewLife.Core，新增繁體中文、Deutsch 与 한국어
+- **依赖升级**：NewLife.Core 12.0.2026.1024、NewLife.XCode 12.2.2026.1021-beta0423、NewLife.Modbus 2.1.2026.1022-beta0202
+
+### 发布流程
+- **双通道发包**：发布工作流同时推送 GitHub Packages 与 NuGet.org，tag 发布时自动创建 GitHub Release，说明取自 ChangeLog 对应版本段落
+- **统一 Ubuntu 运行**：打包、消费验证与发布均在 Ubuntu 完成，降低跨平台差异
+
+---
+
 ## v3.1.2026.0802 (2026-08-02)
 
 ### 接口异步化增强
